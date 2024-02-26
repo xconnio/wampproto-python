@@ -16,9 +16,6 @@ jobs:
       - name: Setup environment & install dependencies
         run: make setup
 
-      - name: Display Python version
-        run: python -c "import sys; print(sys.version)"
-
   ruff:
     runs-on: ubuntu-latest
     steps:
