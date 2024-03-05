@@ -63,6 +63,6 @@ class Welcome(Message):
             details["authid"] = self.authid
 
         if self.authrole is not None:
-            details["authid"] = self.authid
+            details["authrole"] = self.authid
 
         return [self.MESSAGE_TYPE, self.session_id, details]

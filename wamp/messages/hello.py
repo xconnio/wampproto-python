@@ -26,7 +26,9 @@ class Hello(Message):
     @staticmethod
     def serialize(msg: list) -> Hello:
         if len(msg) != 3:
-            raise error.ProtocolError(f"Invalid message length '{len(msg)}' for {Hello.HELLO_TEXT}, length should be equal to three")
+            raise error.ProtocolError(
+                f"Invalid message length '{len(msg)}' for {Hello.HELLO_TEXT}, length should be equal to three"
+            )
 
         if msg[0] != Hello.MESSAGE_TYPE:
             raise error.ProtocolError("Invalid message type for {Hello.HELLO_TEXT}")
@@ -61,6 +63,6 @@ class Hello(Message):
             details["authid"] = self.authid
 
         if self.authrole is not None:
-            details["authid"] = self.authid
+            details["authrole"] = self.authrole
 
         return [self.MESSAGE_TYPE, self.realm, details]
