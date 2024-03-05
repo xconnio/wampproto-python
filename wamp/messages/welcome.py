@@ -7,11 +7,12 @@ from wamp.messages.message import Message
 
 
 class Welcome(Message):
+    WELCOME_TEXT = "WELCOME"
     MESSAGE_TYPE = 2
 
     def __init__(
         self,
-        session_id: str,
+        session_id: int,
         roles: dict[str, Any],
         authid: str | None = None,
         authrole: str | None = None,
@@ -26,32 +27,32 @@ class Welcome(Message):
     def serialize(msg: list) -> Welcome:
         if len(msg) != 3:
             raise error.ProtocolError(
-                f"Invalid message length '{len(msg)}' for WELCOME, length should be equal to three"
+                f"Invalid message length '{len(msg)}' for {Welcome.WELCOME_TEXT}, length should be equal to three"
             )
 
         if msg[0] != Welcome.MESSAGE_TYPE:
             raise error.ProtocolError("Invalid message type for WELCOME")
 
-        session_id = util.validate_session_id_or_raise(msg[1])
-        details = util.validate_details_or_raise(msg[2])
+        session_id = util.validate_session_id_or_raise(msg[1], Welcome.WELCOME_TEXT)
+        details = util.validate_details_or_raise(msg[2], Welcome.WELCOME_TEXT)
 
         roles = details.get("roles", {})
         if len(roles) == 0:
-            raise error.ProtocolError("roles are missing in details for WELCOME")
+            raise error.ProtocolError(f"roles are missing in details for {Welcome.WELCOME_TEXT}")
 
         for role in roles.keys():
             if role not in util.AllowedRoles.__members__.values():
-                raise error.ProtocolError(f"Invalid role '{role}' in 'roles' details for WELCOME")
+                raise error.ProtocolError(f"Invalid role '{role}' in 'roles' details for {Welcome.WELCOME_TEXT}")
 
         authid = details.get("authid", None)
         if authid is not None:
             if not isinstance(authid, str):
-                raise error.ProtocolError("authid must be a string type for WELCOME")
+                raise error.ProtocolError(f"authid must be a string type for {Welcome.WELCOME_TEXT}")
 
         authrole = details.get("authrole", None)
         if authrole is not None:
             if not isinstance(authrole, str):
-                raise error.ProtocolError("authrole must be a string")
+                raise error.ProtocolError(f"authrole must be a string for {Welcome.WELCOME_TEXT}")
 
         return Welcome(session_id=session_id, roles=roles, authid=authid, authrole=authrole)
 
