@@ -16,6 +16,9 @@ jobs:
       - name: Setup environment & install dependencies
         run: make setup
 
+      - name: Run tests
+        run: make test
+
   ruff:
     runs-on: ubuntu-latest
     steps:
