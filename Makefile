@@ -16,4 +16,4 @@ check-lint:
 
 
 test:
-	pytest -v tests/
+	. .venv/bin/activate; pytest -v tests/
