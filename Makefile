@@ -13,3 +13,7 @@ lint:
 
 check-lint:
 	. .venv/bin/activate; ruff check .
+
+
+test:
+	pytest -v tests/
