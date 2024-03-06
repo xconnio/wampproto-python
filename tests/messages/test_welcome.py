@@ -127,7 +127,10 @@ def test_parse_with_string():
     with pytest.raises(error.ProtocolError) as exc_info:
         Welcome.parse(message)
 
-    assert str(exc_info.value) == f"invalid message type '{type(message)}' for {Welcome.WELCOME_TEXT}, type should be a list"
+    assert (
+        str(exc_info.value)
+        == f"invalid message type '{type(message)}' for {Welcome.WELCOME_TEXT}, type should be a list"
+    )
 
 
 def test_parse_with_invalid_list_length():
@@ -135,7 +138,10 @@ def test_parse_with_invalid_list_length():
     with pytest.raises(error.ProtocolError) as exc_info:
         Welcome.parse(message)
 
-    assert str(exc_info.value) == f"invalid message length '{len(message)}' for {Welcome.WELCOME_TEXT}, length should be equal to three"
+    assert (
+        str(exc_info.value)
+        == f"invalid message length '{len(message)}' for {Welcome.WELCOME_TEXT}, length should be equal to three"
+    )
 
 
 def test_parse_with_invalid_message_type():
