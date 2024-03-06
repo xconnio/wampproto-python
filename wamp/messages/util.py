@@ -10,6 +10,10 @@ class AllowedRoles(str, Enum):
     PUBLISHER = "publisher"
     SUBSCRIBER = "subscriber"
 
+    @classmethod
+    def get_allowed_roles(cls) -> list[str]:
+        return [e.value for e in AllowedRoles]
+
 
 def validate_realm_or_raise(realm: str, error_msg: str) -> str:
     if realm is None:
