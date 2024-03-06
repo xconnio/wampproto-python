@@ -18,7 +18,7 @@ from wamp.messages.hello import Hello
     ],
 )
 def test_hello(realm, roles, details, expected_details):
-    message = Hello(realm, roles, **details).deserialize()
+    message = Hello(realm, roles, **details).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 3

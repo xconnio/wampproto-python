@@ -2,8 +2,8 @@ class Message:
     MESSAGE_TYPE = None
 
     @staticmethod
-    def serialize(msg: list):
+    def parse(msg: list):
         raise NotImplementedError()
 
-    def deserialize(self):
+    def marshal(self):
         raise NotImplementedError()

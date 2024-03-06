@@ -24,7 +24,7 @@ class Hello(Message):
         self.authrole = authrole
 
     @staticmethod
-    def serialize(msg: list) -> Hello:
+    def parse(msg: list) -> Hello:
         if len(msg) != 3:
             raise error.ProtocolError(
                 f"Invalid message length '{len(msg)}' for {Hello.HELLO_TEXT}, length should be equal to three"
@@ -56,7 +56,7 @@ class Hello(Message):
 
         return Hello(realm=realm, roles=roles, authid=authid, authrole=authrole)
 
-    def deserialize(self):
+    def marshal(self):
         details: dict[str, Any] = {"roles": self.roles}
 
         if self.authid is not None:

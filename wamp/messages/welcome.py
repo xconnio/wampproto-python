@@ -24,7 +24,7 @@ class Welcome(Message):
         self.authrole = authrole
 
     @staticmethod
-    def serialize(msg: list) -> Welcome:
+    def parse(msg: list) -> Welcome:
         if len(msg) != 3:
             raise error.ProtocolError(
                 f"Invalid message length '{len(msg)}' for {Welcome.WELCOME_TEXT}, length should be equal to three"
@@ -56,13 +56,13 @@ class Welcome(Message):
 
         return Welcome(session_id=session_id, roles=roles, authid=authid, authrole=authrole)
 
-    def deserialize(self):
+    def marshal(self):
         details: dict[str, Any] = {"roles": self.roles}
 
         if self.authid is not None:
             details["authid"] = self.authid
 
         if self.authrole is not None:
-            details["authrole"] = self.authid
+            details["authrole"] = self.authrole
 
         return [self.MESSAGE_TYPE, self.session_id, details]
