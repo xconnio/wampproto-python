@@ -17,3 +17,6 @@ check-lint:
 
 test:
 	. .venv/bin/activate; pytest -v tests/
+
+coverage:
+	. .venv/bin/activate; coverage run -m pytest -v tests && coverage html && open htmlcov/index.html
