@@ -6,5 +6,5 @@ class InvalidRealmError(Exception):
     pass
 
 
-class InvalidDetails(Exception):
+class InvalidDetailsError(Exception):
     pass
