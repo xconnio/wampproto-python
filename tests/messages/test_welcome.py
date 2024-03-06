@@ -1,5 +1,3 @@
-from typing import Any
-
 import pytest
 
 from wamp.messages import error, util
