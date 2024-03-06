@@ -1,3 +1,8 @@
-ruff==0.2.2
-pytest==8.0.2
 coverage==7.4.3
+exceptiongroup==1.2.0
+iniconfig==2.0.0
+packaging==23.2
+pluggy==1.4.0
+pytest==8.0.2
+ruff==0.3.0
+tomli==2.0.1
