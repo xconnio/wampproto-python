@@ -6,10 +6,17 @@ install_uv:
 setup:
 	make install_uv
 	uv venv
-	uv pip install -r requirements.txt
+	uv pip install -r requirements-dev.txt
 
 lint:
 	. .venv/bin/activate; ruff format .
 
 check-lint:
 	. .venv/bin/activate; ruff check .
+
+
+test:
+	. .venv/bin/activate; pytest -v tests/
+
+coverage:
+	. .venv/bin/activate; coverage run -m pytest -v tests && coverage html && open htmlcov/index.html
