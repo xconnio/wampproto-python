@@ -21,8 +21,8 @@ def test_parse_with_invalid_list_length():
         Authenticate.parse(message)
 
     assert (
-        str(exc_info.value)
-        == f"invalid message length '{len(message)}' for {Authenticate.AUTHENTICATE_TEXT}, length should be equal to three"
+        str(exc_info.value) == f"invalid message length '{len(message)}' for {Authenticate.AUTHENTICATE_TEXT}, "
+        f"length should be equal to three"
     )
 
 
