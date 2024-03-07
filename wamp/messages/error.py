@@ -8,3 +8,7 @@ class InvalidRealmError(Exception):
 
 class InvalidDetailsError(Exception):
     pass
+
+
+class InvalidUriError(Exception):
+    pass

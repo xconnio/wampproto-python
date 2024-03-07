@@ -73,3 +73,25 @@ def test_validate_session_id_or_raise_correctly(session_id):
     result = util.validate_session_id_or_raise(session_id, "")
     assert isinstance(session_id, int)
     assert result == session_id
+
+
+def test_validate_uri_or_raise_with_realm_none():
+    error_message = "error"
+    with pytest.raises(error.InvalidUriError) as exc_info:
+        util.validate_uri_or_raise(None, error_message)
+
+    assert str(exc_info.value) == f"uri cannot be null for {error_message}"
+
+
+def test_validate_uri_or_raise_with_invalid_uri_type():
+    error_message = "error"
+    with pytest.raises(error.InvalidUriError) as exc_info:
+        util.validate_uri_or_raise(3, error_message)
+
+    assert str(exc_info.value) == f"uri must be of type string for {error_message}"
+
+
+def test_validate_uri_or_raise_correctly():
+    uri = "wamp.close.goodbye_and_out"
+    result = util.validate_uri_or_raise(uri, "")
+    assert result == uri
