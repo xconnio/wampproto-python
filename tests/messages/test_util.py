@@ -95,3 +95,26 @@ def test_validate_uri_or_raise_correctly():
     uri = "wamp.close.goodbye_and_out"
     result = util.validate_uri_or_raise(uri, "")
     assert result == uri
+
+
+def test_validate_message_or_raise_with_invalid_type():
+    message = "wamp message"
+    error_msg = "Pie"
+
+    with pytest.raises(error.ProtocolError) as exc_info:
+        util.validate_message_or_raise(message, error_msg)
+
+    assert str(exc_info.value) == f"invalid message type '{type(message)}' for {error_msg}, type should be a list"
+
+
+def test_validate_message_or_raise_with_invalid_list_length():
+    message = ["wamp message"]
+    error_msg = "Pie"
+
+    with pytest.raises(error.ProtocolError) as exc_info:
+        util.validate_message_or_raise(message, error_msg)
+
+    assert (
+        str(exc_info.value)
+        == f"invalid message length '{len(message)}' for {error_msg}, length should be equal to three"
+    )
