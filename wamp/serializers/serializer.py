@@ -8,7 +8,6 @@ from wamp.messages.authenticate import Authenticate
 
 
 class Serializer:
-
     def serialize(self, message: Message) -> bytes:
         raise NotImplementedError()
 
