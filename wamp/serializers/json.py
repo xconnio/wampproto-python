@@ -5,7 +5,7 @@ from wamp.serializers.serializer import to_message
 from wamp.serializers.serializer import Serializer
 
 
-class JsonSerializer(Serializer):
+class JSONSerializer(Serializer):
     def serialize(self, message: Message) -> bytes:
         json_str = json.dumps(message.marshal())
         return json_str.encode("utf-8")

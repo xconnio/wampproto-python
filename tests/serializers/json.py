@@ -1,9 +1,9 @@
 from wamp.messages.hello import Hello
-from wamp.serializers.json import JsonSerializer
+from wamp.serializers.json import JSONSerializer
 
 
 def test_serializer():
-    serializer = JsonSerializer()
+    serializer = JSONSerializer()
     hello = Hello.parse([1, "realm1", {"roles": {"callee": {}}}])
 
     data = serializer.serialize(hello)
