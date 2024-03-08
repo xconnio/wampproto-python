@@ -1,3 +1,4 @@
+cbor2==5.6.2
 coverage==7.4.3
 exceptiongroup==1.2.0
 iniconfig==2.0.0
