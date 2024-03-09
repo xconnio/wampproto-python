@@ -284,26 +284,31 @@ def test_parse_with_invalid_authrole():
 
 def test_parse_with_invalid_authmethods_type():
     message = [1, "realm1", {"roles": {"callee": {}}, "authmethods": "authmethods"}]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(error.InvalidTypeError) as exc_info:
         Hello.parse(message)
 
-    assert str(exc_info.value) == f"invalid type for 'authmethods' in details for {Hello.HELLO_TEXT}"
+    assert (
+        str(exc_info.value) == f"invalid type: expected type 'list', got 'str' for authmethods in '{Hello.HELLO_TEXT}'"
+    )
 
 
 def test_parse_with_invalid_authmethods_item_type():
     message = [1, "realm1", {"roles": {"callee": {}}, "authmethods": ["ticket", 23]}]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(error.InvalidTypeError) as exc_info:
         Hello.parse(message)
 
-    assert str(exc_info.value) == f"invalid type for item in 'authmethods' details for {Hello.HELLO_TEXT}"
+    assert (
+        str(exc_info.value)
+        == f"invalid type: expected type 'str', got 'int' for item '23' in 'authmethods' in '{Hello.HELLO_TEXT}'"
+    )
 
 
 def test_parse_with_invalid_authextra_type():
     message = [1, "realm1", {"roles": {"callee": {}}, "authextra": "authextra"}]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(error.InvalidTypeError) as exc_info:
         Hello.parse(message)
 
-    assert str(exc_info.value) == f"invalid type for 'authextra' in details for {Hello.HELLO_TEXT}"
+    assert str(exc_info.value) == f"invalid type: expected type 'dict', got 'str' for authextra in '{Hello.HELLO_TEXT}'"
 
 
 def test_parse_with_valid_roles():

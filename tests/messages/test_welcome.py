@@ -310,18 +310,24 @@ def test_parse_with_invalid_authrole():
 
 def test_parse_with_invalid_authmethod_type():
     message = [2, TEST_SESSION_ID, {"roles": {"callee": {}}, "authmethod": []}]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(error.InvalidTypeError) as exc_info:
         Welcome.parse(message)
 
-    assert str(exc_info.value) == f"invalid type for 'authmethod' in details for {Welcome.WELCOME_TEXT}"
+    assert (
+        str(exc_info.value)
+        == f"invalid type: expected type 'str', got 'list' for authmethod in '{Welcome.WELCOME_TEXT}'"
+    )
 
 
 def test_parse_with_invalid_authextra_type():
     message = [2, TEST_SESSION_ID, {"roles": {"callee": {}}, "authextra": "authextra"}]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(error.InvalidTypeError) as exc_info:
         Welcome.parse(message)
 
-    assert str(exc_info.value) == f"invalid type for 'authextra' in details for {Welcome.WELCOME_TEXT}"
+    assert (
+        str(exc_info.value)
+        == f"invalid type: expected type 'dict', got 'str' for authextra in '{Welcome.WELCOME_TEXT}'"
+    )
 
 
 def test_parse_with_valid_roles():

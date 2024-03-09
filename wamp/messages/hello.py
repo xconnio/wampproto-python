@@ -69,16 +69,18 @@ class Hello(Message):
         authmethods = details.get("authmethods", None)
         if authmethods is not None:
             if not isinstance(authmethods, list):
-                raise error.ProtocolError(f"invalid type for 'authmethods' in details for {Hello.HELLO_TEXT}")
+                raise error.InvalidTypeError(list, type(authmethods), "authmethods", Hello.HELLO_TEXT)
 
             for authmethod in authmethods:
                 if not isinstance(authmethod, str):
-                    raise error.ProtocolError(f"invalid type for item in 'authmethods' details for {Hello.HELLO_TEXT}")
+                    raise error.InvalidTypeError(
+                        str, type(authmethod), f"item '{authmethod}' in 'authmethods'", Hello.HELLO_TEXT
+                    )
 
         authextra = details.get("authextra", None)
         if authextra is not None:
             if not isinstance(authextra, dict):
-                raise error.ProtocolError(f"invalid type for 'authextra' in details for {Hello.HELLO_TEXT}")
+                raise error.InvalidTypeError(dict, type(authextra), "authextra", Hello.HELLO_TEXT)
 
         return Hello(
             realm=realm, roles=roles, authid=authid, authrole=authrole, authmethods=authmethods, authextra=authextra

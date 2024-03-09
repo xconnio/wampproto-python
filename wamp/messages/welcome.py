@@ -69,12 +69,12 @@ class Welcome(Message):
         authmethod = details.get("authmethod", None)
         if authmethod is not None:
             if not isinstance(authmethod, str):
-                raise error.ProtocolError(f"invalid type for 'authmethod' in details for {Welcome.WELCOME_TEXT}")
+                raise error.InvalidTypeError(str, type(authmethod), "authmethod", Welcome.WELCOME_TEXT)
 
         authextra = details.get("authextra", None)
         if authextra is not None:
             if not isinstance(authextra, dict):
-                raise error.ProtocolError(f"invalid type for 'authextra' in details for {Welcome.WELCOME_TEXT}")
+                raise error.InvalidTypeError(dict, type(authextra), "authextra", Welcome.WELCOME_TEXT)
 
         return Welcome(
             session_id=session_id,
