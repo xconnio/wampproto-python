@@ -19,5 +19,6 @@ class InvalidUriError(Exception):
 
 class InvalidTypeError(Exception):
     def __init__(self, expected_type: Any, actual_type: Any, field: str, message_name: str):
-        error_msg = f"invalid type: expected type '{expected_type.__name__}', got '{actual_type.__name__}' for {field} in '{message_name}'"
+        error_msg = (f"invalid type: expected type '{expected_type.__name__}', "
+                     f"got '{actual_type.__name__}' for {field} in '{message_name}'")
         super().__init__(error_msg)
