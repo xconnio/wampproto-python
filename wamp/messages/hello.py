@@ -16,12 +16,16 @@ class Hello(Message):
         roles: dict[str, Any],
         authid: str | None = None,
         authrole: str | None = None,
+        authmethods: list[str] | None = None,
+        authextra: str | None = None,
     ):
         super().__init__()
         self.realm = realm
         self.roles = roles
         self.authid = authid
         self.authrole = authrole
+        self.authmethods = authmethods
+        self.authextra = authextra
 
     @staticmethod
     def parse(msg: list) -> Hello:
@@ -62,7 +66,25 @@ class Hello(Message):
             if not isinstance(authrole, str):
                 raise error.ProtocolError(f"authrole must be a type string for {Hello.HELLO_TEXT}")
 
-        return Hello(realm=realm, roles=roles, authid=authid, authrole=authrole)
+        authmethods = details.get("authmethods", None)
+        if authmethods is not None:
+            if not isinstance(authmethods, list):
+                raise error.InvalidTypeError(list, type(authmethods), "authmethods", Hello.HELLO_TEXT)
+
+            for authmethod in authmethods:
+                if not isinstance(authmethod, str):
+                    raise error.InvalidTypeError(
+                        str, type(authmethod), f"item '{authmethod}' in 'authmethods'", Hello.HELLO_TEXT
+                    )
+
+        authextra = details.get("authextra", None)
+        if authextra is not None:
+            if not isinstance(authextra, dict):
+                raise error.InvalidTypeError(dict, type(authextra), "authextra", Hello.HELLO_TEXT)
+
+        return Hello(
+            realm=realm, roles=roles, authid=authid, authrole=authrole, authmethods=authmethods, authextra=authextra
+        )
 
     def marshal(self):
         details: dict[str, Any] = {"roles": self.roles}
@@ -72,5 +94,11 @@ class Hello(Message):
 
         if self.authrole is not None:
             details["authrole"] = self.authrole
+
+        if self.authmethods is not None:
+            details["authmethods"] = self.authmethods
+
+        if self.authextra is not None:
+            details["authextra"] = self.authextra
 
         return [self.MESSAGE_TYPE, self.realm, details]

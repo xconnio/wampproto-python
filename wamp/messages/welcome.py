@@ -16,12 +16,16 @@ class Welcome(Message):
         roles: dict[str, Any],
         authid: str | None = None,
         authrole: str | None = None,
+        authmethod: str | None = None,
+        authextra: str | None = None,
     ):
         super().__init__()
         self.session_id = session_id
         self.roles = roles
         self.authid = authid
         self.authrole = authrole
+        self.authmethod = authmethod
+        self.authextra = authextra
 
     @staticmethod
     def parse(msg: list) -> Welcome:
@@ -62,7 +66,24 @@ class Welcome(Message):
             if not isinstance(authrole, str):
                 raise error.ProtocolError(f"authrole must be a type string for {Welcome.WELCOME_TEXT}")
 
-        return Welcome(session_id=session_id, roles=roles, authid=authid, authrole=authrole)
+        authmethod = details.get("authmethod", None)
+        if authmethod is not None:
+            if not isinstance(authmethod, str):
+                raise error.InvalidTypeError(str, type(authmethod), "authmethod", Welcome.WELCOME_TEXT)
+
+        authextra = details.get("authextra", None)
+        if authextra is not None:
+            if not isinstance(authextra, dict):
+                raise error.InvalidTypeError(dict, type(authextra), "authextra", Welcome.WELCOME_TEXT)
+
+        return Welcome(
+            session_id=session_id,
+            roles=roles,
+            authid=authid,
+            authrole=authrole,
+            authmethod=authmethod,
+            authextra=authextra,
+        )
 
     def marshal(self):
         details: dict[str, Any] = {"roles": self.roles}
@@ -72,5 +93,11 @@ class Welcome(Message):
 
         if self.authrole is not None:
             details["authrole"] = self.authrole
+
+        if self.authmethod is not None:
+            details["authmethod"] = self.authmethod
+
+        if self.authextra is not None:
+            details["authextra"] = self.authextra
 
         return [self.MESSAGE_TYPE, self.session_id, details]

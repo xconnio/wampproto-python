@@ -102,6 +102,42 @@ def test_marshal_with_authrole():
     assert message[2] == {"roles": roles, "authrole": "admin"}
 
 
+def test_marshal_with_authmethod():
+    roles = {"callee": {}}
+    details = {"authmethod": "anonymous"}
+    message = Welcome(TEST_SESSION_ID, roles, **details).marshal()
+
+    assert isinstance(message, list)
+    assert len(message) == 3
+
+    assert isinstance(message[0], int)
+    assert message[0] == Welcome.MESSAGE_TYPE
+
+    assert isinstance(message[1], int)
+    assert message[1] == TEST_SESSION_ID
+
+    assert isinstance(message[2], dict)
+    assert message[2] == {"roles": roles, "authmethod": "anonymous"}
+
+
+def test_marshal_with_authextra():
+    roles = {"callee": {}}
+    details = {"authextra": {"extra": True}}
+    message = Welcome(TEST_SESSION_ID, roles, **details).marshal()
+
+    assert isinstance(message, list)
+    assert len(message) == 3
+
+    assert isinstance(message[0], int)
+    assert message[0] == Welcome.MESSAGE_TYPE
+
+    assert isinstance(message[1], int)
+    assert message[1] == TEST_SESSION_ID
+
+    assert isinstance(message[2], dict)
+    assert message[2] == {"roles": roles, "authextra": {"extra": True}}
+
+
 def test_marshal_with_role_authid_and_authrole():
     roles = {"callee": {}}
     details = {"authid": "mahad", "authrole": "admin"}
@@ -120,7 +156,49 @@ def test_marshal_with_role_authid_and_authrole():
     assert message[2] == {"roles": roles, "authid": "mahad", "authrole": "admin"}
 
 
-def test_parse_with_string():
+def test_marshal_with_role_authid_authrole_authmethod():
+    roles = {"callee": {}}
+    details = {"authid": "mahad", "authrole": "admin", "authmethod": "ticket"}
+    message = Welcome(TEST_SESSION_ID, roles, **details).marshal()
+
+    assert isinstance(message, list)
+    assert len(message) == 3
+
+    assert isinstance(message[0], int)
+    assert message[0] == Welcome.MESSAGE_TYPE
+
+    assert isinstance(message[1], int)
+    assert message[1] == TEST_SESSION_ID
+
+    assert isinstance(message[2], dict)
+    assert message[2] == {"roles": roles, "authid": "mahad", "authrole": "admin", "authmethod": "ticket"}
+
+
+def test_marshal_with_role_authid_authrole_authmethod_authextra():
+    roles = {"callee": {}}
+    details = {"authid": "mahad", "authrole": "admin", "authmethod": "ticket", "authextra": {"authprovider": "static"}}
+    message = Welcome(TEST_SESSION_ID, roles, **details).marshal()
+
+    assert isinstance(message, list)
+    assert len(message) == 3
+
+    assert isinstance(message[0], int)
+    assert message[0] == Welcome.MESSAGE_TYPE
+
+    assert isinstance(message[1], int)
+    assert message[1] == TEST_SESSION_ID
+
+    assert isinstance(message[2], dict)
+    assert message[2] == {
+        "roles": roles,
+        "authid": "mahad",
+        "authrole": "admin",
+        "authmethod": "ticket",
+        "authextra": {"authprovider": "static"},
+    }
+
+
+def test_parse_with_invalid_type():
     message = "msg"
     with pytest.raises(error.ProtocolError) as exc_info:
         Welcome.parse(message)
@@ -230,6 +308,28 @@ def test_parse_with_invalid_authrole():
     assert str(exc_info.value) == f"authrole must be a type string for {Welcome.WELCOME_TEXT}"
 
 
+def test_parse_with_invalid_authmethod_type():
+    message = [2, TEST_SESSION_ID, {"roles": {"callee": {}}, "authmethod": []}]
+    with pytest.raises(error.InvalidTypeError) as exc_info:
+        Welcome.parse(message)
+
+    assert (
+        str(exc_info.value)
+        == f"invalid type: expected type 'str', got 'list' for authmethod in '{Welcome.WELCOME_TEXT}'"
+    )
+
+
+def test_parse_with_invalid_authextra_type():
+    message = [2, TEST_SESSION_ID, {"roles": {"callee": {}}, "authextra": "authextra"}]
+    with pytest.raises(error.InvalidTypeError) as exc_info:
+        Welcome.parse(message)
+
+    assert (
+        str(exc_info.value)
+        == f"invalid type: expected type 'dict', got 'str' for authextra in '{Welcome.WELCOME_TEXT}'"
+    )
+
+
 def test_parse_with_valid_roles():
     for role in util.AllowedRoles.get_allowed_roles():
         details = {"roles": {role: {}}}
@@ -244,6 +344,8 @@ def test_parse_with_valid_roles():
 
         assert welcome.authid is None
         assert welcome.authrole is None
+        assert welcome.authmethod is None
+        assert welcome.authextra is None
 
 
 def test_parse_with_multiple_roles():
@@ -259,6 +361,8 @@ def test_parse_with_multiple_roles():
 
     assert welcome.authid is None
     assert welcome.authrole is None
+    assert welcome.authmethod is None
+    assert welcome.authextra is None
 
 
 def test_parse_with_authid():
@@ -275,6 +379,8 @@ def test_parse_with_authid():
     assert isinstance(welcome.authid, str)
     assert welcome.authid == details["authid"]
     assert welcome.authrole is None
+    assert welcome.authmethod is None
+    assert welcome.authextra is None
 
 
 def test_parse_with_authrole():
@@ -291,6 +397,26 @@ def test_parse_with_authrole():
     assert isinstance(welcome.authrole, str)
     assert welcome.authrole == details["authrole"]
     assert welcome.authid is None
+    assert welcome.authmethod is None
+    assert welcome.authextra is None
+
+
+def test_parse_with_authmethod():
+    details = {"roles": {"callee": {}}, "authmethod": "cryptosign"}
+    welcome = Welcome.parse([Welcome.MESSAGE_TYPE, TEST_SESSION_ID, details])
+
+    assert isinstance(welcome, Welcome)
+    assert isinstance(welcome.session_id, int)
+    assert welcome.session_id == TEST_SESSION_ID
+
+    assert isinstance(welcome.roles, dict)
+    assert welcome.roles == details["roles"]
+
+    assert isinstance(welcome.authmethod, str)
+    assert welcome.authmethod == details["authmethod"]
+    assert welcome.authid is None
+    assert welcome.authrole is None
+    assert welcome.authextra is None
 
 
 def test_parse_with_authid_and_authrole():
@@ -309,3 +435,58 @@ def test_parse_with_authid_and_authrole():
 
     assert isinstance(welcome.authrole, str)
     assert welcome.authrole == details["authrole"]
+    assert welcome.authmethod is None
+    assert welcome.authextra is None
+
+
+def test_parse_with_authid_authrole_authmethod():
+    details = {"roles": {"callee": {}}, "authid": "mahad", "authrole": "admin", "authmethod": "cryptosign"}
+    welcome = Welcome.parse([Welcome.MESSAGE_TYPE, TEST_SESSION_ID, details])
+
+    assert isinstance(welcome, Welcome)
+    assert isinstance(welcome.session_id, int)
+    assert welcome.session_id == TEST_SESSION_ID
+
+    assert isinstance(welcome.roles, dict)
+    assert welcome.roles == details["roles"]
+
+    assert isinstance(welcome.authid, str)
+    assert welcome.authid == details["authid"]
+
+    assert isinstance(welcome.authrole, str)
+    assert welcome.authrole == details["authrole"]
+
+    assert isinstance(welcome.authmethod, str)
+    assert welcome.authmethod == details["authmethod"]
+    assert welcome.authextra is None
+
+
+def test_parse_with_authid_authrole_authmethod_authextra():
+    details = {
+        "roles": {"callee": {}},
+        "authid": "mahad",
+        "authrole": "admin",
+        "authmethod": "cryptosign",
+        "authextra": {"extra": True},
+    }
+    welcome = Welcome.parse([Welcome.MESSAGE_TYPE, TEST_SESSION_ID, details])
+
+    assert isinstance(welcome, Welcome)
+    assert isinstance(welcome.session_id, int)
+    assert welcome.session_id == TEST_SESSION_ID
+
+    assert isinstance(welcome.roles, dict)
+    assert welcome.roles == details["roles"]
+
+    assert isinstance(welcome.authid, str)
+    assert welcome.authid == details["authid"]
+
+    assert isinstance(welcome.authrole, str)
+    assert welcome.authrole == details["authrole"]
+
+    assert isinstance(welcome.authmethod, str)
+    assert welcome.authmethod == details["authmethod"]
+
+    assert isinstance(welcome.authextra, dict)
+    assert len(welcome.authextra) == 1
+    assert welcome.authextra == details["authextra"]

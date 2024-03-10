@@ -80,6 +80,44 @@ def test_marshal_with_authrole():
     assert message[2] == {"roles": roles, "authrole": "admin"}
 
 
+def test_marshal_with_authmethods():
+    realm = "realm"
+    roles = {"callee": {}}
+    details = {"authmethods": ["ticket"]}
+    message = Hello(realm, roles, **details).marshal()
+
+    assert isinstance(message, list)
+    assert len(message) == 3
+
+    assert isinstance(message[0], int)
+    assert message[0] == Hello.MESSAGE_TYPE
+
+    assert isinstance(message[1], str)
+    assert message[1] == realm
+
+    assert isinstance(message[2], dict)
+    assert message[2] == {"roles": roles, "authmethods": ["ticket"]}
+
+
+def test_marshal_with_authextra():
+    realm = "realm"
+    roles = {"callee": {}}
+    details = {"authextra": {"authproivder": "static"}}
+    message = Hello(realm, roles, **details).marshal()
+
+    assert isinstance(message, list)
+    assert len(message) == 3
+
+    assert isinstance(message[0], int)
+    assert message[0] == Hello.MESSAGE_TYPE
+
+    assert isinstance(message[1], str)
+    assert message[1] == realm
+
+    assert isinstance(message[2], dict)
+    assert message[2] == {"roles": roles, "authextra": {"authproivder": "static"}}
+
+
 def test_marshal_with_role_authid_and_authrole():
     realm = "realm"
     roles = {"callee": {}}
@@ -99,7 +137,51 @@ def test_marshal_with_role_authid_and_authrole():
     assert message[2] == {"roles": roles, "authid": "mahad", "authrole": "admin"}
 
 
-def test_parse_with_string():
+def test_marshal_with_role_authid_authrole_authmethods():
+    realm = "realm"
+    roles = {"callee": {}}
+    details = {"authid": "mahad", "authrole": "admin", "authmethods": ["ticket"]}
+    message = Hello(realm, roles, **details).marshal()
+
+    assert isinstance(message, list)
+    assert len(message) == 3
+
+    assert isinstance(message[0], int)
+    assert message[0] == Hello.MESSAGE_TYPE
+
+    assert isinstance(message[1], str)
+    assert message[1] == realm
+
+    assert isinstance(message[2], dict)
+    assert message[2] == {"roles": roles, "authid": "mahad", "authrole": "admin", "authmethods": ["ticket"]}
+
+
+def test_marshal_with_role_authid_authrole_authmethods_authextra():
+    realm = "realm"
+    roles = {"callee": {}}
+    details = {"authid": "mahad", "authrole": "admin", "authmethods": ["ticket"], "authextra": {"extra": True}}
+    message = Hello(realm, roles, **details).marshal()
+
+    assert isinstance(message, list)
+    assert len(message) == 3
+
+    assert isinstance(message[0], int)
+    assert message[0] == Hello.MESSAGE_TYPE
+
+    assert isinstance(message[1], str)
+    assert message[1] == realm
+
+    assert isinstance(message[2], dict)
+    assert message[2] == {
+        "roles": roles,
+        "authid": "mahad",
+        "authrole": "admin",
+        "authmethods": ["ticket"],
+        "authextra": {"extra": True},
+    }
+
+
+def test_parse_with_invalid_type():
     message = "msg"
     with pytest.raises(error.ProtocolError) as exc_info:
         Hello.parse(message)
@@ -200,6 +282,35 @@ def test_parse_with_invalid_authrole():
     assert str(exc_info.value) == f"authrole must be a type string for {Hello.HELLO_TEXT}"
 
 
+def test_parse_with_invalid_authmethods_type():
+    message = [1, "realm1", {"roles": {"callee": {}}, "authmethods": "authmethods"}]
+    with pytest.raises(error.InvalidTypeError) as exc_info:
+        Hello.parse(message)
+
+    assert (
+        str(exc_info.value) == f"invalid type: expected type 'list', got 'str' for authmethods in '{Hello.HELLO_TEXT}'"
+    )
+
+
+def test_parse_with_invalid_authmethods_item_type():
+    message = [1, "realm1", {"roles": {"callee": {}}, "authmethods": ["ticket", 23]}]
+    with pytest.raises(error.InvalidTypeError) as exc_info:
+        Hello.parse(message)
+
+    assert (
+        str(exc_info.value)
+        == f"invalid type: expected type 'str', got 'int' for item '23' in 'authmethods' in '{Hello.HELLO_TEXT}'"
+    )
+
+
+def test_parse_with_invalid_authextra_type():
+    message = [1, "realm1", {"roles": {"callee": {}}, "authextra": "authextra"}]
+    with pytest.raises(error.InvalidTypeError) as exc_info:
+        Hello.parse(message)
+
+    assert str(exc_info.value) == f"invalid type: expected type 'dict', got 'str' for authextra in '{Hello.HELLO_TEXT}'"
+
+
 def test_parse_with_valid_roles():
     realm = "realm1"
     for role in util.AllowedRoles.get_allowed_roles():
@@ -215,6 +326,8 @@ def test_parse_with_valid_roles():
 
         assert hello.authid is None
         assert hello.authrole is None
+        assert hello.authmethods is None
+        assert hello.authextra is None
 
 
 def test_parse_with_multiple_roles():
@@ -231,6 +344,8 @@ def test_parse_with_multiple_roles():
 
     assert hello.authid is None
     assert hello.authrole is None
+    assert hello.authmethods is None
+    assert hello.authextra is None
 
 
 def test_parse_with_authid():
@@ -248,6 +363,8 @@ def test_parse_with_authid():
     assert isinstance(hello.authid, str)
     assert hello.authid == details["authid"]
     assert hello.authrole is None
+    assert hello.authmethods is None
+    assert hello.authextra is None
 
 
 def test_parse_with_authrole():
@@ -265,11 +382,55 @@ def test_parse_with_authrole():
     assert isinstance(hello.authrole, str)
     assert hello.authrole == details["authrole"]
     assert hello.authid is None
+    assert hello.authmethods is None
+    assert hello.authextra is None
 
 
-def test_parse_with_authid_and_authrole():
+def test_parse_with_authmethods():
     realm = "realm1"
-    details = {"roles": {"callee": {}}, "authid": "mahad", "authrole": "admin"}
+    details = {"roles": {"callee": {}}, "authmethods": ["wampcra"]}
+    hello = Hello.parse([Hello.MESSAGE_TYPE, realm, details])
+
+    assert isinstance(hello, Hello)
+    assert isinstance(hello.realm, str)
+    assert hello.realm == realm
+
+    assert isinstance(hello.roles, dict)
+    assert hello.roles == details["roles"]
+
+    assert isinstance(hello.authmethods, list)
+    assert len(hello.authmethods) == 1
+    assert hello.authmethods[0] == "wampcra"
+
+    assert hello.authrole is None
+    assert hello.authid is None
+    assert hello.authextra is None
+
+
+def test_parse_with_authextra():
+    realm = "realm1"
+    details = {"roles": {"callee": {}}, "authextra": {"extra": True}}
+    hello = Hello.parse([Hello.MESSAGE_TYPE, realm, details])
+
+    assert isinstance(hello, Hello)
+    assert isinstance(hello.realm, str)
+    assert hello.realm == realm
+
+    assert isinstance(hello.roles, dict)
+    assert hello.roles == details["roles"]
+
+    assert isinstance(hello.authextra, dict)
+    assert len(hello.authextra) == 1
+    assert hello.authextra == {"extra": True}
+
+    assert hello.authrole is None
+    assert hello.authid is None
+    assert hello.authmethods is None
+
+
+def test_parse_with_authid_authrole_authmethods():
+    realm = "realm1"
+    details = {"roles": {"callee": {}}, "authid": "mahad", "authrole": "admin", "authmethods": ["wampcra"]}
     hello = Hello.parse([Hello.MESSAGE_TYPE, realm, details])
 
     assert isinstance(hello, Hello)
@@ -284,3 +445,42 @@ def test_parse_with_authid_and_authrole():
 
     assert isinstance(hello.authrole, str)
     assert hello.authrole == details["authrole"]
+
+    assert isinstance(hello.authmethods, list)
+    assert len(hello.authmethods) == 1
+    assert hello.authmethods[0] == "wampcra"
+
+    assert hello.authextra is None
+
+
+def test_parse_with_authid_authrole_authmethods_authextra():
+    realm = "realm1"
+    details = {
+        "roles": {"callee": {}},
+        "authid": "mahad",
+        "authrole": "admin",
+        "authmethods": ["wampcra"],
+        "authextra": {"provider": "dynamic"},
+    }
+    hello = Hello.parse([Hello.MESSAGE_TYPE, realm, details])
+
+    assert isinstance(hello, Hello)
+    assert isinstance(hello.realm, str)
+    assert hello.realm == realm
+
+    assert isinstance(hello.roles, dict)
+    assert hello.roles == details["roles"]
+
+    assert isinstance(hello.authid, str)
+    assert hello.authid == details["authid"]
+
+    assert isinstance(hello.authrole, str)
+    assert hello.authrole == details["authrole"]
+
+    assert isinstance(hello.authmethods, list)
+    assert len(hello.authmethods) == 1
+    assert hello.authmethods[0] == "wampcra"
+
+    assert isinstance(hello.authextra, dict)
+    assert len(hello.authextra) == 1
+    assert hello.authextra == {"provider": "dynamic"}
