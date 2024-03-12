@@ -35,9 +35,11 @@ def validate_uri_or_raise(uri: str, error_msg: str) -> str:
     return uri
 
 
-def validate_details_or_raise(details: dict[str, Any], error_msg: str) -> dict[str, Any]:
+def validate_details_or_raise(details: dict[str, Any], error_msg: str, field: str | None = None) -> dict[str, Any]:
+    if field is None:
+        field = "details"
     if not isinstance(details, dict):
-        raise error.InvalidDetailsError(f"details must be of type dictionary for {error_msg}")
+        raise error.InvalidDetailsError(f"{field} must be of type dictionary for {error_msg}")
 
     for key in details.keys():
         if not isinstance(key, str):
@@ -46,14 +48,16 @@ def validate_details_or_raise(details: dict[str, Any], error_msg: str) -> dict[s
     return details
 
 
-def validate_session_id_or_raise(session_id: int, error_msg: str) -> int:
+def validate_session_id_or_raise(session_id: int, error_msg: str, field: str | None = None) -> int:
     if not isinstance(session_id, int):
         raise error.ProtocolError(f"session ID must be an integer for {error_msg}")
 
     # session id values lie between 1 and 2**53
     # https://wamp-proto.org/wamp_bp_latest_ietf.html#section-2.1.2-3
     if session_id < 0 or session_id > 9007199254740992:
-        raise error.ProtocolError(f"invalid Session ID value for {error_msg}")
+        if field is None:
+            field = "Session ID"
+        raise error.ProtocolError(f"invalid {field} value for {error_msg}")
 
     return session_id
 
