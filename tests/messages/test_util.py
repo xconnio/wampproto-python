@@ -33,6 +33,15 @@ def test_validate_details_or_raise_with_invalid_detail_type():
     assert str(exc_info.value) == f"details must be of type dictionary for {error_message}"
 
 
+def test_validate_details_or_raise_with_invalid_detail_type_and_custom_field():
+    error_message = "Ping"
+    field = "options"
+    with pytest.raises(error.InvalidDetailsError) as exc_info:
+        util.validate_details_or_raise(["detail"], error_message, field)
+
+    assert str(exc_info.value) == f"{field} must be of type dictionary for {error_message}"
+
+
 def test_validate_details_or_raise_with_invalid_detail_key_type():
     error_message = "Ping"
     with pytest.raises(error.InvalidDetailsError) as exc_info:
@@ -66,6 +75,15 @@ def test_validate_session_id_or_raise_with_out_of_range_session_id():
             util.validate_session_id_or_raise(session_id, error_message)
 
         assert str(exc_info.value) == f"invalid Session ID value for {error_message}"
+
+
+def test_validate_session_id_or_raise_with_out_of_range_session_id_and_custom_field():
+    error_message = "Pong"
+    field = "request ID"
+    with pytest.raises(error.ProtocolError) as exc_info:
+        util.validate_session_id_or_raise(-1, error_message, field)
+
+        assert str(exc_info.value) == f"invalid {field} value for {error_message}"
 
 
 @pytest.mark.parametrize("session_id", [1, 30, 9007199254740992])

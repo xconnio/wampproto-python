@@ -33,8 +33,8 @@ def test_parse_with_invalid_message_type():
         messages.Invocation.parse(message)
 
     assert (
-        str(exc_info.value) == f"invalid message type: "
-        f"message type for {messages.Invocation.INVOCATION_TEXT} is '{messages.Invocation.MESSAGE_TYPE}', got '{msg_type}'"
+        str(exc_info.value) == f"invalid message type: message type for {messages.Invocation.INVOCATION_TEXT} is "
+        f"'{messages.Invocation.MESSAGE_TYPE}', got '{msg_type}'"
     )
 
 
