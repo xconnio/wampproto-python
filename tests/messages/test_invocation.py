@@ -258,7 +258,7 @@ def test_marshal_with_args():
 
     assert message[3] == {}
 
-    assert isinstance(args, list)
+    assert isinstance(message[4], list)
     assert message[4] == args
 
 
@@ -283,7 +283,7 @@ def test_marshal_with_kwargs():
 
     assert message[3] == {}
 
-    assert isinstance(args, list)
+    assert isinstance(message[4], list)
     assert message[4] == args
 
     assert isinstance(message[5], dict)
@@ -313,7 +313,7 @@ def test_marshal_with_all_options():
     assert isinstance(message[3], dict)
     assert message[3] == details
 
-    assert isinstance(args, list)
+    assert isinstance(message[4], list)
     assert message[4] == args
 
     assert isinstance(message[5], dict)

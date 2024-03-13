@@ -269,7 +269,7 @@ def test_marshal_with_kwargs():
     assert message[2] == {}
     assert message[3] == uri
 
-    assert isinstance(args, list)
+    assert isinstance(message[4], list)
     assert message[4] == args
 
     assert isinstance(message[5], dict)
@@ -297,7 +297,7 @@ def test_marshal_with_all_options():
     assert message[2] == options
     assert message[3] == uri
 
-    assert isinstance(args, list)
+    assert isinstance(message[4], list)
     assert message[4] == args
 
     assert isinstance(message[5], dict)
