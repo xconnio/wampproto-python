@@ -21,8 +21,8 @@ def test_parse_with_invalid_list_length():
         messages.Yield.parse(message)
 
     assert (
-        str(exc_info.value)
-        == f"invalid message length: expected length 'between 3 & 5', got '{len(message)}' for '{messages.Yield.YIELD_TEXT}'"
+        str(exc_info.value) == f"invalid message length: expected length 'between 3 & 5', "
+        f"got '{len(message)}' for '{messages.Yield.YIELD_TEXT}'"
     )
 
 
@@ -76,7 +76,8 @@ def test_parse_with_invalid_args_type():
         messages.Yield.parse(message)
 
     assert (
-        str(exc_info.value) == f"invalid type: expected type 'list', got 'str' for args in '{messages.Yield.YIELD_TEXT}'"
+        str(exc_info.value)
+        == f"invalid type: expected type 'list', got 'str' for args in '{messages.Yield.YIELD_TEXT}'"
     )
 
 
