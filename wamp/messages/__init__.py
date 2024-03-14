@@ -11,5 +11,16 @@ from wamp.messages.authenticate import Authenticate
 from wamp.messages.yield_message import Yield
 from wamp.messages.authenticate import Authenticate
 
-__all__ = ["Message", "Hello", "Welcome", "Abort", "Challenge", "Authenticate", "Goodbye", "Call", "Invocation",
-           "Yield", "Result"]
+__all__ = [
+    "Message",
+    "Hello",
+    "Welcome",
+    "Abort",
+    "Challenge",
+    "Authenticate",
+    "Goodbye",
+    "Call",
+    "Invocation",
+    "Yield",
+    "Result",
+]
