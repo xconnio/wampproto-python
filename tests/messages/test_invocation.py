@@ -21,9 +21,8 @@ def test_parse_with_invalid_list_length():
         messages.Invocation.parse(message)
 
     assert (
-        str(exc_info.value)
-        == f"invalid message length: expected length 'between 4 & 6', "
-           f"got '1' for '{messages.Invocation.INVOCATION_TEXT}'"
+        str(exc_info.value) == f"invalid message length: expected length 'between 4 & 6', "
+        f"got '1' for '{messages.Invocation.INVOCATION_TEXT}'"
     )
 
 
@@ -84,7 +83,9 @@ def test_parse_with_invalid_options_dict_key():
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         messages.Invocation.parse(message)
 
-    assert str(exc_info.value) == f"invalid type for key '98' in extra details for {messages.Invocation.INVOCATION_TEXT}"
+    assert (
+        str(exc_info.value) == f"invalid type for key '98' in extra details for {messages.Invocation.INVOCATION_TEXT}"
+    )
 
 
 def test_parse_with_invalid_args_type():
