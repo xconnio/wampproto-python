@@ -5,7 +5,7 @@ from wamp.messages.message import Message
 
 
 class Result(Message):
-    RESULT_TEXT = "Result"
+    RESULT_TEXT = "RESULT"
     MESSAGE_TYPE = 50
 
     def __init__(

@@ -5,7 +5,7 @@ from wamp.messages.message import Message
 
 
 class Yield(Message):
-    YIELD_TEXT = "Yield"
+    YIELD_TEXT = "YIELD"
     MESSAGE_TYPE = 70
 
     def __init__(
