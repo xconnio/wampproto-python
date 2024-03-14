@@ -5,7 +5,7 @@ from wamp.messages.message import Message
 
 
 class Invocation(Message):
-    INVOCATION_TEXT = "CALL"
+    INVOCATION_TEXT = "INVOCATION"
     MESSAGE_TYPE = 68
 
     def __init__(

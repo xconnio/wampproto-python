@@ -11,7 +11,7 @@ def test_parse_with_invalid_type():
 
     assert (
         str(exc_info.value)
-        == f"invalid type: expected type 'list', got 'str' for message in '{messages.Call.Call_TEXT}'"
+        == f"invalid type: expected type 'list', got 'str' for message in '{messages.Invocation.INVOCATION_TEXT}'"
     )
 
 
@@ -22,7 +22,8 @@ def test_parse_with_invalid_list_length():
 
     assert (
         str(exc_info.value)
-        == f"invalid message length: expected length 'between 4 & 6', got '1' for '{messages.Call.Call_TEXT}'"
+        == f"invalid message length: expected length 'between 4 & 6', "
+           f"got '1' for '{messages.Invocation.INVOCATION_TEXT}'"
     )
 
 
@@ -75,7 +76,7 @@ def test_parse_with_invalid_options_type():
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         messages.Invocation.parse(message)
 
-    assert str(exc_info.value) == f"options must be of type dictionary for {messages.Call.Call_TEXT}"
+    assert str(exc_info.value) == f"options must be of type dictionary for {messages.Invocation.INVOCATION_TEXT}"
 
 
 def test_parse_with_invalid_options_dict_key():
@@ -83,7 +84,7 @@ def test_parse_with_invalid_options_dict_key():
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         messages.Invocation.parse(message)
 
-    assert str(exc_info.value) == f"invalid type for key '98' in extra details for {messages.Call.Call_TEXT}"
+    assert str(exc_info.value) == f"invalid type for key '98' in extra details for {messages.Invocation.INVOCATION_TEXT}"
 
 
 def test_parse_with_invalid_args_type():
@@ -112,19 +113,19 @@ def test_parse_correctly():
     request_id = 74
     registration_id = 14
     message = [messages.Invocation.MESSAGE_TYPE, request_id, registration_id, {}]
-    call = messages.Invocation.parse(message)
+    invocation = messages.Invocation.parse(message)
 
-    assert isinstance(call, messages.Invocation)
+    assert isinstance(invocation, messages.Invocation)
 
-    assert isinstance(call.request_id, int)
-    assert call.request_id == request_id
+    assert isinstance(invocation.request_id, int)
+    assert invocation.request_id == request_id
 
-    assert isinstance(call.registration_id, int)
-    assert call.registration_id == registration_id
+    assert isinstance(invocation.registration_id, int)
+    assert invocation.registration_id == registration_id
 
-    assert call.args is None
-    assert call.kwargs is None
-    assert call.details == {}
+    assert invocation.args is None
+    assert invocation.kwargs is None
+    assert invocation.details == {}
 
 
 def test_parse_correctly_with_options():
@@ -132,19 +133,19 @@ def test_parse_correctly_with_options():
     registration_id = 142
     details = {"extra": True}
     message = [messages.Invocation.MESSAGE_TYPE, request_id, registration_id, details]
-    call = messages.Invocation.parse(message)
+    invocation = messages.Invocation.parse(message)
 
-    assert isinstance(call, messages.Invocation)
+    assert isinstance(invocation, messages.Invocation)
 
-    assert isinstance(call.request_id, int)
-    assert call.request_id == request_id
+    assert isinstance(invocation.request_id, int)
+    assert invocation.request_id == request_id
 
-    assert isinstance(call.registration_id, int)
-    assert call.registration_id == registration_id
+    assert isinstance(invocation.registration_id, int)
+    assert invocation.registration_id == registration_id
 
-    assert call.details == details
-    assert call.args is None
-    assert call.kwargs is None
+    assert invocation.details == details
+    assert invocation.args is None
+    assert invocation.kwargs is None
 
 
 def test_parse_correctly_with_args():
@@ -152,21 +153,21 @@ def test_parse_correctly_with_args():
     registration_id = 142
     args = [1, 2]
     message = [messages.Invocation.MESSAGE_TYPE, request_id, registration_id, {}, args]
-    call = messages.Invocation.parse(message)
+    invocation = messages.Invocation.parse(message)
 
-    assert isinstance(call, messages.Invocation)
+    assert isinstance(invocation, messages.Invocation)
 
-    assert isinstance(call.request_id, int)
-    assert call.request_id == request_id
+    assert isinstance(invocation.request_id, int)
+    assert invocation.request_id == request_id
 
-    assert isinstance(call.registration_id, int)
-    assert call.registration_id == registration_id
+    assert isinstance(invocation.registration_id, int)
+    assert invocation.registration_id == registration_id
 
-    assert isinstance(call.args, list)
-    assert call.args == args
+    assert isinstance(invocation.args, list)
+    assert invocation.args == args
 
-    assert call.kwargs is None
-    assert call.details == {}
+    assert invocation.kwargs is None
+    assert invocation.details == {}
 
 
 def test_parse_correctly_with_kwargs():
@@ -174,21 +175,21 @@ def test_parse_correctly_with_kwargs():
     registration_id = 12
     kwargs = {"fruit": "grape"}
     message = [messages.Invocation.MESSAGE_TYPE, request_id, registration_id, {}, [], kwargs]
-    call = messages.Invocation.parse(message)
+    invocation = messages.Invocation.parse(message)
 
-    assert isinstance(call, messages.Invocation)
+    assert isinstance(invocation, messages.Invocation)
 
-    assert isinstance(call.request_id, int)
-    assert call.request_id == request_id
+    assert isinstance(invocation.request_id, int)
+    assert invocation.request_id == request_id
 
-    assert isinstance(call.registration_id, int)
-    assert call.registration_id == registration_id
+    assert isinstance(invocation.registration_id, int)
+    assert invocation.registration_id == registration_id
 
-    assert isinstance(call.kwargs, dict)
-    assert call.kwargs == kwargs
+    assert isinstance(invocation.kwargs, dict)
+    assert invocation.kwargs == kwargs
 
-    assert call.args == []
-    assert call.details == {}
+    assert invocation.args == []
+    assert invocation.details == {}
 
 
 def test_parse_correctly_with_all_options():
@@ -198,24 +199,24 @@ def test_parse_correctly_with_all_options():
     kwargs = {"fruit": "apple"}
     details = {"caller_authrole": "user"}
     message = [messages.Invocation.MESSAGE_TYPE, request_id, registration_id, details, args, kwargs]
-    call = messages.Invocation.parse(message)
+    invocation = messages.Invocation.parse(message)
 
-    assert isinstance(call, messages.Invocation)
+    assert isinstance(invocation, messages.Invocation)
 
-    assert isinstance(call.request_id, int)
-    assert call.request_id == request_id
+    assert isinstance(invocation.request_id, int)
+    assert invocation.request_id == request_id
 
-    assert isinstance(call.registration_id, int)
-    assert call.registration_id == registration_id
+    assert isinstance(invocation.registration_id, int)
+    assert invocation.registration_id == registration_id
 
-    assert isinstance(call.args, list)
-    assert call.args == args
+    assert isinstance(invocation.args, list)
+    assert invocation.args == args
 
-    assert isinstance(call.kwargs, dict)
-    assert call.kwargs == kwargs
+    assert isinstance(invocation.kwargs, dict)
+    assert invocation.kwargs == kwargs
 
-    assert isinstance(call.details, dict)
-    assert call.details == details
+    assert isinstance(invocation.details, dict)
+    assert invocation.details == details
 
 
 def test_marshal():
