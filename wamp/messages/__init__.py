@@ -7,7 +7,7 @@ from wamp.messages.goodbye import Goodbye
 from wamp.messages.message import Message
 from wamp.messages.challenge import Challenge
 from wamp.messages.invocation import Invocation
-from wamp.messages.yield_message import Yield
+from wamp.messages.yield_ import Yield
 from wamp.messages.authenticate import Authenticate
 
 __all__ = [
