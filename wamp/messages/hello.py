@@ -28,7 +28,7 @@ class Hello(Message):
         self.authextra = authextra
 
     @staticmethod
-    def parse(msg: list) -> Hello:
+    def parse(msg: list[Any]) -> Hello:
         if not isinstance(msg, list):
             raise error.ProtocolError(
                 f"invalid message type '{type(msg)}' for {Hello.HELLO_TEXT}, type should be a list"
@@ -86,7 +86,7 @@ class Hello(Message):
             realm=realm, roles=roles, authid=authid, authrole=authrole, authmethods=authmethods, authextra=authextra
         )
 
-    def marshal(self):
+    def marshal(self) -> list[Any]:
         details: dict[str, Any] = {"roles": self.roles}
 
         if self.authid is not None:

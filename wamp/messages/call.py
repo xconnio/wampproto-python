@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from wamp.messages.message import Message
 from wamp.messages import error, util
 
@@ -24,7 +26,7 @@ class Call(Message):
         self.options = options if options is not None else {}
 
     @staticmethod
-    def parse(msg: list) -> Call:
+    def parse(msg: list[Any]) -> Call:
         if not isinstance(msg, list):
             raise error.InvalidTypeError(list, type(msg), "message", Call.Call_TEXT)
 
@@ -52,7 +54,7 @@ class Call(Message):
 
         return Call(request_id, uri, args, kwargs, options)
 
-    def marshal(self) -> list:
+    def marshal(self) -> list[Any]:
         message = [Call.MESSAGE_TYPE, self.request_id, self.options, self.uri]
         if self.args is not None:
             message.append(self.args)

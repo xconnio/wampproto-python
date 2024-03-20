@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from wamp.messages import error, util
 from wamp.messages.message import Message
 
@@ -14,7 +16,7 @@ class Goodbye(Message):
         self.reason = reason
 
     @staticmethod
-    def parse(msg: list) -> Goodbye:
+    def parse(msg: list[Any]) -> Goodbye:
         util.validate_message_or_raise(msg, Goodbye.GOODBYE_TEXT)
 
         if msg[0] != Goodbye.MESSAGE_TYPE:
@@ -26,5 +28,5 @@ class Goodbye(Message):
 
         return Goodbye(details, reason)
 
-    def marshal(self):
+    def marshal(self) -> list[Any]:
         return [Goodbye.MESSAGE_TYPE, self.details, self.reason]

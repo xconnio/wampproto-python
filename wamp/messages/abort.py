@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from wamp.messages import error, util
 from wamp.messages.message import Message
 
@@ -14,7 +16,7 @@ class Abort(Message):
         self.reason = reason
 
     @staticmethod
-    def parse(msg: list) -> Abort:
+    def parse(msg: list[Any]) -> Abort:
         util.validate_message_or_raise(msg, Abort.ABORT_TEXT)
 
         if msg[0] != Abort.MESSAGE_TYPE:
@@ -26,5 +28,5 @@ class Abort(Message):
 
         return Abort(details, reason)
 
-    def marshal(self):
+    def marshal(self) -> list[Any]:
         return [Abort.MESSAGE_TYPE, self.details, self.reason]

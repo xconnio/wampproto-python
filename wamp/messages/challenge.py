@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from wamp.messages import error, util
 from wamp.messages.message import Message
 
@@ -14,7 +16,7 @@ class Challenge(Message):
         self.extra = {} if extra is None else extra
 
     @staticmethod
-    def parse(msg: list) -> Challenge:
+    def parse(msg: list[Any]) -> Challenge:
         util.validate_message_or_raise(msg, Challenge.CHALLENGE_TEXT)
 
         if msg[0] != Challenge.MESSAGE_TYPE:
@@ -28,5 +30,5 @@ class Challenge(Message):
 
         return Challenge(authmethod, extra)
 
-    def marshal(self):
+    def marshal(self) -> list[Any]:
         return [Challenge.MESSAGE_TYPE, self.authmethod, self.extra]
