@@ -16,7 +16,7 @@ class Challenge(Message):
         self.extra = {} if extra is None else extra
 
     @staticmethod
-    def parse(msg: list) -> Challenge:
+    def parse(msg: list[Any]) -> Challenge:
         util.validate_message_or_raise(msg, Challenge.CHALLENGE_TEXT)
 
         if msg[0] != Challenge.MESSAGE_TYPE:

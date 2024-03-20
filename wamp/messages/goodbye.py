@@ -16,7 +16,7 @@ class Goodbye(Message):
         self.reason = reason
 
     @staticmethod
-    def parse(msg: list) -> Goodbye:
+    def parse(msg: list[Any]) -> Goodbye:
         util.validate_message_or_raise(msg, Goodbye.GOODBYE_TEXT)
 
         if msg[0] != Goodbye.MESSAGE_TYPE:

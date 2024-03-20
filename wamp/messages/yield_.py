@@ -24,7 +24,7 @@ class Yield(Message):
         self.options = options if options is not None else {}
 
     @staticmethod
-    def parse(msg: list) -> Yield:
+    def parse(msg: list[Any]) -> Yield:
         if not isinstance(msg, list):
             raise error.InvalidTypeError(list, type(msg), "message", Yield.YIELD_TEXT)
 

@@ -16,7 +16,7 @@ class Authenticate(Message):
         self.extra = {} if extra is None else extra
 
     @staticmethod
-    def parse(msg: list) -> Authenticate:
+    def parse(msg: list[Any]) -> Authenticate:
         util.validate_message_or_raise(msg, Authenticate.AUTHENTICATE_TEXT)
 
         if msg[0] != Authenticate.MESSAGE_TYPE:

@@ -26,7 +26,7 @@ class Invocation(Message):
         self.details = details if details is not None else {}
 
     @staticmethod
-    def parse(msg: list) -> Invocation:
+    def parse(msg: list[Any]) -> Invocation:
         if not isinstance(msg, list):
             raise error.InvalidTypeError(list, type(msg), "message", Invocation.INVOCATION_TEXT)
 

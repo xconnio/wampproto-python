@@ -28,7 +28,7 @@ class Hello(Message):
         self.authextra = authextra
 
     @staticmethod
-    def parse(msg: list) -> Hello:
+    def parse(msg: list[Any]) -> Hello:
         if not isinstance(msg, list):
             raise error.ProtocolError(
                 f"invalid message type '{type(msg)}' for {Hello.HELLO_TEXT}, type should be a list"

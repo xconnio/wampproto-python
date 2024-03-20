@@ -24,7 +24,7 @@ class Result(Message):
         self.options = options if options is not None else {}
 
     @staticmethod
-    def parse(msg: list) -> Result:
+    def parse(msg: list[Any]) -> Result:
         if not isinstance(msg, list):
             raise error.InvalidTypeError(list, type(msg), "message", Result.RESULT_TEXT)
 

@@ -26,7 +26,7 @@ class Call(Message):
         self.options = options if options is not None else {}
 
     @staticmethod
-    def parse(msg: list) -> Call:
+    def parse(msg: list[Any]) -> Call:
         if not isinstance(msg, list):
             raise error.InvalidTypeError(list, type(msg), "message", Call.Call_TEXT)
 

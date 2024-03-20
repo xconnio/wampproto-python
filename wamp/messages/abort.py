@@ -16,7 +16,7 @@ class Abort(Message):
         self.reason = reason
 
     @staticmethod
-    def parse(msg: list) -> Abort:
+    def parse(msg: list[Any]) -> Abort:
         util.validate_message_or_raise(msg, Abort.ABORT_TEXT)
 
         if msg[0] != Abort.MESSAGE_TYPE:
