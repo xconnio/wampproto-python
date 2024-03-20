@@ -1,6 +1,6 @@
 from wamp import messages
 
-ROLES = {
+CLIENT_ROLES = {
     "caller": {"features": {}},
     "callee": {"features": {}},
     "publisher": {"features": {}},
