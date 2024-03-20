@@ -16,8 +16,8 @@ class TicketAuthenticator(IClientAuthenticator):
             "authmethods": [TicketAuthenticator.TYPE],
             "authid": self._authid,
             "authextra": self._auth_extra,
-            "roles": CLIENT_ROLES
+            "roles": CLIENT_ROLES,
         }
 
     def authenticate(self, challenge: messages.Challenge) -> messages.Authenticate:
-        return messages.Authenticate(self._ticket, self._auth_extra)
+        return messages.Authenticate(self._ticket, {})

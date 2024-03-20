@@ -16,7 +16,7 @@ class WAMPCRAAuthenticator(IClientAuthenticator):
             "authmethods": [WAMPCRAAuthenticator.TYPE],
             "authid": self._authid,
             "authextra": self._auth_extra,
-            "roles": CLIENT_ROLES
+            "roles": CLIENT_ROLES,
         }
 
     def authenticate(self, challenge: messages.Challenge) -> messages.Authenticate:

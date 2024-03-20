@@ -16,9 +16,9 @@ class CryptoSignAuthenticator(IClientAuthenticator):
         self._auth_extra = auth_extra
         self._private_key = nacl.signing.SigningKey(binascii.a2b_hex(private_key))
 
-        if "public_key" not in self._auth_extra:
+        if "pubkey" not in self._auth_extra:
             public_key = self._private_key.verify_key.encode(HexEncoder).decode()
-            self._auth_extra["public_key"] = public_key
+            self._auth_extra["pubkey"] = public_key
 
     def details(self) -> dict:
         return {

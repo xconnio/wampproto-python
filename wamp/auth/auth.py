@@ -4,7 +4,7 @@ CLIENT_ROLES = {
     "caller": {"features": {}},
     "callee": {"features": {}},
     "publisher": {"features": {}},
-    "subscriber": {"features": {}}
+    "subscriber": {"features": {}},
 }
 
 
