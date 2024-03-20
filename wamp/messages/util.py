@@ -70,3 +70,15 @@ def validate_message_or_raise(message: list, error_msg: str) -> None:
         raise error.ProtocolError(
             f"invalid message length '{len(message)}' for {error_msg}, length should be equal to three"
         )
+
+
+def sanity_check(wamp_message: list[Any], min_length: int, max_length: int, expected_id: int, name: str) -> None:
+    if len(wamp_message) < min_length:
+        raise ValueError(f"invalid message length {len(wamp_message)}, must be at least {min_length}")
+
+    if len(wamp_message) > max_length:
+        raise ValueError(f"invalid message length {len(wamp_message)}, must be at most {max_length}")
+
+    message_id = wamp_message[0]
+    if message_id != expected_id:
+        raise ValueError(f"invalid message id {message_id} for {name}, expected {expected_id}")
