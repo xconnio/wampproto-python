@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from wamp.messages.message import Message
 from wamp.messages import error, util
 
@@ -52,7 +54,7 @@ class Call(Message):
 
         return Call(request_id, uri, args, kwargs, options)
 
-    def marshal(self) -> list:
+    def marshal(self) -> list[Any]:
         message = [Call.MESSAGE_TYPE, self.request_id, self.options, self.uri]
         if self.args is not None:
             message.append(self.args)

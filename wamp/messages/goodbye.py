@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from wamp.messages import error, util
 from wamp.messages.message import Message
 
@@ -26,5 +28,5 @@ class Goodbye(Message):
 
         return Goodbye(details, reason)
 
-    def marshal(self):
+    def marshal(self) -> list[Any]:
         return [Goodbye.MESSAGE_TYPE, self.details, self.reason]

@@ -85,7 +85,7 @@ class Welcome(Message):
             authextra=authextra,
         )
 
-    def marshal(self):
+    def marshal(self) -> list[Any]:
         details: dict[str, Any] = {"roles": self.roles}
 
         if self.authid is not None:

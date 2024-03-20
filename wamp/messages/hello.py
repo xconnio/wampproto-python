@@ -86,7 +86,7 @@ class Hello(Message):
             realm=realm, roles=roles, authid=authid, authrole=authrole, authmethods=authmethods, authextra=authextra
         )
 
-    def marshal(self):
+    def marshal(self) -> list[Any]:
         details: dict[str, Any] = {"roles": self.roles}
 
         if self.authid is not None:

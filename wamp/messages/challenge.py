@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from wamp.messages import error, util
 from wamp.messages.message import Message
 
@@ -28,5 +30,5 @@ class Challenge(Message):
 
         return Challenge(authmethod, extra)
 
-    def marshal(self):
+    def marshal(self) -> list[Any]:
         return [Challenge.MESSAGE_TYPE, self.authmethod, self.extra]

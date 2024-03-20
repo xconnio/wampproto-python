@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from wamp.messages import error, util
 from wamp.messages.message import Message
 
@@ -52,7 +54,7 @@ class Invocation(Message):
 
         return Invocation(request_id, registration_id, args, kwargs, options)
 
-    def marshal(self) -> list:
+    def marshal(self) -> list[Any]:
         message = [Invocation.MESSAGE_TYPE, self.request_id, self.registration_id, self.details]
         if self.args is not None:
             message.append(self.args)
