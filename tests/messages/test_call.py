@@ -6,35 +6,37 @@ from wamp.messages import error
 
 def test_parse_with_invalid_type():
     message = "msg"
-    with pytest.raises(error.InvalidTypeError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         messages.Call.parse(message)
 
-    assert (
-        str(exc_info.value)
-        == f"invalid type: expected type 'list', got 'str' for message in '{messages.Call.Call_TEXT}'"
-    )
+    assert str(exc_info.value) == f"invalid message type str for {messages.Call.Call_TEXT}, type should be a list"
 
 
-def test_parse_with_invalid_list_length():
+def test_parse_with_invalid_min_length():
     message = ["foo"]
-    with pytest.raises(error.InvalidMessageLengthError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         messages.Call.parse(message)
 
-    assert (
-        str(exc_info.value)
-        == f"invalid message length: expected length 'between 4 & 6', got '1' for '{messages.Call.Call_TEXT}'"
-    )
+    assert str(exc_info.value) == "invalid message length 1, must be at least 4"
+
+
+def test_parse_with_invalid_max_length():
+    message = ["foo", 1, 6, 3, 42, 24, 12]
+    with pytest.raises(ValueError) as exc_info:
+        messages.Call.parse(message)
+
+    assert str(exc_info.value) == "invalid message length 7, must be at most 6"
 
 
 def test_parse_with_invalid_message_type():
     msg_type = 10
     message = [msg_type, 7814135, {}, "io.xconn.ping"]
-    with pytest.raises(error.InvalidMessageTypeError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         messages.Call.parse(message)
 
     assert (
-        str(exc_info.value) == f"invalid message type: "
-        f"message type for {messages.Call.Call_TEXT} is '{messages.Call.MESSAGE_TYPE}', got '{msg_type}'"
+        str(exc_info.value)
+        == f"invalid message id 10 for {messages.Call.Call_TEXT}, expected {messages.Call.MESSAGE_TYPE}"
     )
 
 

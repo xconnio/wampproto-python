@@ -200,32 +200,37 @@ def test_marshal_with_role_authid_authrole_authmethod_authextra():
 
 def test_parse_with_invalid_type():
     message = "msg"
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Welcome.parse(message)
 
     assert (
         str(exc_info.value)
-        == f"invalid message type '{type(message)}' for {Welcome.WELCOME_TEXT}, type should be a list"
+        == f"invalid message type {type(message).__name__} for {Welcome.WELCOME_TEXT}, type should be a list"
     )
 
 
-def test_parse_with_invalid_list_length():
+def test_parse_with_invalid_list_min_length():
     message = [2]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Welcome.parse(message)
 
-    assert (
-        str(exc_info.value)
-        == f"invalid message length '{len(message)}' for {Welcome.WELCOME_TEXT}, length should be equal to three"
-    )
+    assert str(exc_info.value) == f"invalid message length {len(message)}, must be at least 3"
+
+
+def test_parse_with_invalid_list_max_length():
+    message = [1, 5, 23, 1]
+    with pytest.raises(ValueError) as exc_info:
+        Welcome.parse(message)
+
+    assert str(exc_info.value) == f"invalid message length {len(message)}, must be at most 3"
 
 
 def test_parse_with_invalid_message_type():
     message = [1, TEST_SESSION_ID, {}]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Welcome.parse(message)
 
-    assert str(exc_info.value) == f"invalid message type for {Welcome.WELCOME_TEXT}"
+    assert str(exc_info.value) == f"invalid message id 1 for {Welcome.WELCOME_TEXT}, expected {Welcome.MESSAGE_TYPE}"
 
 
 def test_parse_with_invalid_session_type():
@@ -245,11 +250,11 @@ def test_parse_with_negative_session_value():
 
 
 def test_parse_with_out_of_range_session_value():
-    message = [1, 9007199254740993, "details"]
+    message = [2, 9007199254740993, "details"]
     with pytest.raises(error.ProtocolError) as exc_info:
         Welcome.parse(message)
 
-    assert str(exc_info.value) == f"invalid message type for {Welcome.WELCOME_TEXT}"
+    assert str(exc_info.value) == f"invalid Session ID value for {Welcome.WELCOME_TEXT}"
 
 
 def test_parse_with_invalid_details_type():

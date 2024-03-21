@@ -27,14 +27,7 @@ class Call(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> Call:
-        if not isinstance(msg, list):
-            raise error.InvalidTypeError(list, type(msg), "message", Call.Call_TEXT)
-
-        if len(msg) < 4 or len(msg) > 6:
-            raise error.InvalidMessageLengthError("between 4 & 6", len(msg), Call.Call_TEXT)
-
-        if msg[0] != Call.MESSAGE_TYPE:
-            raise error.InvalidMessageTypeError(Call.MESSAGE_TYPE, msg[0], Call.Call_TEXT)
+        util.sanity_check(msg, 4, 6, Call.MESSAGE_TYPE, Call.Call_TEXT)
 
         request_id = util.validate_session_id_or_raise(msg[1], Call.Call_TEXT, "request ID")
         options = util.validate_details_or_raise(msg[2], Call.Call_TEXT, "options")

@@ -29,18 +29,7 @@ class Hello(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> Hello:
-        if not isinstance(msg, list):
-            raise error.ProtocolError(
-                f"invalid message type '{type(msg)}' for {Hello.HELLO_TEXT}, type should be a list"
-            )
-
-        if len(msg) != 3:
-            raise error.ProtocolError(
-                f"invalid message length '{len(msg)}' for {Hello.HELLO_TEXT}, length should be equal to three"
-            )
-
-        if msg[0] != Hello.MESSAGE_TYPE:
-            raise error.ProtocolError(f"invalid message type for {Hello.HELLO_TEXT}")
+        util.sanity_check(msg, 3, 3, Hello.MESSAGE_TYPE, Hello.HELLO_TEXT)
 
         realm = util.validate_realm_or_raise(msg[1], Hello.HELLO_TEXT)
         details = util.validate_details_or_raise(msg[2], Hello.HELLO_TEXT)

@@ -6,31 +6,37 @@ from wamp.messages.abort import Abort
 
 def test_parse_with_invalid_type():
     message = "msg"
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Abort.parse(message)
 
     assert (
-        str(exc_info.value) == f"invalid message type '{type(message)}' for {Abort.ABORT_TEXT}, type should be a list"
+        str(exc_info.value)
+        == f"invalid message type {type(message).__name__} for {Abort.ABORT_TEXT}, type should be a list"
     )
 
 
-def test_parse_with_invalid_list_length():
+def test_parse_with_invalid_min_length():
     message = ["foo"]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Abort.parse(message)
 
-    assert (
-        str(exc_info.value) == f"invalid message length '{len(message)}' for {Abort.ABORT_TEXT}, "
-        f"length should be equal to three"
-    )
+    assert str(exc_info.value) == f"invalid message length {len(message)}, must be at least 3"
+
+
+def test_parse_with_invalid_max_length():
+    message = [1, {}, "io.xconn", 4]
+    with pytest.raises(ValueError) as exc_info:
+        Abort.parse(message)
+
+    assert str(exc_info.value) == f"invalid message length {len(message)}, must be at most 3"
 
 
 def test_parse_with_invalid_message_type():
     message = [2, {}, "wamp.error.no_such_realm"]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Abort.parse(message)
 
-    assert str(exc_info.value) == f"invalid message type for {Abort.ABORT_TEXT}"
+    assert str(exc_info.value) == f"invalid message id 2 for {Abort.ABORT_TEXT}, expected {Abort.MESSAGE_TYPE}"
 
 
 def test_parse_with_invalid_detail_type():

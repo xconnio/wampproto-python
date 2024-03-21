@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from wamp.messages import error, util
+from wamp.messages import util
 from wamp.messages.message import Message
 
 
@@ -17,10 +17,7 @@ class Abort(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> Abort:
-        util.validate_message_or_raise(msg, Abort.ABORT_TEXT)
-
-        if msg[0] != Abort.MESSAGE_TYPE:
-            raise error.ProtocolError(f"invalid message type for {Abort.ABORT_TEXT}")
+        util.sanity_check(msg, 3, 3, Abort.MESSAGE_TYPE, Abort.ABORT_TEXT)
 
         details = util.validate_details_or_raise(msg[1], Abort.ABORT_TEXT)
 

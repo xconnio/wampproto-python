@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from wamp.messages import error, util
+from wamp.messages import util
 from wamp.messages.message import Message
 
 
@@ -17,10 +17,7 @@ class Goodbye(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> Goodbye:
-        util.validate_message_or_raise(msg, Goodbye.GOODBYE_TEXT)
-
-        if msg[0] != Goodbye.MESSAGE_TYPE:
-            raise error.ProtocolError(f"invalid message type for {Goodbye.GOODBYE_TEXT}")
+        util.sanity_check(msg, 3, 3, Goodbye.MESSAGE_TYPE, Goodbye.GOODBYE_TEXT)
 
         details = util.validate_details_or_raise(msg[1], Goodbye.GOODBYE_TEXT)
 

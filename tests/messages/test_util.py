@@ -115,24 +115,40 @@ def test_validate_uri_or_raise_correctly():
     assert result == uri
 
 
-def test_validate_message_or_raise_with_invalid_type():
-    message = "wamp message"
-    error_msg = "Pie"
+def test_sanity_check_with_invalid_message_type():
+    wamp_message = "wamp message"
+    with pytest.raises(ValueError) as exc_info:
+        util.sanity_check(wamp_message, 1, 1, 1, "hello")
 
-    with pytest.raises(error.ProtocolError) as exc_info:
-        util.validate_message_or_raise(message, error_msg)
-
-    assert str(exc_info.value) == f"invalid message type '{type(message)}' for {error_msg}, type should be a list"
+    assert str(exc_info.value) == f"invalid message type {type(wamp_message).__name__} for hello, type should be a list"
 
 
-def test_validate_message_or_raise_with_invalid_list_length():
-    message = ["wamp message"]
-    error_msg = "Pie"
+def test_sanity_check_min_length_error():
+    wamp_message = []
+    min_length = 1
+    with pytest.raises(ValueError) as exc_info:
+        util.sanity_check(wamp_message, min_length, 1, 1, "hello")
 
-    with pytest.raises(error.ProtocolError) as exc_info:
-        util.validate_message_or_raise(message, error_msg)
+    assert str(exc_info.value) == f"invalid message length {len(wamp_message)}, must be at least {min_length}"
 
-    assert (
-        str(exc_info.value)
-        == f"invalid message length '{len(message)}' for {error_msg}, length should be equal to three"
-    )
+
+def test_sanity_check_max_length_error():
+    wamp_message = [1, "io.xconn"]
+    max_length = 1
+    with pytest.raises(ValueError) as exc_info:
+        util.sanity_check(wamp_message, 1, max_length, 1, "hello")
+
+    assert str(exc_info.value) == f"invalid message length {len(wamp_message)}, must be at most {max_length}"
+
+
+def test_sanity_with_invalid_message_id():
+    wamp_message = [2, "io.xconn", {}]
+    with pytest.raises(ValueError) as exc_info:
+        util.sanity_check(wamp_message, 3, 3, 1, "hello")
+
+    assert str(exc_info.value) == f"invalid message id {wamp_message[0]} for hello, expected 1"
+
+
+def test_sanity_with_correct_message():
+    wamp_message = [1, "io.xconn", {}]
+    util.sanity_check(wamp_message, 3, 3, 1, "hello")
