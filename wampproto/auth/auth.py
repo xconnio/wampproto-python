@@ -9,8 +9,23 @@ CLIENT_ROLES = {
 
 
 class IClientAuthenticator:
-    def details(self) -> dict:
-        raise NotImplementedError()
+    def __init__(self, method: str, authid: str, auth_extra: dict):
+        super().__init__()
+        self._method = method
+        self._authid = authid
+        self._auth_extra = auth_extra
+
+    @property
+    def auth_method(self) -> str:
+        return self._method
+
+    @property
+    def authid(self) -> str:
+        return self._authid
+
+    @property
+    def auth_extra(self) -> dict:
+        return self._auth_extra
 
     def authenticate(self, challenge: messages.Challenge) -> messages.Authenticate:
         raise NotImplementedError()

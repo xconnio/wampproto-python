@@ -18,7 +18,7 @@ class Hello(Message):
         authid: str | None = None,
         authrole: str | None = None,
         authmethods: list[str] | None = None,
-        authextra: str | None = None,
+        authextra: dict | None = None,
     ):
         super().__init__()
         self.realm = realm
