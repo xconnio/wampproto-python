@@ -10,8 +10,8 @@ def test_parse_with_invalid_type():
         Abort.parse(message)
 
     assert (
-        str(exc_info.value) ==
-        f"invalid message type {type(message).__name__} for {Abort.ABORT_TEXT}, type should be a list"
+        str(exc_info.value)
+        == f"invalid message type {type(message).__name__} for {Abort.ABORT_TEXT}, type should be a list"
     )
 
 

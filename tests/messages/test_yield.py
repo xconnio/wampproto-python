@@ -20,7 +20,7 @@ def test_parse_with_invalid_list_min_length():
     with pytest.raises(ValueError) as exc_info:
         messages.Yield.parse(message)
 
-    assert str(exc_info.value) == f"invalid message length 1, must be at least 3"
+    assert str(exc_info.value) == "invalid message length 1, must be at least 3"
 
 
 def test_parse_with_invalid_list_max_length():
@@ -28,7 +28,7 @@ def test_parse_with_invalid_list_max_length():
     with pytest.raises(ValueError) as exc_info:
         messages.Yield.parse(message)
 
-    assert str(exc_info.value) == f"invalid message length 6, must be at most 5"
+    assert str(exc_info.value) == "invalid message length 6, must be at most 5"
 
 
 def test_parse_with_invalid_message_type():

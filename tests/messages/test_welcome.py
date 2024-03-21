@@ -214,10 +214,7 @@ def test_parse_with_invalid_list_min_length():
     with pytest.raises(ValueError) as exc_info:
         Welcome.parse(message)
 
-    assert (
-        str(exc_info.value)
-        == f"invalid message length {len(message)}, must be at least 3"
-    )
+    assert str(exc_info.value) == f"invalid message length {len(message)}, must be at least 3"
 
 
 def test_parse_with_invalid_list_max_length():
@@ -225,10 +222,7 @@ def test_parse_with_invalid_list_max_length():
     with pytest.raises(ValueError) as exc_info:
         Welcome.parse(message)
 
-    assert (
-        str(exc_info.value)
-        == f"invalid message length {len(message)}, must be at most 3"
-    )
+    assert str(exc_info.value) == f"invalid message length {len(message)}, must be at most 3"
 
 
 def test_parse_with_invalid_message_type():

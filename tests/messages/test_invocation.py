@@ -20,7 +20,7 @@ def test_parse_with_invalid_list_min_length():
     with pytest.raises(ValueError) as exc_info:
         messages.Invocation.parse(message)
 
-    assert str(exc_info.value) == f"invalid message length 1, must be at least 4"
+    assert str(exc_info.value) == "invalid message length 1, must be at least 4"
 
 
 def test_parse_with_invalid_list_max_length():
@@ -28,7 +28,7 @@ def test_parse_with_invalid_list_max_length():
     with pytest.raises(ValueError) as exc_info:
         messages.Invocation.parse(message)
 
-    assert str(exc_info.value) == f"invalid message length 7, must be at most 6"
+    assert str(exc_info.value) == "invalid message length 7, must be at most 6"
 
 
 def test_parse_with_invalid_message_type():
@@ -38,9 +38,8 @@ def test_parse_with_invalid_message_type():
         messages.Invocation.parse(message)
 
     assert (
-        str(exc_info.value)
-        == f"invalid message id 9 for {messages.Invocation.INVOCATION_TEXT}, "
-           f"expected {messages.Invocation.MESSAGE_TYPE}"
+        str(exc_info.value) == f"invalid message id 9 for {messages.Invocation.INVOCATION_TEXT}, "
+        f"expected {messages.Invocation.MESSAGE_TYPE}"
     )
 
 

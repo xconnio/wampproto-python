@@ -20,10 +20,7 @@ def test_parse_with_invalid_min_length():
     with pytest.raises(ValueError) as exc_info:
         Challenge.parse(message)
 
-    assert (
-        str(exc_info.value)
-        == f"invalid message length {len(message)}, must be at least 3"
-    )
+    assert str(exc_info.value) == f"invalid message length {len(message)}, must be at least 3"
 
 
 def test_parse_with_invalid_max_length():
@@ -31,10 +28,7 @@ def test_parse_with_invalid_max_length():
     with pytest.raises(ValueError) as exc_info:
         Challenge.parse(message)
 
-    assert (
-        str(exc_info.value)
-        == f"invalid message length {len(message)}, must be at most 3"
-    )
+    assert str(exc_info.value) == f"invalid message length {len(message)}, must be at most 3"
 
 
 def test_parse_with_invalid_message_type():
@@ -43,7 +37,7 @@ def test_parse_with_invalid_message_type():
         Challenge.parse(message)
 
     assert (
-        str(exc_info.value)== f"invalid message id 2 for {Challenge.CHALLENGE_TEXT}, expected {Challenge.MESSAGE_TYPE}"
+        str(exc_info.value) == f"invalid message id 2 for {Challenge.CHALLENGE_TEXT}, expected {Challenge.MESSAGE_TYPE}"
     )
 
 
