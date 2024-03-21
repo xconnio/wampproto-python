@@ -1,4 +1,4 @@
-from wamp import messages
+from wampproto import messages
 
 CLIENT_ROLES = {
     "caller": {"features": {}},

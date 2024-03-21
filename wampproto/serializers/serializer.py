@@ -1,10 +1,10 @@
-from wamp.messages.hello import Hello
-from wamp.messages.abort import Abort
-from wamp.messages.welcome import Welcome
-from wamp.messages.goodbye import Goodbye
-from wampproto.wamp.messages.message import Message
-from wamp.messages.challenge import Challenge
-from wamp.messages.authenticate import Authenticate
+from wampproto.messages import Message
+from wampproto.messages.hello import Hello
+from wampproto.messages.abort import Abort
+from wampproto.messages.welcome import Welcome
+from wampproto.messages.goodbye import Goodbye
+from wampproto.messages.challenge import Challenge
+from wampproto.messages.authenticate import Authenticate
 
 
 class Serializer:

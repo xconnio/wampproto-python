@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from wampproto.wamp.messages.message import Message
-from wampproto.wamp.messages import error, util
+from wampproto.messages.message import Message
+from wampproto.messages import util
+from wampproto.messages import error
 
 
 class Call(Message):

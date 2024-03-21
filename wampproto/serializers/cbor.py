@@ -1,8 +1,8 @@
 import cbor2
 
-from wampproto.wamp.messages.message import Message
-from wamp.serializers.serializer import to_message
-from wamp.serializers.serializer import Serializer
+from wampproto.messages import Message
+from wampproto.serializers.serializer import to_message
+from wampproto.serializers.serializer import Serializer
 
 
 class CBORSerializer(Serializer):

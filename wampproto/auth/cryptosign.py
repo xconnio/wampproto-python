@@ -3,8 +3,8 @@ import binascii
 import nacl.signing
 from nacl.encoding import HexEncoder
 
-from wamp import messages
-from wamp.auth.auth import IClientAuthenticator, CLIENT_ROLES
+from wampproto import messages
+from wampproto.auth.auth import IClientAuthenticator, CLIENT_ROLES
 
 
 class CryptoSignAuthenticator(IClientAuthenticator):

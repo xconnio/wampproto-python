@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any
 
-from wampproto.wamp.messages import error
+from wampproto.messages import error
 
 
 class AllowedRoles(str, Enum):

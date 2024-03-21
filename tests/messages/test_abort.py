@@ -1,7 +1,7 @@
 import pytest
 
-from wampproto.wamp.messages import error
-from wampproto.wamp.messages.abort import Abort
+from wampproto.messages import error
+from wampproto.messages.abort import Abort
 
 
 def test_parse_with_invalid_type():
