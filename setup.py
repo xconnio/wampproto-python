@@ -27,6 +27,7 @@ setup(
     packages=find_packages(exclude=["tests*"]),
     python_requires=">=3.10",
     install_requires=requirements,
+    namespace_packages=["wampproto.wamp"],
     project_urls={
         "Source": "https://github.com/xconnio/wampproto.py",
     },

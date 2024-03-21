@@ -1,6 +1,6 @@
 import json
 
-from wamp.messages.message import Message
+from wampproto.wamp.messages.message import Message
 from wamp.serializers.serializer import to_message
 from wamp.serializers.serializer import Serializer
 
