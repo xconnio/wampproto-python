@@ -27,14 +27,7 @@ class Invocation(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> Invocation:
-        if not isinstance(msg, list):
-            raise error.InvalidTypeError(list, type(msg), "message", Invocation.INVOCATION_TEXT)
-
-        if len(msg) < 4 or len(msg) > 6:
-            raise error.InvalidMessageLengthError("between 4 & 6", len(msg), Invocation.INVOCATION_TEXT)
-
-        if msg[0] != Invocation.MESSAGE_TYPE:
-            raise error.InvalidMessageTypeError(Invocation.MESSAGE_TYPE, msg[0], Invocation.INVOCATION_TEXT)
+        util.sanity_check(msg, 4, 6, Invocation.MESSAGE_TYPE, Invocation.INVOCATION_TEXT)
 
         request_id = util.validate_session_id_or_raise(msg[1], Invocation.INVOCATION_TEXT, "request ID")
         registration_id = util.validate_session_id_or_raise(msg[2], Invocation.INVOCATION_TEXT, "registration ID")

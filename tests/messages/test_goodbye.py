@@ -6,32 +6,37 @@ from wamp.messages.goodbye import Goodbye
 
 def test_parse_with_invalid_type():
     message = "msg"
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Goodbye.parse(message)
 
     assert (
         str(exc_info.value)
-        == f"invalid message type '{type(message)}' for {Goodbye.GOODBYE_TEXT}, type should be a list"
+        == f"invalid message type {type(message).__name__} for {Goodbye.GOODBYE_TEXT}, type should be a list"
     )
 
 
-def test_parse_with_invalid_list_length():
+def test_parse_with_invalid_min_length():
     message = ["foo"]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Goodbye.parse(message)
 
-    assert (
-        str(exc_info.value) == f"invalid message length '{len(message)}' for {Goodbye.GOODBYE_TEXT}, "
-        f"length should be equal to three"
-    )
+    assert str(exc_info.value) == f"invalid message length {len(message)}, must be at least 3"
+
+
+def test_parse_with_invalid_max_length():
+    message = ["foo", 1, 3, 23]
+    with pytest.raises(ValueError) as exc_info:
+        Goodbye.parse(message)
+
+    assert str(exc_info.value) == f"invalid message length {len(message)}, must be at most 3"
 
 
 def test_parse_with_invalid_message_type():
     message = [3, {}, "wamp.close.close_realm"]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Goodbye.parse(message)
 
-    assert str(exc_info.value) == f"invalid message type for {Goodbye.GOODBYE_TEXT}"
+    assert str(exc_info.value) == f"invalid message id 3 for {Goodbye.GOODBYE_TEXT}, expected {Goodbye.MESSAGE_TYPE}"
 
 
 def test_parse_with_invalid_detail_type():

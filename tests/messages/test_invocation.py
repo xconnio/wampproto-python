@@ -6,35 +6,41 @@ from wamp.messages import error
 
 def test_parse_with_invalid_type():
     message = "new message"
-    with pytest.raises(error.InvalidTypeError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         messages.Invocation.parse(message)
 
     assert (
         str(exc_info.value)
-        == f"invalid type: expected type 'list', got 'str' for message in '{messages.Invocation.INVOCATION_TEXT}'"
+        == f"invalid message type str for {messages.Invocation.INVOCATION_TEXT}, type should be a list"
     )
 
 
-def test_parse_with_invalid_list_length():
+def test_parse_with_invalid_list_min_length():
     message = ["bar"]
-    with pytest.raises(error.InvalidMessageLengthError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         messages.Invocation.parse(message)
 
-    assert (
-        str(exc_info.value) == f"invalid message length: expected length 'between 4 & 6', "
-        f"got '1' for '{messages.Invocation.INVOCATION_TEXT}'"
-    )
+    assert str(exc_info.value) == f"invalid message length 1, must be at least 4"
+
+
+def test_parse_with_invalid_list_max_length():
+    message = ["bar", 1, 3, 443, 23, 432, 2]
+    with pytest.raises(ValueError) as exc_info:
+        messages.Invocation.parse(message)
+
+    assert str(exc_info.value) == f"invalid message length 7, must be at most 6"
 
 
 def test_parse_with_invalid_message_type():
     msg_type = 9
     message = [msg_type, 123, 456, {}]
-    with pytest.raises(error.InvalidMessageTypeError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         messages.Invocation.parse(message)
 
     assert (
-        str(exc_info.value) == f"invalid message type: message type for {messages.Invocation.INVOCATION_TEXT} is "
-        f"'{messages.Invocation.MESSAGE_TYPE}', got '{msg_type}'"
+        str(exc_info.value)
+        == f"invalid message id 9 for {messages.Invocation.INVOCATION_TEXT}, "
+           f"expected {messages.Invocation.MESSAGE_TYPE}"
     )
 
 

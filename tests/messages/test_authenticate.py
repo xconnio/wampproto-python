@@ -6,32 +6,37 @@ from wamp.messages.authenticate import Authenticate
 
 def test_parse_with_invalid_type():
     message = "msg"
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Authenticate.parse(message)
 
     assert (
         str(exc_info.value)
-        == f"invalid message type '{type(message)}' for {Authenticate.AUTHENTICATE_TEXT}, type should be a list"
+        == f"invalid message type {type(message).__name__} for {Authenticate.AUTHENTICATE_TEXT}, type should be a list"
     )
 
 
-def test_parse_with_invalid_list_length():
+def test_parse_with_invalid_min_length():
     message = [5]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Authenticate.parse(message)
 
-    assert (
-        str(exc_info.value) == f"invalid message length '{len(message)}' for {Authenticate.AUTHENTICATE_TEXT}, "
-        f"length should be equal to three"
-    )
+    assert str(exc_info.value) == f"invalid message length {len(message)}, must be at least 3"
+
+
+def test_parse_with_invalid_max_length():
+    message = [5, 6, 4, 3]
+    with pytest.raises(ValueError) as exc_info:
+        Authenticate.parse(message)
+
+    assert str(exc_info.value) == f"invalid message length {len(message)}, must be at most 3"
 
 
 def test_parse_with_invalid_message_type():
     message = [4, "signature", {}]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Authenticate.parse(message)
 
-    assert str(exc_info.value) == f"invalid message type for {Authenticate.AUTHENTICATE_TEXT}"
+    assert str(exc_info.value) == f"invalid message id 4 for {Authenticate.AUTHENTICATE_TEXT}, expected 5"
 
 
 def test_parse_with_invalid_signature_type():

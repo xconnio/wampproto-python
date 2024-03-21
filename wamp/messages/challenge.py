@@ -17,10 +17,7 @@ class Challenge(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> Challenge:
-        util.validate_message_or_raise(msg, Challenge.CHALLENGE_TEXT)
-
-        if msg[0] != Challenge.MESSAGE_TYPE:
-            raise error.ProtocolError(f"invalid message type for {Challenge.CHALLENGE_TEXT}")
+        util.sanity_check(msg, 3, 3, Challenge.MESSAGE_TYPE, Challenge.CHALLENGE_TEXT)
 
         authmethod = msg[1]
         if not isinstance(authmethod, str):

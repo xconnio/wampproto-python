@@ -6,32 +6,45 @@ from wamp.messages.challenge import Challenge
 
 def test_parse_with_invalid_type():
     message = "msg"
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Challenge.parse(message)
 
     assert (
         str(exc_info.value)
-        == f"invalid message type '{type(message)}' for {Challenge.CHALLENGE_TEXT}, type should be a list"
+        == f"invalid message type {type(message).__name__} for {Challenge.CHALLENGE_TEXT}, type should be a list"
     )
 
 
-def test_parse_with_invalid_list_length():
+def test_parse_with_invalid_min_length():
     message = [1]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Challenge.parse(message)
 
     assert (
         str(exc_info.value)
-        == f"invalid message length '{len(message)}' for {Challenge.CHALLENGE_TEXT}, length should be equal to three"
+        == f"invalid message length {len(message)}, must be at least 3"
+    )
+
+
+def test_parse_with_invalid_max_length():
+    message = [1, 3, 4, 5]
+    with pytest.raises(ValueError) as exc_info:
+        Challenge.parse(message)
+
+    assert (
+        str(exc_info.value)
+        == f"invalid message length {len(message)}, must be at most 3"
     )
 
 
 def test_parse_with_invalid_message_type():
     message = [2, "anonymous", {}]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Challenge.parse(message)
 
-    assert str(exc_info.value) == f"invalid message type for {Challenge.CHALLENGE_TEXT}"
+    assert (
+        str(exc_info.value)== f"invalid message id 2 for {Challenge.CHALLENGE_TEXT}, expected {Challenge.MESSAGE_TYPE}"
+    )
 
 
 def test_parse_with_invalid_authmethod_type():

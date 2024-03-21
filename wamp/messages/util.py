@@ -62,17 +62,10 @@ def validate_session_id_or_raise(session_id: int, error_msg: str, field: str | N
     return session_id
 
 
-def validate_message_or_raise(message: list, error_msg: str) -> None:
-    if not isinstance(message, list):
-        raise error.ProtocolError(f"invalid message type '{type(message)}' for {error_msg}, type should be a list")
-
-    if len(message) != 3:
-        raise error.ProtocolError(
-            f"invalid message length '{len(message)}' for {error_msg}, length should be equal to three"
-        )
-
-
 def sanity_check(wamp_message: list[Any], min_length: int, max_length: int, expected_id: int, name: str) -> None:
+    if not isinstance(wamp_message, list):
+        raise ValueError(f"invalid message type {type(wamp_message).__name__} for {name}, type should be a list")
+
     if len(wamp_message) < min_length:
         raise ValueError(f"invalid message length {len(wamp_message)}, must be at least {min_length}")
 

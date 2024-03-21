@@ -29,18 +29,7 @@ class Welcome(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> Welcome:
-        if not isinstance(msg, list):
-            raise error.ProtocolError(
-                f"invalid message type '{type(msg)}' for {Welcome.WELCOME_TEXT}, type should be a list"
-            )
-
-        if len(msg) != 3:
-            raise error.ProtocolError(
-                f"invalid message length '{len(msg)}' for {Welcome.WELCOME_TEXT}, length should be equal to three"
-            )
-
-        if msg[0] != Welcome.MESSAGE_TYPE:
-            raise error.ProtocolError("invalid message type for WELCOME")
+        util.sanity_check(msg, 3, 3, Welcome.MESSAGE_TYPE, Welcome.WELCOME_TEXT)
 
         session_id = util.validate_session_id_or_raise(msg[1], Welcome.WELCOME_TEXT)
         details = util.validate_details_or_raise(msg[2], Welcome.WELCOME_TEXT)

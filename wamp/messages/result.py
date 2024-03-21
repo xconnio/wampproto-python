@@ -25,14 +25,7 @@ class Result(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> Result:
-        if not isinstance(msg, list):
-            raise error.InvalidTypeError(list, type(msg), "message", Result.RESULT_TEXT)
-
-        if len(msg) < 3 or len(msg) > 5:
-            raise error.InvalidMessageLengthError("between 3 & 5", len(msg), Result.RESULT_TEXT)
-
-        if msg[0] != Result.MESSAGE_TYPE:
-            raise error.InvalidMessageTypeError(Result.MESSAGE_TYPE, msg[0], Result.RESULT_TEXT)
+        util.sanity_check(msg, 3, 5, Result.MESSAGE_TYPE, Result.RESULT_TEXT)
 
         request_id = util.validate_session_id_or_raise(msg[1], Result.RESULT_TEXT, "request ID")
         options = util.validate_details_or_raise(msg[2], Result.RESULT_TEXT, "options")
