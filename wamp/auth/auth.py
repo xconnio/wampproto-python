@@ -40,6 +40,26 @@ class Request:
         return self._auth_extra
 
 
+class TicketRequest(Request):
+    def __init__(self, realm: str, authid: str, auth_extra: dict, ticket: str):
+        super().__init__(method="ticket", realm=realm, authid=authid, auth_extra=auth_extra)
+        self._ticket = ticket
+
+    @property
+    def ticket(self) -> str:
+        return self._ticket
+
+
+class CryptoSignRequest(Request):
+    def __init__(self, realm: str, authid: str, auth_extra: dict, public_key: str):
+        super().__init__(method="cryptosign", realm=realm, authid=authid, auth_extra=auth_extra)
+        self._public_key = public_key
+
+    @property
+    def public_key(self) -> str:
+        return self._public_key
+
+
 class Response:
     def __init__(self, authid: str, authrole: str):
         self._authid = authid
