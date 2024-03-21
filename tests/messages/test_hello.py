@@ -1,7 +1,8 @@
 import pytest
 
-from wamp.messages import error, util
-from wamp.messages.hello import Hello
+from wampproto.messages import util
+from wampproto.messages import error
+from wampproto.messages.hello import Hello
 
 
 def test_marshal_with_no_roles_and_details():

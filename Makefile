@@ -6,7 +6,7 @@ install_uv:
 setup:
 	make install_uv
 	uv venv
-	uv pip install -r requirements-dev.txt
+	uv pip install -r requirements-pinned.txt
 
 lint:
 	. .venv/bin/activate; ruff format .
@@ -20,3 +20,9 @@ test:
 
 coverage:
 	. .venv/bin/activate; coverage run -m pytest -v tests && coverage html && open htmlcov/index.html
+
+build-wheel:
+	pip wheel --no-deps -w dist .
+
+clean:
+	rm -rf .venv build dist wampproto.egg-info

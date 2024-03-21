@@ -1,7 +1,7 @@
 import pytest
 
-from wamp.messages import error
-from wamp.messages.authenticate import Authenticate
+from wampproto.messages import error
+from wampproto.messages import Authenticate
 
 
 def test_parse_with_invalid_type():

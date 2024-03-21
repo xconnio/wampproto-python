@@ -1,6 +1,7 @@
 import pytest
 
-from wamp.messages import util, error
+from wampproto.messages import util
+from wampproto.messages import error
 
 
 def test_validate_realm_or_raise_with_realm_none():

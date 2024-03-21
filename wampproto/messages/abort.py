@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from wamp.messages import util
-from wamp.messages.message import Message
+from wampproto.messages import util
+from wampproto.messages.message import Message
 
 
 class Abort(Message):
