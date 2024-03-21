@@ -54,6 +54,16 @@ class Response:
         return self._authrole
 
 
+class WAMPCRAResponse(Response):
+    def __init__(self, authid: str, authrole: str, secret: str):
+        super().__init__(authid, authrole)
+        self._secret = secret
+
+    @property
+    def secret(self) -> str:
+        return self._secret
+
+
 class IServerAuthenticator:
     def methods(self) -> list[str]:
         raise NotImplementedError()
