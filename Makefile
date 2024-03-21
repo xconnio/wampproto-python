@@ -20,3 +20,9 @@ test:
 
 coverage:
 	. .venv/bin/activate; coverage run -m pytest -v tests && coverage html && open htmlcov/index.html
+
+build-wheel:
+	pip wheel --no-deps -w dist .
+
+clean:
+	rm -rf .venv build dist wampproto.egg-info
