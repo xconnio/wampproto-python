@@ -16,6 +16,9 @@ jobs:
       - name: Setup environment & install dependencies
         run: make setup
 
+      - name: Build wheel
+        run: make build-wheel
+
       - name: Run tests
         run: make test
 
