@@ -1,10 +1,7 @@
 from typing import Optional
 
-from wampproto.auth.auth import IClientAuthenticator, CLIENT_ROLES
-from wampproto.auth.anonymous import AnonymousAuthenticator
-from wampproto import messages
-from wampproto.serializers.json import JSONSerializer
-from wampproto.serializers.serializer import Serializer
+from wampproto.auth.auth import CLIENT_ROLES
+from wampproto import messages, serializers, auth
 from wampproto.types import SessionDetails
 
 
@@ -14,11 +11,15 @@ class Joiner:
     STATE_AUTHENTICATE_SENT = 2
     STATE_JOINED = 3
 
-    def __init__(self, realm: str, serializer: Serializer = JSONSerializer(),
-                 authenticator: IClientAuthenticator = None):
+    def __init__(
+        self,
+        realm: str,
+        serializer: serializers.Serializer = serializers.JSONSerializer(),
+        authenticator: auth.IClientAuthenticator = None,
+    ):
         self._realm = realm
         self._serializer = serializer
-        self._authenticator = authenticator if authenticator is not None else AnonymousAuthenticator("", {})
+        self._authenticator = authenticator if authenticator is not None else auth.AnonymousAuthenticator("", {})
         self._state = Joiner.STATE_NONE
 
         self._session_details: SessionDetails = None

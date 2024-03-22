@@ -1,8 +1,7 @@
-from wampproto import messages
-from wampproto.auth.auth import IClientAuthenticator
+from wampproto import messages, auth
 
 
-class WAMPCRAAuthenticator(IClientAuthenticator):
+class WAMPCRAAuthenticator(auth.IClientAuthenticator):
     TYPE = "wampcra"
 
     def __init__(self, authid: str, auth_extra: dict, secret: str):

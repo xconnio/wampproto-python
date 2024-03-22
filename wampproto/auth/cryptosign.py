@@ -3,11 +3,10 @@ import binascii
 import nacl.signing
 from nacl.encoding import HexEncoder
 
-from wampproto import messages
-from wampproto.auth.auth import IClientAuthenticator
+from wampproto import messages, auth
 
 
-class CryptoSignAuthenticator(IClientAuthenticator):
+class CryptoSignAuthenticator(auth.IClientAuthenticator):
     TYPE = "cryptosign"
 
     def __init__(self, authid: str, auth_extra: dict, private_key: str):
