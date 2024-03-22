@@ -1,8 +1,7 @@
-from wampproto import messages
-from wampproto.auth.auth import IClientAuthenticator
+from wampproto import messages, auth
 
 
-class TicketAuthenticator(IClientAuthenticator):
+class TicketAuthenticator(auth.IClientAuthenticator):
     TYPE = "ticket"
 
     def __init__(self, authid: str, auth_extra: dict, ticket: str):

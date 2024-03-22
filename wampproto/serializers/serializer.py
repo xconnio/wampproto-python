@@ -1,21 +1,15 @@
-from wampproto.messages import Message
-from wampproto.messages.hello import Hello
-from wampproto.messages.abort import Abort
-from wampproto.messages.welcome import Welcome
-from wampproto.messages.goodbye import Goodbye
-from wampproto.messages.challenge import Challenge
-from wampproto.messages.authenticate import Authenticate
+from wampproto import messages
 
 
 class Serializer:
-    def serialize(self, message: Message) -> bytes:
+    def serialize(self, message: messages.Message) -> bytes:
         raise NotImplementedError()
 
-    def deserialize(self, data: bytes) -> Message:
+    def deserialize(self, data: bytes) -> messages.Message:
         raise NotImplementedError()
 
 
-def to_message(message: list) -> Message:
+def to_message(message: list) -> messages.Message:
     if not isinstance(message, list):
         raise TypeError(f"invalid type '{type(message)}', expected a list")
 
@@ -24,17 +18,17 @@ def to_message(message: list) -> Message:
         raise TypeError(f"invalid message type '{type(message[0])}', expected an integer")
 
     match message_type:
-        case Hello.MESSAGE_TYPE:
-            return Hello.parse(message)
-        case Welcome.MESSAGE_TYPE:
-            return Welcome.parse(message)
-        case Abort.MESSAGE_TYPE:
-            return Abort.parse(message)
-        case Challenge.MESSAGE_TYPE:
-            return Challenge.parse(message)
-        case Authenticate.MESSAGE_TYPE:
-            return Authenticate.parse(message)
-        case Goodbye.MESSAGE_TYPE:
-            return Goodbye.parse(message)
+        case messages.Hello.MESSAGE_TYPE:
+            return messages.Hello.parse(message)
+        case messages.Welcome.MESSAGE_TYPE:
+            return messages.Welcome.parse(message)
+        case messages.Abort.MESSAGE_TYPE:
+            return messages.Abort.parse(message)
+        case messages.Challenge.MESSAGE_TYPE:
+            return messages.Challenge.parse(message)
+        case messages.Authenticate.MESSAGE_TYPE:
+            return messages.Authenticate.parse(message)
+        case messages.Goodbye.MESSAGE_TYPE:
+            return messages.Goodbye.parse(message)
         case _:
             raise ValueError("unknown message type")

@@ -1,8 +1,7 @@
-from wampproto import messages
-from wampproto.auth.auth import IClientAuthenticator
+from wampproto import messages, auth
 
 
-class AnonymousAuthenticator(IClientAuthenticator):
+class AnonymousAuthenticator(auth.IClientAuthenticator):
     TYPE = "anonymous"
 
     def __init__(self, authid: str, auth_extra: dict):
