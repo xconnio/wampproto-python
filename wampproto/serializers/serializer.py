@@ -11,7 +11,7 @@ class Serializer:
     def serialize(self, message: Message) -> bytes:
         raise NotImplementedError()
 
-    def deserialize(self, message: Message) -> Message:
+    def deserialize(self, data: bytes) -> Message:
         raise NotImplementedError()
 
 
