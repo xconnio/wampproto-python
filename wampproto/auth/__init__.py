@@ -1,4 +1,12 @@
-from wampproto.auth.auth import IClientAuthenticator
+from wampproto.auth.auth import (
+    IClientAuthenticator,
+    IServerAuthenticator,
+    Request,
+    CryptoSignRequest,
+    TicketRequest,
+    Response,
+    WAMPCRAResponse,
+)
 from wampproto.auth.anonymous import AnonymousAuthenticator
 from wampproto.auth.cryptosign import CryptoSignAuthenticator
 from wampproto.auth.ticket import TicketAuthenticator
@@ -10,4 +18,10 @@ __all__ = (
     "CryptoSignAuthenticator",
     "TicketAuthenticator",
     "WAMPCRAAuthenticator",
+    "IServerAuthenticator",
+    "Request",
+    "CryptoSignRequest",
+    "TicketRequest",
+    "Response",
+    "WAMPCRAResponse",
 )
