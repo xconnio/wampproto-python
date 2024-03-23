@@ -1,4 +1,5 @@
 import binascii
+import random
 
 import nacl.signing
 from nacl.encoding import HexEncoder
@@ -23,7 +24,22 @@ class CryptoSignAuthenticator(auth.IClientAuthenticator):
         if challenge_hex is None:
             raise ValueError("challenge string missing in extra")
 
-        raw_challenge = binascii.a2b_hex(challenge_hex)
-        signed = self._private_key.sign(raw_challenge, HexEncoder).decode()
+        signed = sign_cryptosign_challenge(challenge_hex, self._private_key)
 
         return messages.Authenticate(signed + challenge_hex, {})
+
+
+def create_cryptosign_challenge() -> str:
+    raw_bytes = random.randbytes(32)
+    return binascii.hexlify(raw_bytes).decode()
+
+
+def sign_cryptosign_challenge(challenge: str, private_key: nacl.signing.SigningKey) -> str:
+    raw_challenge = binascii.a2b_hex(challenge)
+    return private_key.sign(raw_challenge, HexEncoder).decode()
+
+
+def verify_cryptosign_challenge(signature: str, public_key: bytes) -> bool:
+    verifying_key = nacl.signing.VerifyKey(public_key)
+    verifying_key.verify(binascii.unhexlify(signature))
+    return True
