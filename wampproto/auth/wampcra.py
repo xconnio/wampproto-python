@@ -1,3 +1,10 @@
+import binascii
+import datetime
+import hashlib
+import hmac
+import json
+import random
+
 from wampproto import messages, auth
 
 
@@ -9,4 +16,38 @@ class WAMPCRAAuthenticator(auth.IClientAuthenticator):
         self._secret = secret
 
     def authenticate(self, challenge: messages.Challenge) -> messages.Authenticate:
-        return messages.Authenticate(self._secret, {})
+        signed = sign_wampcra_challenge(challenge.extra["challenge"], self._secret.encode())
+        return messages.Authenticate(signed, {})
+
+
+def utcnow() -> str:
+    ts = datetime.datetime.utcnow()
+    return f"{ts.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]}Z"
+
+
+def create_wampcra_challenge(session_id: int, authid: str, authrole: str, provider: str) -> str:
+    nonce = binascii.hexlify(random.randbytes(16))
+
+    data = {
+        "nonce": nonce,
+        "authprovider": provider,
+        "authid": authid,
+        "authrole": authrole,
+        "authmethod": "wampcra",
+        "session": session_id,
+        "timestamp": utcnow(),
+    }
+
+    return json.dumps(data)
+
+
+def sign_wampcra_challenge(challenge: str, key: bytes) -> str:
+    challenge_bytes = binascii.unhexlify(challenge)
+    return hmac.new(key, challenge_bytes, hashlib.sha256).hexdigest()
+
+
+def verify_wampcra_signature(signature: str, challenge: str, key: bytes) -> bool:
+    sig_bytes = binascii.unhexlify(signature)
+    local_signature = sign_wampcra_challenge(challenge, key)
+
+    return hmac.compare_digest(sig_bytes, binascii.unhexlify(local_signature))
