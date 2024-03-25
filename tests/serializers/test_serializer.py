@@ -1,6 +1,6 @@
 import pytest
 
-from wamp.serializers.serializer import to_message
+from wampproto.serializers.serializer import to_message
 
 
 def test_to_message_with_invalid_type():
