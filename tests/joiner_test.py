@@ -28,12 +28,15 @@ def test_join_no_auth(serializer):
     j = joiner.Joiner("realm1", serializer, authenticator)
     hello = j.send_hello()
     assert hello is not None
+    assert isinstance(hello, bytes)
 
-    a = acceptor.Acceptor(serializer, None)
+    a = acceptor.Acceptor(serializer)
     data, final = a.receive(hello)
     assert data is not None and isinstance(data, bytes)
     assert final
 
+    # for WAMP joiner, when the call to Joiner.receive() returns None
+    # that means the session has been joined
     data = j.receive(data)
     assert data is None
 
@@ -61,6 +64,8 @@ def test_join_auth(serializer, authenticator):
     data = j.receive(data)
     assert data is not None
 
+    # for acceptor to know if the "welcome" as been sent
+    # it may check if the "final" bool is true.
     data, final = a.receive(data)
     assert data is not None and isinstance(data, bytes)
     assert final
