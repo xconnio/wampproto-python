@@ -1,8 +1,26 @@
-from wampproto.auth.auth import IClientAuthenticator
+from wampproto.auth.auth import (
+    IClientAuthenticator,
+    IServerAuthenticator,
+    Request,
+    CryptoSignRequest,
+    TicketRequest,
+    Response,
+    WAMPCRAResponse,
+)
 from wampproto.auth.anonymous import AnonymousAuthenticator
-from wampproto.auth.cryptosign import CryptoSignAuthenticator
+from wampproto.auth.cryptosign import (
+    CryptoSignAuthenticator,
+    generate_cryptosign_challenge,
+    sign_cryptosign_challenge,
+    verify_cryptosign_signature,
+)
 from wampproto.auth.ticket import TicketAuthenticator
-from wampproto.auth.wampcra import WAMPCRAAuthenticator
+from wampproto.auth.wampcra import (
+    WAMPCRAAuthenticator,
+    generate_wampcra_challenge,
+    sign_wampcra_challenge,
+    verify_wampcra_signature,
+)
 
 __all__ = (
     "IClientAuthenticator",
@@ -10,4 +28,16 @@ __all__ = (
     "CryptoSignAuthenticator",
     "TicketAuthenticator",
     "WAMPCRAAuthenticator",
+    "IServerAuthenticator",
+    "Request",
+    "CryptoSignRequest",
+    "TicketRequest",
+    "Response",
+    "WAMPCRAResponse",
+    "generate_cryptosign_challenge",
+    "sign_cryptosign_challenge",
+    "verify_cryptosign_signature",
+    "generate_wampcra_challenge",
+    "sign_wampcra_challenge",
+    "verify_wampcra_signature",
 )

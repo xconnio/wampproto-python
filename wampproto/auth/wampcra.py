@@ -25,7 +25,7 @@ def utcnow() -> str:
     return f"{ts.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]}Z"
 
 
-def create_wampcra_challenge(session_id: int, authid: str, authrole: str, provider: str) -> str:
+def generate_wampcra_challenge(session_id: int, authid: str, authrole: str, provider: str) -> str:
     nonce = binascii.hexlify(random.randbytes(16))
 
     data = {

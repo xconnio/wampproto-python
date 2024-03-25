@@ -1,12 +1,5 @@
 from wampproto import messages
 
-CLIENT_ROLES = {
-    "caller": {"features": {}},
-    "callee": {"features": {}},
-    "publisher": {"features": {}},
-    "subscriber": {"features": {}},
-}
-
 
 class IClientAuthenticator:
     def __init__(self, method: str, authid: str, auth_extra: dict):
