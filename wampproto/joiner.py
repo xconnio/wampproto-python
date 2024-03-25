@@ -1,8 +1,14 @@
 from typing import Optional
 
-from wampproto.auth.auth import CLIENT_ROLES
 from wampproto import messages, serializers, auth
 from wampproto.types import SessionDetails
+
+CLIENT_ROLES = {
+    "caller": {"features": {}},
+    "callee": {"features": {}},
+    "publisher": {"features": {}},
+    "subscriber": {"features": {}},
+}
 
 
 class Joiner:
