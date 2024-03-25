@@ -51,7 +51,7 @@ class Joiner:
 
     def receive_message(self, msg: messages.Message) -> Optional[messages.Message]:
         if isinstance(msg, messages.Welcome):
-            if self._state != Joiner.STATE_HELLO_SENT or self._state != Joiner.STATE_AUTHENTICATE_SENT:
+            if self._state != Joiner.STATE_HELLO_SENT and self._state != Joiner.STATE_AUTHENTICATE_SENT:
                 raise ValueError("received welcome when it was not expected")
 
             self._session_details = SessionDetails(msg.session_id, self._realm, msg.authid, msg.authrole)

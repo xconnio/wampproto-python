@@ -20,3 +20,14 @@ class SessionDetails:
     @property
     def authrole(self) -> str:
         return self._authrole
+
+    def __eq__(self, __value: "SessionDetails") -> bool:
+        if __value is None or not isinstance(__value, SessionDetails):
+            return False
+
+        return (
+            self.session_id == __value.session_id
+            and self.realm == __value.realm
+            and self.authid == __value.authid
+            and self.authrole == __value.authrole
+        )
