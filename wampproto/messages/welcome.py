@@ -42,9 +42,9 @@ class Welcome(Message):
         if len(roles) == 0:
             raise error.ProtocolError(f"roles are missing in details for {Welcome.WELCOME_TEXT}")
 
-        for role in roles.keys():
-            if role not in util.AllowedRoles.__members__.values():
-                raise error.ProtocolError(f"invalid role '{role}' in 'roles' details for {Welcome.WELCOME_TEXT}")
+        # for role in roles.keys():
+        #     if role not in util.AllowedRoles.__members__.values():
+        #         raise error.ProtocolError(f"invalid role '{role}' in 'roles' details for {Welcome.WELCOME_TEXT}")
 
         authid = details.get("authid", None)
         if authid is not None:

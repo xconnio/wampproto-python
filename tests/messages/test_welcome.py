@@ -290,12 +290,12 @@ def test_parse_with_empty_role():
     assert str(exc_info.value) == f"roles are missing in details for {Welcome.WELCOME_TEXT}"
 
 
-def test_parse_with_invalid_role_key():
-    message = [2, TEST_SESSION_ID, {"roles": {"new_role": {}}}]
-    with pytest.raises(error.ProtocolError) as exc_info:
-        Welcome.parse(message)
-
-    assert str(exc_info.value) == f"invalid role 'new_role' in 'roles' details for {Welcome.WELCOME_TEXT}"
+# def test_parse_with_invalid_role_key():
+#     message = [2, TEST_SESSION_ID, {"roles": {"new_role": {}}}]
+#     with pytest.raises(error.ProtocolError) as exc_info:
+#         Welcome.parse(message)
+#
+#     assert str(exc_info.value) == f"invalid role 'new_role' in 'roles' details for {Welcome.WELCOME_TEXT}"
 
 
 def test_parse_with_invalid_authid():

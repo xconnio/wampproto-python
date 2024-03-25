@@ -26,7 +26,7 @@ def utcnow() -> str:
 
 
 def generate_wampcra_challenge(session_id: int, authid: str, authrole: str, provider: str) -> str:
-    nonce = binascii.hexlify(random.randbytes(16))
+    nonce = binascii.hexlify(random.randbytes(16)).decode()
 
     data = {
         "nonce": nonce,
@@ -42,8 +42,7 @@ def generate_wampcra_challenge(session_id: int, authid: str, authrole: str, prov
 
 
 def sign_wampcra_challenge(challenge: str, key: bytes) -> str:
-    challenge_bytes = binascii.unhexlify(challenge)
-    return hmac.new(key, challenge_bytes, hashlib.sha256).hexdigest()
+    return hmac.new(key, challenge.encode(), hashlib.sha256).hexdigest()
 
 
 def verify_wampcra_signature(signature: str, challenge: str, key: bytes) -> bool:

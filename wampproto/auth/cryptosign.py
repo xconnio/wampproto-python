@@ -12,6 +12,7 @@ class CryptoSignAuthenticator(auth.IClientAuthenticator):
 
     def __init__(self, authid: str, auth_extra: dict, private_key: str):
         self._private_key = nacl.signing.SigningKey(binascii.a2b_hex(private_key))
+        self._auth_extra = auth_extra
 
         if "pubkey" not in self._auth_extra:
             public_key = self._private_key.verify_key.encode(HexEncoder).decode()
@@ -31,7 +32,7 @@ class CryptoSignAuthenticator(auth.IClientAuthenticator):
 
 def generate_cryptosign_challenge() -> str:
     raw_bytes = random.randbytes(32)
-    return binascii.hexlify(raw_bytes).decode()
+    return binascii.hexlify(raw_bytes).decode("ascii")
 
 
 def sign_cryptosign_challenge(challenge: str, private_key: nacl.signing.SigningKey) -> str:
@@ -41,5 +42,5 @@ def sign_cryptosign_challenge(challenge: str, private_key: nacl.signing.SigningK
 
 def verify_cryptosign_signature(signature: str, public_key: bytes) -> bool:
     verifying_key = nacl.signing.VerifyKey(public_key)
-    verifying_key.verify(binascii.unhexlify(signature))
+    verifying_key.verify(binascii.unhexlify(signature[:-64]))
     return True
