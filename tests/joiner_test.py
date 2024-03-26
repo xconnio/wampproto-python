@@ -46,9 +46,9 @@ def test_join_no_auth(serializer):
 @pytest.mark.parametrize(
     "serializer, authenticator",
     [
-        (serializers.JSONSerializer(), auth.TicketAuthenticator("anonymous", {}, "ticket")),
-        (serializers.MsgPackSerializer(), auth.WAMPCRAAuthenticator("anonymous", {}, "password")),
-        (serializers.CBORSerializer(), auth.CryptoSignAuthenticator("anonymous", {}, PRIVATE_KEY)),
+        (serializers.JSONSerializer(), auth.TicketAuthenticator("anonymous", "ticket", {})),
+        (serializers.MsgPackSerializer(), auth.WAMPCRAAuthenticator("anonymous", "password", {})),
+        (serializers.CBORSerializer(), auth.CryptoSignAuthenticator("anonymous", PRIVATE_KEY, {})),
     ],
 )
 def test_join_auth(serializer, authenticator):

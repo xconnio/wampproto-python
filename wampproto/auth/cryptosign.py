@@ -10,7 +10,7 @@ from wampproto import messages, auth
 class CryptoSignAuthenticator(auth.IClientAuthenticator):
     TYPE = "cryptosign"
 
-    def __init__(self, authid: str, auth_extra: dict, private_key: str):
+    def __init__(self, authid: str, private_key: str, auth_extra: dict | None = None):
         self._private_key = nacl.signing.SigningKey(binascii.a2b_hex(private_key))
         self._auth_extra = auth_extra
 

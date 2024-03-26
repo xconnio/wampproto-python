@@ -11,7 +11,7 @@ from wampproto import messages, auth
 class WAMPCRAAuthenticator(auth.IClientAuthenticator):
     TYPE = "wampcra"
 
-    def __init__(self, authid: str, auth_extra: dict, secret: str):
+    def __init__(self, authid: str, secret: str, auth_extra: dict = None):
         super().__init__(WAMPCRAAuthenticator.TYPE, authid, auth_extra)
         self._secret = secret
 
