@@ -2,11 +2,11 @@ from wampproto import messages
 
 
 class IClientAuthenticator:
-    def __init__(self, method: str, authid: str, auth_extra: dict):
+    def __init__(self, method: str, authid: str, auth_extra: dict | None = None):
         super().__init__()
         self._method = method
         self._authid = authid
-        self._auth_extra = auth_extra
+        self._auth_extra = auth_extra if auth_extra is not None else {}
 
     @property
     def auth_method(self) -> str:
