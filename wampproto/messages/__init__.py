@@ -13,6 +13,7 @@ from wampproto.messages.invocation import Invocation
 from wampproto.messages.authenticate import Authenticate
 from wampproto.messages.publish import Publish
 from wampproto.messages.published import Published
+from wampproto.messages.event import Event
 
 __all__ = (
     "Message",
@@ -30,4 +31,5 @@ __all__ = (
     "Registered",
     "Publish",
     "Published",
+    "Event",
 )
