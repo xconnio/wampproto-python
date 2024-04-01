@@ -1,5 +1,6 @@
 from wampproto.messages.call import Call
 from wampproto.messages.register import Register
+from wampproto.messages.registered import Registered
 from wampproto.messages.hello import Hello
 from wampproto.messages.abort import Abort
 from wampproto.messages.yield_ import Yield
@@ -24,4 +25,5 @@ __all__ = [
     "Yield",
     "Result",
     "Register",
+    "Registered",
 ]
