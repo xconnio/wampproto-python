@@ -11,8 +11,10 @@ from wampproto.messages.message import Message
 from wampproto.messages.challenge import Challenge
 from wampproto.messages.invocation import Invocation
 from wampproto.messages.authenticate import Authenticate
+from wampproto.messages.publish import Publish
+from wampproto.messages.published import Published
 
-__all__ = [
+__all__ = (
     "Message",
     "Hello",
     "Welcome",
@@ -26,4 +28,6 @@ __all__ = [
     "Result",
     "Register",
     "Registered",
-]
+    "Publish",
+    "Published",
+)
