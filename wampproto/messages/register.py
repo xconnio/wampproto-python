@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any
 
 from wampproto.messages.message import Message
@@ -15,7 +17,7 @@ class Register(Message):
         self.options = options
 
     @staticmethod
-    def parse(msg: list[Any]) -> "Register":
+    def parse(msg: list[Any]) -> Register:
         util.sanity_check(msg, 4, 4, Register.MESSAGE_TYPE, Register.Register_Text)
 
         request_id = util.validate_session_id_or_raise(msg[1], Register.Register_Text, "request ID")
