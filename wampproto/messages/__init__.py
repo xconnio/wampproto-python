@@ -1,4 +1,6 @@
 from wampproto.messages.call import Call
+from wampproto.messages.register import Register
+from wampproto.messages.registered import Registered
 from wampproto.messages.hello import Hello
 from wampproto.messages.abort import Abort
 from wampproto.messages.yield_ import Yield
@@ -9,8 +11,11 @@ from wampproto.messages.message import Message
 from wampproto.messages.challenge import Challenge
 from wampproto.messages.invocation import Invocation
 from wampproto.messages.authenticate import Authenticate
+from wampproto.messages.publish import Publish
+from wampproto.messages.published import Published
+from wampproto.messages.event import Event
 
-__all__ = [
+__all__ = (
     "Message",
     "Hello",
     "Welcome",
@@ -22,4 +27,9 @@ __all__ = [
     "Invocation",
     "Yield",
     "Result",
-]
+    "Register",
+    "Registered",
+    "Publish",
+    "Published",
+    "Event",
+)
