@@ -5,10 +5,13 @@ class WAMPSession:
     def __init__(self, serializer: serializers.Serializer = serializers.JSONSerializer()):
         self._serializer = serializer
 
+        # data structures for RPC
         self._call_requests: dict[int, int] = {}
         self._register_requests: dict[int, int] = {}
         self._registrations: dict[int, int] = {}
         self._invocation_requests: dict[int, int] = {}
+        # data structures for PubSub
+        self._publish_requests: dict[int, int] = {}
 
     def send_message(self, msg: messages.Message) -> bytes:
         if isinstance(msg, messages.Call):
@@ -25,6 +28,12 @@ class WAMPSession:
 
             data = self._serializer.serialize(msg)
             self._invocation_requests.pop(msg.request_id)
+            return data
+        elif isinstance(msg, messages.Publish):
+            data = self._serializer.serialize(msg)
+            if msg.options.get("acknowledge", False):
+                self._publish_requests[msg.request_id] = msg.request_id
+
             return data
 
     def receive(self, data: bytes) -> messages.Message:
@@ -55,6 +64,13 @@ class WAMPSession:
                 raise ValueError("received INVOCATION for invalid registration_id")
 
             self._invocation_requests[msg.request_id] = msg.request_id
+
+            return msg
+        elif isinstance(msg, messages.Published):
+            try:
+                self._publish_requests.pop(msg.request_id)
+            except KeyError:
+                raise ValueError("received PUBLISHED for invalid registration_id")
 
             return msg
         else:
