@@ -36,12 +36,12 @@ def test_parse_with_invalid_message_type():
 
     assert (
         str(exc_info.value)
-        == f"invalid message id 10 for {messages.Call.Call_TEXT}, expected {messages.Call.MESSAGE_TYPE}"
+        == f"invalid message id 10 for {messages.Call.Call_TEXT}, expected {messages.Call.TYPE}"
     )
 
 
 def test_parse_with_negative_request_id():
-    message = [messages.Call.MESSAGE_TYPE, -1, {}, "io.xconn.ping"]
+    message = [messages.Call.TYPE, -1, {}, "io.xconn.ping"]
     with pytest.raises(error.ProtocolError) as exc_info:
         messages.Call.parse(message)
 
@@ -49,7 +49,7 @@ def test_parse_with_negative_request_id():
 
 
 def test_parse_with_out_of_range_request_value():
-    message = [messages.Call.MESSAGE_TYPE, 9007199254740993, {}, "io.xconn.ping"]
+    message = [messages.Call.TYPE, 9007199254740993, {}, "io.xconn.ping"]
     with pytest.raises(error.ProtocolError) as exc_info:
         messages.Call.parse(message)
 
@@ -57,7 +57,7 @@ def test_parse_with_out_of_range_request_value():
 
 
 def test_parse_with_invalid_options_type():
-    message = [messages.Call.MESSAGE_TYPE, 367, "options", "io.xconn.ping"]
+    message = [messages.Call.TYPE, 367, "options", "io.xconn.ping"]
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         messages.Call.parse(message)
 
@@ -65,7 +65,7 @@ def test_parse_with_invalid_options_type():
 
 
 def test_parse_with_invalid_options_dict_key():
-    message = [messages.Call.MESSAGE_TYPE, 367, {2: "v"}, "io.xconn.ping"]
+    message = [messages.Call.TYPE, 367, {2: "v"}, "io.xconn.ping"]
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         messages.Call.parse(message)
 
@@ -73,7 +73,7 @@ def test_parse_with_invalid_options_dict_key():
 
 
 def test_parse_with_uri_none():
-    message = [messages.Call.MESSAGE_TYPE, 367, {}, None]
+    message = [messages.Call.TYPE, 367, {}, None]
     with pytest.raises(error.InvalidUriError) as exc_info:
         messages.Call.parse(message)
 
@@ -81,7 +81,7 @@ def test_parse_with_uri_none():
 
 
 def test_parse_with_invalid_uri_type():
-    message = [messages.Call.MESSAGE_TYPE, 367, {}, {"uri": "io.xconn.ping"}]
+    message = [messages.Call.TYPE, 367, {}, {"uri": "io.xconn.ping"}]
     with pytest.raises(error.InvalidUriError) as exc_info:
         messages.Call.parse(message)
 
@@ -89,7 +89,7 @@ def test_parse_with_invalid_uri_type():
 
 
 def test_parse_with_invalid_args_type():
-    message = [messages.Call.MESSAGE_TYPE, 367, {}, "io.xconn.ping", "args"]
+    message = [messages.Call.TYPE, 367, {}, "io.xconn.ping", "args"]
     with pytest.raises(error.InvalidTypeError) as exc_info:
         messages.Call.parse(message)
 
@@ -99,7 +99,7 @@ def test_parse_with_invalid_args_type():
 
 
 def test_parse_with_invalid_kwargs_type():
-    message = [messages.Call.MESSAGE_TYPE, 367, {}, "io.xconn.ping", [], ["kwargs"]]
+    message = [messages.Call.TYPE, 367, {}, "io.xconn.ping", [], ["kwargs"]]
     with pytest.raises(error.InvalidTypeError) as exc_info:
         messages.Call.parse(message)
 
@@ -112,7 +112,7 @@ def test_parse_with_invalid_kwargs_type():
 def test_parse_correctly():
     uri = "io.xconn.ping"
     request_id = 367
-    message = [messages.Call.MESSAGE_TYPE, request_id, {}, uri]
+    message = [messages.Call.TYPE, request_id, {}, uri]
     call = messages.Call.parse(message)
 
     assert isinstance(call, messages.Call)
@@ -132,7 +132,7 @@ def test_parse_correctly_with_options():
     uri = "io.xconn.ping"
     request_id = 367
     options = {"caller_authid": "mahad"}
-    message = [messages.Call.MESSAGE_TYPE, request_id, options, uri]
+    message = [messages.Call.TYPE, request_id, options, uri]
     call = messages.Call.parse(message)
 
     assert isinstance(call, messages.Call)
@@ -154,7 +154,7 @@ def test_parse_correctly_with_args():
     uri = "io.xconn.ping"
     request_id = 367
     args = ["first", 2]
-    message = [messages.Call.MESSAGE_TYPE, request_id, {}, uri, args]
+    message = [messages.Call.TYPE, request_id, {}, uri, args]
     call = messages.Call.parse(message)
 
     assert isinstance(call, messages.Call)
@@ -176,7 +176,7 @@ def test_parse_correctly_with_kwargs():
     uri = "io.xconn.ping"
     request_id = 367
     kwargs = {"name": "mahad"}
-    message = [messages.Call.MESSAGE_TYPE, request_id, {}, uri, [], kwargs]
+    message = [messages.Call.TYPE, request_id, {}, uri, [], kwargs]
     call = messages.Call.parse(message)
 
     assert isinstance(call, messages.Call)
@@ -198,7 +198,7 @@ def test_parse_correctly_with_all_options():
     options = {"caller_authid": "mahad"}
     args = ["arg1"]
     kwargs = {"name": "mahad"}
-    message = [messages.Call.MESSAGE_TYPE, request_id, options, uri, args, kwargs]
+    message = [messages.Call.TYPE, request_id, options, uri, args, kwargs]
     call = messages.Call.parse(message)
 
     assert isinstance(call, messages.Call)
@@ -223,7 +223,7 @@ def test_marshal():
     assert len(message) == 4
 
     assert isinstance(message[0], int)
-    assert message[0] == messages.Call.MESSAGE_TYPE
+    assert message[0] == messages.Call.TYPE
 
     assert isinstance(message[1], int)
     assert message[1] == request_id
@@ -242,7 +242,7 @@ def test_marshal_with_args():
     assert len(message) == 5
 
     assert isinstance(message[0], int)
-    assert message[0] == messages.Call.MESSAGE_TYPE
+    assert message[0] == messages.Call.TYPE
 
     assert isinstance(message[1], int)
     assert message[1] == request_id
@@ -263,7 +263,7 @@ def test_marshal_with_kwargs():
     assert len(message) == 6
 
     assert isinstance(message[0], int)
-    assert message[0] == messages.Call.MESSAGE_TYPE
+    assert message[0] == messages.Call.TYPE
 
     assert isinstance(message[1], int)
     assert message[1] == request_id
@@ -290,7 +290,7 @@ def test_marshal_with_all_options():
     assert len(message) == 6
 
     assert isinstance(message[0], int)
-    assert message[0] == messages.Call.MESSAGE_TYPE
+    assert message[0] == messages.Call.TYPE
 
     assert isinstance(message[1], int)
     assert message[1] == request_id

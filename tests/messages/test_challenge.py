@@ -37,7 +37,7 @@ def test_parse_with_invalid_message_type():
         Challenge.parse(message)
 
     assert (
-        str(exc_info.value) == f"invalid message id 2 for {Challenge.CHALLENGE_TEXT}, expected {Challenge.MESSAGE_TYPE}"
+        str(exc_info.value) == f"invalid message id 2 for {Challenge.CHALLENGE_TEXT}, expected {Challenge.TYPE}"
     )
 
 
@@ -87,7 +87,7 @@ def test_marshal_without_extra():
     assert isinstance(message, list)
 
     assert isinstance(message[0], int)
-    assert message[0] == Challenge.MESSAGE_TYPE
+    assert message[0] == Challenge.TYPE
 
     assert isinstance(message[1], str)
     assert message[1] == authmethod
@@ -103,7 +103,7 @@ def test_marshal_with_extra():
     assert isinstance(message, list)
 
     assert isinstance(message[0], int)
-    assert message[0] == Challenge.MESSAGE_TYPE
+    assert message[0] == Challenge.TYPE
 
     assert isinstance(message[1], str)
     assert message[1] == authmethod

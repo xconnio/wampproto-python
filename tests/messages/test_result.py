@@ -39,12 +39,12 @@ def test_parse_with_invalid_message_type():
 
     assert (
         str(exc_info.value)
-        == f"invalid message id {msg_type} for {messages.Result.RESULT_TEXT}, expected {messages.Result.MESSAGE_TYPE}"
+        == f"invalid message id {msg_type} for {messages.Result.RESULT_TEXT}, expected {messages.Result.TYPE}"
     )
 
 
 def test_parse_with_negative_request_id():
-    message = [messages.Result.MESSAGE_TYPE, -2, {}]
+    message = [messages.Result.TYPE, -2, {}]
     with pytest.raises(error.ProtocolError) as exc_info:
         messages.Result.parse(message)
 
@@ -52,7 +52,7 @@ def test_parse_with_negative_request_id():
 
 
 def test_parse_with_out_of_range_request_value():
-    message = [messages.Result.MESSAGE_TYPE, 9007199254740993, {}]
+    message = [messages.Result.TYPE, 9007199254740993, {}]
     with pytest.raises(error.ProtocolError) as exc_info:
         messages.Result.parse(message)
 
@@ -60,7 +60,7 @@ def test_parse_with_out_of_range_request_value():
 
 
 def test_parse_with_invalid_options_type():
-    message = [messages.Result.MESSAGE_TYPE, 367, "options"]
+    message = [messages.Result.TYPE, 367, "options"]
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         messages.Result.parse(message)
 
@@ -68,7 +68,7 @@ def test_parse_with_invalid_options_type():
 
 
 def test_parse_with_invalid_options_dict_key():
-    message = [messages.Result.MESSAGE_TYPE, 367, {2: "v"}]
+    message = [messages.Result.TYPE, 367, {2: "v"}]
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         messages.Result.parse(message)
 
@@ -76,7 +76,7 @@ def test_parse_with_invalid_options_dict_key():
 
 
 def test_parse_with_invalid_args_type():
-    message = [messages.Result.MESSAGE_TYPE, 361, {}, "args"]
+    message = [messages.Result.TYPE, 361, {}, "args"]
     with pytest.raises(error.InvalidTypeError) as exc_info:
         messages.Result.parse(message)
 
@@ -87,7 +87,7 @@ def test_parse_with_invalid_args_type():
 
 
 def test_parse_with_invalid_kwargs_type():
-    message = [messages.Result.MESSAGE_TYPE, 367, {}, [], ["kwargs"]]
+    message = [messages.Result.TYPE, 367, {}, [], ["kwargs"]]
     with pytest.raises(error.InvalidTypeError) as exc_info:
         messages.Result.parse(message)
 
@@ -99,7 +99,7 @@ def test_parse_with_invalid_kwargs_type():
 
 def test_parse_correctly():
     request_id = 367
-    message = [messages.Result.MESSAGE_TYPE, request_id, {}]
+    message = [messages.Result.TYPE, request_id, {}]
     yield_message = messages.Result.parse(message)
 
     assert isinstance(yield_message, messages.Result)
@@ -115,7 +115,7 @@ def test_parse_correctly():
 def test_parse_correctly_with_options():
     request_id = 362
     options = {"caller_authid": "mahad"}
-    message = [messages.Result.MESSAGE_TYPE, request_id, options]
+    message = [messages.Result.TYPE, request_id, options]
     yield_message = messages.Result.parse(message)
 
     assert isinstance(yield_message, messages.Result)
@@ -133,7 +133,7 @@ def test_parse_correctly_with_options():
 def test_parse_correctly_with_args():
     request_id = 367
     args = ["first", 2]
-    message = [messages.Result.MESSAGE_TYPE, request_id, {}, args]
+    message = [messages.Result.TYPE, request_id, {}, args]
     yield_message = messages.Result.parse(message)
 
     assert isinstance(yield_message, messages.Result)
@@ -151,7 +151,7 @@ def test_parse_correctly_with_args():
 def test_parse_correctly_with_kwargs():
     request_id = 367
     kwargs = {"name": "mahad"}
-    message = [messages.Result.MESSAGE_TYPE, request_id, {}, [], kwargs]
+    message = [messages.Result.TYPE, request_id, {}, [], kwargs]
     result = messages.Result.parse(message)
 
     assert isinstance(result, messages.Result)
@@ -169,7 +169,7 @@ def test_parse_correctly_with_all_options():
     options = {"caller_authid": "mahad"}
     args = ["arg1"]
     kwargs = {"name": "mahad"}
-    message = [messages.Result.MESSAGE_TYPE, request_id, options, args, kwargs]
+    message = [messages.Result.TYPE, request_id, options, args, kwargs]
     result = messages.Result.parse(message)
 
     assert isinstance(result, messages.Result)
@@ -190,7 +190,7 @@ def test_marshal():
     assert len(message) == 3
 
     assert isinstance(message[0], int)
-    assert message[0] == messages.Result.MESSAGE_TYPE
+    assert message[0] == messages.Result.TYPE
 
     assert isinstance(message[1], int)
     assert message[1] == request_id
@@ -207,7 +207,7 @@ def test_marshal_with_args():
     assert len(message) == 4
 
     assert isinstance(message[0], int)
-    assert message[0] == messages.Result.MESSAGE_TYPE
+    assert message[0] == messages.Result.TYPE
 
     assert isinstance(message[1], int)
     assert message[1] == request_id
@@ -227,7 +227,7 @@ def test_marshal_with_kwargs():
     assert len(message) == 5
 
     assert isinstance(message[0], int)
-    assert message[0] == messages.Result.MESSAGE_TYPE
+    assert message[0] == messages.Result.TYPE
 
     assert isinstance(message[1], int)
     assert message[1] == request_id
@@ -252,7 +252,7 @@ def test_marshal_with_all_options():
     assert len(message) == 5
 
     assert isinstance(message[0], int)
-    assert message[0] == messages.Result.MESSAGE_TYPE
+    assert message[0] == messages.Result.TYPE
 
     assert isinstance(message[1], int)
     assert message[1] == request_id

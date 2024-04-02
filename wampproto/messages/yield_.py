@@ -9,7 +9,7 @@ from wampproto.messages.message import Message
 
 class Yield(Message):
     YIELD_TEXT = "YIELD"
-    MESSAGE_TYPE = 70
+    TYPE = 70
 
     def __init__(
         self,
@@ -26,7 +26,7 @@ class Yield(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> Yield:
-        util.sanity_check(msg, 3, 5, Yield.MESSAGE_TYPE, Yield.YIELD_TEXT)
+        util.sanity_check(msg, 3, 5, Yield.TYPE, Yield.YIELD_TEXT)
 
         request_id = util.validate_session_id_or_raise(msg[1], Yield.YIELD_TEXT, "request ID")
         options = util.validate_details_or_raise(msg[2], Yield.YIELD_TEXT, "options")
@@ -46,7 +46,7 @@ class Yield(Message):
         return Yield(request_id, args, kwargs, options)
 
     def marshal(self) -> list[Any]:
-        message = [Yield.MESSAGE_TYPE, self.request_id, self.options]
+        message = [Yield.TYPE, self.request_id, self.options]
         if self.args is not None:
             message.append(self.args)
 

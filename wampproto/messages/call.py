@@ -9,7 +9,7 @@ from wampproto.messages import error
 
 class Call(Message):
     Call_TEXT = "CALL"
-    MESSAGE_TYPE = 48
+    TYPE = 48
 
     def __init__(
         self,
@@ -28,7 +28,7 @@ class Call(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> Call:
-        util.sanity_check(msg, 4, 6, Call.MESSAGE_TYPE, Call.Call_TEXT)
+        util.sanity_check(msg, 4, 6, Call.TYPE, Call.Call_TEXT)
 
         request_id = util.validate_session_id_or_raise(msg[1], Call.Call_TEXT, "request ID")
         options = util.validate_details_or_raise(msg[2], Call.Call_TEXT, "options")
@@ -49,7 +49,7 @@ class Call(Message):
         return Call(request_id, uri, args, kwargs, options)
 
     def marshal(self) -> list[Any]:
-        message = [Call.MESSAGE_TYPE, self.request_id, self.options, self.uri]
+        message = [Call.TYPE, self.request_id, self.options, self.uri]
         if self.args is not None:
             message.append(self.args)
 

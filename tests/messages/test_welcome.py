@@ -26,7 +26,7 @@ def test_welcome(session_id, roles, details, expected_details):
 
     assert isinstance(message, list)
     assert len(message) == 3
-    assert message[0] == Welcome.MESSAGE_TYPE
+    assert message[0] == Welcome.TYPE
     assert message[1] == session_id
     assert message[2] == expected_details
 
@@ -40,7 +40,7 @@ def test_marshal_with_no_roles_and_details():
     assert len(message) == 3
 
     assert isinstance(message[0], int)
-    assert message[0] == Welcome.MESSAGE_TYPE
+    assert message[0] == Welcome.TYPE
 
     assert isinstance(message[1], int)
     assert message[1] == TEST_SESSION_ID
@@ -58,7 +58,7 @@ def test_marshal_with_role_and_no_details():
     assert len(message) == 3
 
     assert isinstance(message[0], int)
-    assert message[0] == Welcome.MESSAGE_TYPE
+    assert message[0] == Welcome.TYPE
 
     assert isinstance(message[1], int)
     assert message[1] == TEST_SESSION_ID
@@ -76,7 +76,7 @@ def test_marshal_with_authid():
     assert len(message) == 3
 
     assert isinstance(message[0], int)
-    assert message[0] == Welcome.MESSAGE_TYPE
+    assert message[0] == Welcome.TYPE
 
     assert isinstance(message[1], int)
     assert message[1] == TEST_SESSION_ID
@@ -94,7 +94,7 @@ def test_marshal_with_authrole():
     assert len(message) == 3
 
     assert isinstance(message[0], int)
-    assert message[0] == Welcome.MESSAGE_TYPE
+    assert message[0] == Welcome.TYPE
 
     assert isinstance(message[1], int)
     assert message[1] == TEST_SESSION_ID
@@ -112,7 +112,7 @@ def test_marshal_with_authmethod():
     assert len(message) == 3
 
     assert isinstance(message[0], int)
-    assert message[0] == Welcome.MESSAGE_TYPE
+    assert message[0] == Welcome.TYPE
 
     assert isinstance(message[1], int)
     assert message[1] == TEST_SESSION_ID
@@ -130,7 +130,7 @@ def test_marshal_with_authextra():
     assert len(message) == 3
 
     assert isinstance(message[0], int)
-    assert message[0] == Welcome.MESSAGE_TYPE
+    assert message[0] == Welcome.TYPE
 
     assert isinstance(message[1], int)
     assert message[1] == TEST_SESSION_ID
@@ -148,7 +148,7 @@ def test_marshal_with_role_authid_and_authrole():
     assert len(message) == 3
 
     assert isinstance(message[0], int)
-    assert message[0] == Welcome.MESSAGE_TYPE
+    assert message[0] == Welcome.TYPE
 
     assert isinstance(message[1], int)
     assert message[1] == TEST_SESSION_ID
@@ -166,7 +166,7 @@ def test_marshal_with_role_authid_authrole_authmethod():
     assert len(message) == 3
 
     assert isinstance(message[0], int)
-    assert message[0] == Welcome.MESSAGE_TYPE
+    assert message[0] == Welcome.TYPE
 
     assert isinstance(message[1], int)
     assert message[1] == TEST_SESSION_ID
@@ -184,7 +184,7 @@ def test_marshal_with_role_authid_authrole_authmethod_authextra():
     assert len(message) == 3
 
     assert isinstance(message[0], int)
-    assert message[0] == Welcome.MESSAGE_TYPE
+    assert message[0] == Welcome.TYPE
 
     assert isinstance(message[1], int)
     assert message[1] == TEST_SESSION_ID
@@ -231,7 +231,7 @@ def test_parse_with_invalid_message_type():
     with pytest.raises(ValueError) as exc_info:
         Welcome.parse(message)
 
-    assert str(exc_info.value) == f"invalid message id 1 for {Welcome.WELCOME_TEXT}, expected {Welcome.MESSAGE_TYPE}"
+    assert str(exc_info.value) == f"invalid message id 1 for {Welcome.WELCOME_TEXT}, expected {Welcome.TYPE}"
 
 
 def test_parse_with_invalid_session_type():
@@ -339,7 +339,7 @@ def test_parse_with_invalid_authextra_type():
 def test_parse_with_valid_roles():
     for role in util.AllowedRoles.get_allowed_roles():
         details = {"roles": {role: {}}}
-        welcome = Welcome.parse([Welcome.MESSAGE_TYPE, TEST_SESSION_ID, details])
+        welcome = Welcome.parse([Welcome.TYPE, TEST_SESSION_ID, details])
 
         assert isinstance(welcome, Welcome)
         assert isinstance(welcome.session_id, int)
@@ -356,7 +356,7 @@ def test_parse_with_valid_roles():
 
 def test_parse_with_multiple_roles():
     details = {"roles": {"callee": {}, "caller": {}}}
-    welcome = Welcome.parse([Welcome.MESSAGE_TYPE, TEST_SESSION_ID, details])
+    welcome = Welcome.parse([Welcome.TYPE, TEST_SESSION_ID, details])
 
     assert isinstance(welcome, Welcome)
     assert isinstance(welcome.session_id, int)
@@ -373,7 +373,7 @@ def test_parse_with_multiple_roles():
 
 def test_parse_with_authid():
     details = {"roles": {"callee": {}}, "authid": "mahad"}
-    welcome = Welcome.parse([Welcome.MESSAGE_TYPE, TEST_SESSION_ID, details])
+    welcome = Welcome.parse([Welcome.TYPE, TEST_SESSION_ID, details])
 
     assert isinstance(welcome, Welcome)
     assert isinstance(welcome.session_id, int)
@@ -391,7 +391,7 @@ def test_parse_with_authid():
 
 def test_parse_with_authrole():
     details = {"roles": {"callee": {}}, "authrole": "admin"}
-    welcome = Welcome.parse([Welcome.MESSAGE_TYPE, TEST_SESSION_ID, details])
+    welcome = Welcome.parse([Welcome.TYPE, TEST_SESSION_ID, details])
 
     assert isinstance(welcome, Welcome)
     assert isinstance(welcome.session_id, int)
@@ -409,7 +409,7 @@ def test_parse_with_authrole():
 
 def test_parse_with_authmethod():
     details = {"roles": {"callee": {}}, "authmethod": "cryptosign"}
-    welcome = Welcome.parse([Welcome.MESSAGE_TYPE, TEST_SESSION_ID, details])
+    welcome = Welcome.parse([Welcome.TYPE, TEST_SESSION_ID, details])
 
     assert isinstance(welcome, Welcome)
     assert isinstance(welcome.session_id, int)
@@ -427,7 +427,7 @@ def test_parse_with_authmethod():
 
 def test_parse_with_authid_and_authrole():
     details = {"roles": {"callee": {}}, "authid": "mahad", "authrole": "admin"}
-    welcome = Welcome.parse([Welcome.MESSAGE_TYPE, TEST_SESSION_ID, details])
+    welcome = Welcome.parse([Welcome.TYPE, TEST_SESSION_ID, details])
 
     assert isinstance(welcome, Welcome)
     assert isinstance(welcome.session_id, int)
@@ -447,7 +447,7 @@ def test_parse_with_authid_and_authrole():
 
 def test_parse_with_authid_authrole_authmethod():
     details = {"roles": {"callee": {}}, "authid": "mahad", "authrole": "admin", "authmethod": "cryptosign"}
-    welcome = Welcome.parse([Welcome.MESSAGE_TYPE, TEST_SESSION_ID, details])
+    welcome = Welcome.parse([Welcome.TYPE, TEST_SESSION_ID, details])
 
     assert isinstance(welcome, Welcome)
     assert isinstance(welcome.session_id, int)
@@ -475,7 +475,7 @@ def test_parse_with_authid_authrole_authmethod_authextra():
         "authmethod": "cryptosign",
         "authextra": {"extra": True},
     }
-    welcome = Welcome.parse([Welcome.MESSAGE_TYPE, TEST_SESSION_ID, details])
+    welcome = Welcome.parse([Welcome.TYPE, TEST_SESSION_ID, details])
 
     assert isinstance(welcome, Welcome)
     assert isinstance(welcome.session_id, int)

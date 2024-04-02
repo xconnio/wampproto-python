@@ -9,7 +9,7 @@ from wampproto.messages.message import Message
 
 class Invocation(Message):
     INVOCATION_TEXT = "INVOCATION"
-    MESSAGE_TYPE = 68
+    TYPE = 68
 
     def __init__(
         self,
@@ -28,7 +28,7 @@ class Invocation(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> Invocation:
-        util.sanity_check(msg, 4, 6, Invocation.MESSAGE_TYPE, Invocation.INVOCATION_TEXT)
+        util.sanity_check(msg, 4, 6, Invocation.TYPE, Invocation.INVOCATION_TEXT)
 
         request_id = util.validate_session_id_or_raise(msg[1], Invocation.INVOCATION_TEXT, "request ID")
         registration_id = util.validate_session_id_or_raise(msg[2], Invocation.INVOCATION_TEXT, "registration ID")
@@ -49,7 +49,7 @@ class Invocation(Message):
         return Invocation(request_id, registration_id, args, kwargs, options)
 
     def marshal(self) -> list[Any]:
-        message = [Invocation.MESSAGE_TYPE, self.request_id, self.registration_id, self.details]
+        message = [Invocation.TYPE, self.request_id, self.registration_id, self.details]
         if self.args is not None:
             message.append(self.args)
 

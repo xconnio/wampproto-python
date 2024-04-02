@@ -9,7 +9,7 @@ from wampproto.messages.message import Message
 
 class Hello(Message):
     HELLO_TEXT = "HELLO"
-    MESSAGE_TYPE = 1
+    TYPE = 1
 
     def __init__(
         self,
@@ -30,7 +30,7 @@ class Hello(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> Hello:
-        util.sanity_check(msg, 3, 3, Hello.MESSAGE_TYPE, Hello.HELLO_TEXT)
+        util.sanity_check(msg, 3, 3, Hello.TYPE, Hello.HELLO_TEXT)
 
         realm = util.validate_realm_or_raise(msg[1], Hello.HELLO_TEXT)
         details = util.validate_details_or_raise(msg[2], Hello.HELLO_TEXT)
@@ -91,4 +91,4 @@ class Hello(Message):
         if self.authextra is not None:
             details["authextra"] = self.authextra
 
-        return [self.MESSAGE_TYPE, self.realm, details]
+        return [self.TYPE, self.realm, details]

@@ -39,12 +39,12 @@ def test_parse_with_invalid_message_type():
 
     assert (
         str(exc_info.value) == f"invalid message id 9 for {messages.Invocation.INVOCATION_TEXT}, "
-        f"expected {messages.Invocation.MESSAGE_TYPE}"
+        f"expected {messages.Invocation.TYPE}"
     )
 
 
 def test_parse_with_negative_request_id():
-    message = [messages.Invocation.MESSAGE_TYPE, -1, 365, {}]
+    message = [messages.Invocation.TYPE, -1, 365, {}]
     with pytest.raises(error.ProtocolError) as exc_info:
         messages.Invocation.parse(message)
 
@@ -52,7 +52,7 @@ def test_parse_with_negative_request_id():
 
 
 def test_parse_with_out_of_range_request_value():
-    message = [messages.Invocation.MESSAGE_TYPE, 9007199254740993, 23, {}]
+    message = [messages.Invocation.TYPE, 9007199254740993, 23, {}]
     with pytest.raises(error.ProtocolError) as exc_info:
         messages.Invocation.parse(message)
 
@@ -60,7 +60,7 @@ def test_parse_with_out_of_range_request_value():
 
 
 def test_parse_with_negative_registration_id():
-    message = [messages.Invocation.MESSAGE_TYPE, 17, -39, {}]
+    message = [messages.Invocation.TYPE, 17, -39, {}]
     with pytest.raises(error.ProtocolError) as exc_info:
         messages.Invocation.parse(message)
 
@@ -68,7 +68,7 @@ def test_parse_with_negative_registration_id():
 
 
 def test_parse_with_out_of_range_registration_value():
-    message = [messages.Invocation.MESSAGE_TYPE, 80, 9007199254740993, {}]
+    message = [messages.Invocation.TYPE, 80, 9007199254740993, {}]
     with pytest.raises(error.ProtocolError) as exc_info:
         messages.Invocation.parse(message)
 
@@ -76,7 +76,7 @@ def test_parse_with_out_of_range_registration_value():
 
 
 def test_parse_with_invalid_options_type():
-    message = [messages.Invocation.MESSAGE_TYPE, 80, 753, ["options"]]
+    message = [messages.Invocation.TYPE, 80, 753, ["options"]]
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         messages.Invocation.parse(message)
 
@@ -84,7 +84,7 @@ def test_parse_with_invalid_options_type():
 
 
 def test_parse_with_invalid_options_dict_key():
-    message = [messages.Invocation.MESSAGE_TYPE, 80, 753, {98: "test"}]
+    message = [messages.Invocation.TYPE, 80, 753, {98: "test"}]
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         messages.Invocation.parse(message)
 
@@ -94,7 +94,7 @@ def test_parse_with_invalid_options_dict_key():
 
 
 def test_parse_with_invalid_args_type():
-    message = [messages.Invocation.MESSAGE_TYPE, 370, 98, {}, "args"]
+    message = [messages.Invocation.TYPE, 370, 98, {}, "args"]
     with pytest.raises(error.InvalidTypeError) as exc_info:
         messages.Invocation.parse(message)
 
@@ -105,7 +105,7 @@ def test_parse_with_invalid_args_type():
 
 
 def test_parse_with_invalid_kwargs_type():
-    message = [messages.Invocation.MESSAGE_TYPE, 67, 147, {}, [], ["kwargs"]]
+    message = [messages.Invocation.TYPE, 67, 147, {}, [], ["kwargs"]]
     with pytest.raises(error.InvalidTypeError) as exc_info:
         messages.Invocation.parse(message)
 
@@ -118,7 +118,7 @@ def test_parse_with_invalid_kwargs_type():
 def test_parse_correctly():
     request_id = 74
     registration_id = 14
-    message = [messages.Invocation.MESSAGE_TYPE, request_id, registration_id, {}]
+    message = [messages.Invocation.TYPE, request_id, registration_id, {}]
     invocation = messages.Invocation.parse(message)
 
     assert isinstance(invocation, messages.Invocation)
@@ -138,7 +138,7 @@ def test_parse_correctly_with_options():
     request_id = 741
     registration_id = 142
     details = {"extra": True}
-    message = [messages.Invocation.MESSAGE_TYPE, request_id, registration_id, details]
+    message = [messages.Invocation.TYPE, request_id, registration_id, details]
     invocation = messages.Invocation.parse(message)
 
     assert isinstance(invocation, messages.Invocation)
@@ -158,7 +158,7 @@ def test_parse_correctly_with_args():
     request_id = 741
     registration_id = 142
     args = [1, 2]
-    message = [messages.Invocation.MESSAGE_TYPE, request_id, registration_id, {}, args]
+    message = [messages.Invocation.TYPE, request_id, registration_id, {}, args]
     invocation = messages.Invocation.parse(message)
 
     assert isinstance(invocation, messages.Invocation)
@@ -180,7 +180,7 @@ def test_parse_correctly_with_kwargs():
     request_id = 73
     registration_id = 12
     kwargs = {"fruit": "grape"}
-    message = [messages.Invocation.MESSAGE_TYPE, request_id, registration_id, {}, [], kwargs]
+    message = [messages.Invocation.TYPE, request_id, registration_id, {}, [], kwargs]
     invocation = messages.Invocation.parse(message)
 
     assert isinstance(invocation, messages.Invocation)
@@ -204,7 +204,7 @@ def test_parse_correctly_with_all_options():
     args = ["1st"]
     kwargs = {"fruit": "apple"}
     details = {"caller_authrole": "user"}
-    message = [messages.Invocation.MESSAGE_TYPE, request_id, registration_id, details, args, kwargs]
+    message = [messages.Invocation.TYPE, request_id, registration_id, details, args, kwargs]
     invocation = messages.Invocation.parse(message)
 
     assert isinstance(invocation, messages.Invocation)
@@ -234,7 +234,7 @@ def test_marshal():
     assert len(message) == 4
 
     assert isinstance(message[0], int)
-    assert message[0] == messages.Invocation.MESSAGE_TYPE
+    assert message[0] == messages.Invocation.TYPE
 
     assert isinstance(message[1], int)
     assert message[1] == request_id
@@ -255,7 +255,7 @@ def test_marshal_with_args():
     assert len(message) == 5
 
     assert isinstance(message[0], int)
-    assert message[0] == messages.Invocation.MESSAGE_TYPE
+    assert message[0] == messages.Invocation.TYPE
 
     assert isinstance(message[1], int)
     assert message[1] == request_id
@@ -280,7 +280,7 @@ def test_marshal_with_kwargs():
     assert len(message) == 6
 
     assert isinstance(message[0], int)
-    assert message[0] == messages.Invocation.MESSAGE_TYPE
+    assert message[0] == messages.Invocation.TYPE
 
     assert isinstance(message[1], int)
     assert message[1] == request_id
@@ -309,7 +309,7 @@ def test_marshal_with_all_options():
     assert len(message) == 6
 
     assert isinstance(message[0], int)
-    assert message[0] == messages.Invocation.MESSAGE_TYPE
+    assert message[0] == messages.Invocation.TYPE
 
     assert isinstance(message[1], int)
     assert message[1] == request_id

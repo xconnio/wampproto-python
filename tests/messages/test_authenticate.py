@@ -85,7 +85,7 @@ def test_marshal_without_extra():
     assert isinstance(message, list)
 
     assert isinstance(message[0], int)
-    assert message[0] == Authenticate.MESSAGE_TYPE
+    assert message[0] == Authenticate.TYPE
 
     assert isinstance(message[1], str)
     assert message[1] == signature
@@ -101,7 +101,7 @@ def test_marshal_with_extra():
     assert isinstance(message, list)
 
     assert isinstance(message[0], int)
-    assert message[0] == Authenticate.MESSAGE_TYPE
+    assert message[0] == Authenticate.TYPE
 
     assert isinstance(message[1], str)
     assert message[1] == signature

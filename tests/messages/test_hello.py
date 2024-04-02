@@ -15,7 +15,7 @@ def test_marshal_with_no_roles_and_details():
     assert len(message) == 3
 
     assert isinstance(message[0], int)
-    assert message[0] == Hello.MESSAGE_TYPE
+    assert message[0] == Hello.TYPE
 
     assert isinstance(message[1], str)
     assert message[1] == realm
@@ -34,7 +34,7 @@ def test_marshal_with_role_and_no_details():
     assert len(message) == 3
 
     assert isinstance(message[0], int)
-    assert message[0] == Hello.MESSAGE_TYPE
+    assert message[0] == Hello.TYPE
 
     assert isinstance(message[1], str)
     assert message[1] == realm
@@ -53,7 +53,7 @@ def test_marshal_with_authid():
     assert len(message) == 3
 
     assert isinstance(message[0], int)
-    assert message[0] == Hello.MESSAGE_TYPE
+    assert message[0] == Hello.TYPE
 
     assert isinstance(message[1], str)
     assert message[1] == realm
@@ -72,7 +72,7 @@ def test_marshal_with_authrole():
     assert len(message) == 3
 
     assert isinstance(message[0], int)
-    assert message[0] == Hello.MESSAGE_TYPE
+    assert message[0] == Hello.TYPE
 
     assert isinstance(message[1], str)
     assert message[1] == realm
@@ -91,7 +91,7 @@ def test_marshal_with_authmethods():
     assert len(message) == 3
 
     assert isinstance(message[0], int)
-    assert message[0] == Hello.MESSAGE_TYPE
+    assert message[0] == Hello.TYPE
 
     assert isinstance(message[1], str)
     assert message[1] == realm
@@ -110,7 +110,7 @@ def test_marshal_with_authextra():
     assert len(message) == 3
 
     assert isinstance(message[0], int)
-    assert message[0] == Hello.MESSAGE_TYPE
+    assert message[0] == Hello.TYPE
 
     assert isinstance(message[1], str)
     assert message[1] == realm
@@ -129,7 +129,7 @@ def test_marshal_with_role_authid_and_authrole():
     assert len(message) == 3
 
     assert isinstance(message[0], int)
-    assert message[0] == Hello.MESSAGE_TYPE
+    assert message[0] == Hello.TYPE
 
     assert isinstance(message[1], str)
     assert message[1] == realm
@@ -148,7 +148,7 @@ def test_marshal_with_role_authid_authrole_authmethods():
     assert len(message) == 3
 
     assert isinstance(message[0], int)
-    assert message[0] == Hello.MESSAGE_TYPE
+    assert message[0] == Hello.TYPE
 
     assert isinstance(message[1], str)
     assert message[1] == realm
@@ -167,7 +167,7 @@ def test_marshal_with_role_authid_authrole_authmethods_authextra():
     assert len(message) == 3
 
     assert isinstance(message[0], int)
-    assert message[0] == Hello.MESSAGE_TYPE
+    assert message[0] == Hello.TYPE
 
     assert isinstance(message[1], str)
     assert message[1] == realm
@@ -322,7 +322,7 @@ def test_parse_with_valid_roles():
     realm = "realm1"
     for role in util.AllowedRoles.get_allowed_roles():
         details = {"roles": {role: {}}}
-        hello = Hello.parse([Hello.MESSAGE_TYPE, realm, details])
+        hello = Hello.parse([Hello.TYPE, realm, details])
 
         assert isinstance(hello, Hello)
         assert isinstance(hello.realm, str)
@@ -340,7 +340,7 @@ def test_parse_with_valid_roles():
 def test_parse_with_multiple_roles():
     realm = "realm1"
     details = {"roles": {"callee": {}, "caller": {}}}
-    hello = Hello.parse([Hello.MESSAGE_TYPE, realm, details])
+    hello = Hello.parse([Hello.TYPE, realm, details])
 
     assert isinstance(hello, Hello)
     assert isinstance(hello.realm, str)
@@ -358,7 +358,7 @@ def test_parse_with_multiple_roles():
 def test_parse_with_authid():
     realm = "realm1"
     details = {"roles": {"callee": {}}, "authid": "mahad"}
-    hello = Hello.parse([Hello.MESSAGE_TYPE, realm, details])
+    hello = Hello.parse([Hello.TYPE, realm, details])
 
     assert isinstance(hello, Hello)
     assert isinstance(hello.realm, str)
@@ -377,7 +377,7 @@ def test_parse_with_authid():
 def test_parse_with_authrole():
     realm = "realm1"
     details = {"roles": {"callee": {}}, "authrole": "admin"}
-    hello = Hello.parse([Hello.MESSAGE_TYPE, realm, details])
+    hello = Hello.parse([Hello.TYPE, realm, details])
 
     assert isinstance(hello, Hello)
     assert isinstance(hello.realm, str)
@@ -396,7 +396,7 @@ def test_parse_with_authrole():
 def test_parse_with_authmethods():
     realm = "realm1"
     details = {"roles": {"callee": {}}, "authmethods": ["wampcra"]}
-    hello = Hello.parse([Hello.MESSAGE_TYPE, realm, details])
+    hello = Hello.parse([Hello.TYPE, realm, details])
 
     assert isinstance(hello, Hello)
     assert isinstance(hello.realm, str)
@@ -417,7 +417,7 @@ def test_parse_with_authmethods():
 def test_parse_with_authextra():
     realm = "realm1"
     details = {"roles": {"callee": {}}, "authextra": {"extra": True}}
-    hello = Hello.parse([Hello.MESSAGE_TYPE, realm, details])
+    hello = Hello.parse([Hello.TYPE, realm, details])
 
     assert isinstance(hello, Hello)
     assert isinstance(hello.realm, str)
@@ -438,7 +438,7 @@ def test_parse_with_authextra():
 def test_parse_with_authid_authrole_authmethods():
     realm = "realm1"
     details = {"roles": {"callee": {}}, "authid": "mahad", "authrole": "admin", "authmethods": ["wampcra"]}
-    hello = Hello.parse([Hello.MESSAGE_TYPE, realm, details])
+    hello = Hello.parse([Hello.TYPE, realm, details])
 
     assert isinstance(hello, Hello)
     assert isinstance(hello.realm, str)
@@ -469,7 +469,7 @@ def test_parse_with_authid_authrole_authmethods_authextra():
         "authmethods": ["wampcra"],
         "authextra": {"provider": "dynamic"},
     }
-    hello = Hello.parse([Hello.MESSAGE_TYPE, realm, details])
+    hello = Hello.parse([Hello.TYPE, realm, details])
 
     assert isinstance(hello, Hello)
     assert isinstance(hello.realm, str)
