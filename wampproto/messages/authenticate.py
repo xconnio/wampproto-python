@@ -2,8 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from wampproto.messages import util
-from wampproto.messages import error
+from wampproto.messages import util, exceptions
 from wampproto.messages.message import Message
 
 
@@ -22,7 +21,7 @@ class Authenticate(Message):
 
         signature = msg[1]
         if not isinstance(signature, str):
-            raise error.ProtocolError(f"invalid type {type(signature)} for 'signature' in {Authenticate.TEXT}")
+            raise exceptions.ProtocolError(f"invalid type {type(signature)} for 'signature' in {Authenticate.TEXT}")
 
         extra = util.validate_details_or_raise(msg[2], Authenticate.TEXT)
 

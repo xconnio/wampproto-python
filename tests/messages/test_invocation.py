@@ -1,7 +1,7 @@
 import pytest
 
 from wampproto import messages
-from wampproto.messages import error
+from wampproto.messages import exceptions
 
 
 def test_parse_with_invalid_type():
@@ -42,7 +42,7 @@ def test_parse_with_invalid_message_type():
 
 def test_parse_with_negative_request_id():
     message = [messages.Invocation.TYPE, -1, 365, {}]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(exceptions.ProtocolError) as exc_info:
         messages.Invocation.parse(message)
 
     assert str(exc_info.value) == f"invalid request ID value for {messages.Invocation.TEXT}"
@@ -50,7 +50,7 @@ def test_parse_with_negative_request_id():
 
 def test_parse_with_out_of_range_request_value():
     message = [messages.Invocation.TYPE, 9007199254740993, 23, {}]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(exceptions.ProtocolError) as exc_info:
         messages.Invocation.parse(message)
 
     assert str(exc_info.value) == f"invalid request ID value for {messages.Invocation.TEXT}"
@@ -58,7 +58,7 @@ def test_parse_with_out_of_range_request_value():
 
 def test_parse_with_negative_registration_id():
     message = [messages.Invocation.TYPE, 17, -39, {}]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(exceptions.ProtocolError) as exc_info:
         messages.Invocation.parse(message)
 
     assert str(exc_info.value) == f"invalid registration ID value for {messages.Invocation.TEXT}"
@@ -66,7 +66,7 @@ def test_parse_with_negative_registration_id():
 
 def test_parse_with_out_of_range_registration_value():
     message = [messages.Invocation.TYPE, 80, 9007199254740993, {}]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(exceptions.ProtocolError) as exc_info:
         messages.Invocation.parse(message)
 
     assert str(exc_info.value) == f"invalid registration ID value for {messages.Invocation.TEXT}"
@@ -74,7 +74,7 @@ def test_parse_with_out_of_range_registration_value():
 
 def test_parse_with_invalid_options_type():
     message = [messages.Invocation.TYPE, 80, 753, ["options"]]
-    with pytest.raises(error.InvalidDetailsError) as exc_info:
+    with pytest.raises(exceptions.InvalidDetailsError) as exc_info:
         messages.Invocation.parse(message)
 
     assert str(exc_info.value) == f"options must be of type dictionary for {messages.Invocation.TEXT}"
@@ -82,7 +82,7 @@ def test_parse_with_invalid_options_type():
 
 def test_parse_with_invalid_options_dict_key():
     message = [messages.Invocation.TYPE, 80, 753, {98: "test"}]
-    with pytest.raises(error.InvalidDetailsError) as exc_info:
+    with pytest.raises(exceptions.InvalidDetailsError) as exc_info:
         messages.Invocation.parse(message)
 
     assert str(exc_info.value) == f"invalid type for key '98' in extra details for {messages.Invocation.TEXT}"
@@ -90,7 +90,7 @@ def test_parse_with_invalid_options_dict_key():
 
 def test_parse_with_invalid_args_type():
     message = [messages.Invocation.TYPE, 370, 98, {}, "args"]
-    with pytest.raises(error.InvalidTypeError) as exc_info:
+    with pytest.raises(exceptions.InvalidTypeError) as exc_info:
         messages.Invocation.parse(message)
 
     assert (
@@ -100,7 +100,7 @@ def test_parse_with_invalid_args_type():
 
 def test_parse_with_invalid_kwargs_type():
     message = [messages.Invocation.TYPE, 67, 147, {}, [], ["kwargs"]]
-    with pytest.raises(error.InvalidTypeError) as exc_info:
+    with pytest.raises(exceptions.InvalidTypeError) as exc_info:
         messages.Invocation.parse(message)
 
     assert (

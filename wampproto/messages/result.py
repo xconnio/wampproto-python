@@ -2,8 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from wampproto.messages import util
-from wampproto.messages import error
+from wampproto.messages import util, exceptions
 from wampproto.messages.message import Message
 
 
@@ -35,13 +34,13 @@ class Result(Message):
         if len(msg) > 3:
             args = msg[3]
             if not isinstance(args, list):
-                raise error.InvalidTypeError(list, type(msg[3]), "args", Result.TEXT)
+                raise exceptions.InvalidTypeError(list, type(msg[3]), "args", Result.TEXT)
 
         kwargs = None
         if len(msg) > 4:
             kwargs = msg[4]
             if not isinstance(kwargs, dict):
-                raise error.InvalidTypeError(dict, type(msg[4]), "kwargs", Result.TEXT)
+                raise exceptions.InvalidTypeError(dict, type(msg[4]), "kwargs", Result.TEXT)
 
         return Result(request_id, args, kwargs, options)
 
