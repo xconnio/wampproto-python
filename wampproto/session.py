@@ -12,6 +12,8 @@ class WAMPSession:
         self._invocation_requests: dict[int, int] = {}
         # data structures for PubSub
         self._publish_requests: dict[int, int] = {}
+        self._subscribe_requests: dict[int, int] = {}
+        self._subscriptions: dict[int, int] = {}
 
     def send_message(self, msg: messages.Message) -> bytes:
         if isinstance(msg, messages.Call):
@@ -34,6 +36,10 @@ class WAMPSession:
             if msg.options.get("acknowledge", False):
                 self._publish_requests[msg.request_id] = msg.request_id
 
+            return data
+        elif isinstance(msg, messages.Subscribe):
+            data = self._serializer.serialize(msg)
+            self._subscribe_requests[msg.request_id] = msg.request_id
             return data
 
     def receive(self, data: bytes) -> messages.Message:
@@ -71,6 +77,20 @@ class WAMPSession:
                 self._publish_requests.pop(msg.request_id)
             except KeyError:
                 raise ValueError("received PUBLISHED for invalid registration_id")
+
+            return msg
+        elif isinstance(msg, messages.Subscribed):
+            try:
+                self._subscribe_requests.pop(msg.request_id)
+            except KeyError:
+                raise ValueError("received SUBSCRIBED for invalid request_id")
+
+            self._subscriptions[msg.subscription_id] = msg.subscription_id
+
+            return msg
+        elif isinstance(msg, messages.Event):
+            if msg.subscription_id not in self._subscriptions:
+                raise ValueError("received EVENT for invalid subscription_id")
 
             return msg
         else:
