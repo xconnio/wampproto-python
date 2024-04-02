@@ -30,17 +30,17 @@ def to_message(message: list) -> messages.Message:
             return messages.Authenticate.parse(message)
         case messages.Goodbye.TYPE:
             return messages.Goodbye.parse(message)
-        case messages.Call.MESSAGE_TYPE:
+        case messages.Call.TYPE:
             return messages.Call.parse(message)
-        case messages.Invocation.MESSAGE_TYPE:
+        case messages.Invocation.TYPE:
             return messages.Invocation.parse(message)
-        case messages.Yield.MESSAGE_TYPE:
+        case messages.Yield.TYPE:
             return messages.Yield.parse(message)
-        case messages.Result.MESSAGE_TYPE:
+        case messages.Result.TYPE:
             return messages.Result.parse(message)
-        case messages.Register.MESSAGE_TYPE:
+        case messages.Register.TYPE:
             return messages.Register.parse(message)
-        case messages.Registered.MESSAGE_TYPE:
+        case messages.Registered.TYPE:
             return messages.Registered.parse(message)
         case messages.UnRegister.TYPE:
             return messages.UnRegister.parse(message)
