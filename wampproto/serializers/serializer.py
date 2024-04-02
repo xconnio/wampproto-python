@@ -30,5 +30,24 @@ def to_message(message: list) -> messages.Message:
             return messages.Authenticate.parse(message)
         case messages.Goodbye.TYPE:
             return messages.Goodbye.parse(message)
+        case messages.Call.MESSAGE_TYPE:
+            return messages.Call.parse(message)
+        case messages.Invocation.MESSAGE_TYPE:
+            return messages.Invocation.parse(message)
+        case messages.Yield.MESSAGE_TYPE:
+            return messages.Yield.parse(message)
+        case messages.Result.MESSAGE_TYPE:
+            return messages.Result.parse(message)
+        case messages.Register.MESSAGE_TYPE:
+            return messages.Register.parse(message)
+        case messages.Registered.MESSAGE_TYPE:
+            return messages.Registered.parse(message)
+        case messages.Publish.MESSAGE_TYPE:
+            return messages.Publish.parse(message)
+        case messages.Published.MESSAGE_TYPE:
+            return messages.Published.parse(message)
+        case messages.Event.MESSAGE_TYPE:
+            return messages.Event.parse(message)
+
         case _:
             raise ValueError("unknown message type")
