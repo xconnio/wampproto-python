@@ -49,6 +49,9 @@ class Event(Message):
             message.append(self.args)
 
         if self.kwargs is not None:
+            if self.args is None:
+                message.append([])
+
             message.append(self.kwargs)
 
         return message
