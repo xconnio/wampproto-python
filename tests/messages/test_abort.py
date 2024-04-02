@@ -1,6 +1,6 @@
 import pytest
 
-from wampproto.messages import error
+from wampproto.messages import exception
 from wampproto.messages.abort import Abort
 
 
@@ -40,7 +40,7 @@ def test_parse_with_invalid_message_type():
 
 def test_parse_with_invalid_detail_type():
     message = [3, "detail", "wamp.error.no_such_realm"]
-    with pytest.raises(error.InvalidDetailsError) as exc_info:
+    with pytest.raises(exception.InvalidDetailsError) as exc_info:
         Abort.parse(message)
 
     assert str(exc_info.value) == f"details must be of type dictionary for {Abort.TEXT}"
@@ -48,7 +48,7 @@ def test_parse_with_invalid_detail_type():
 
 def test_parse_with_invalid_details_dict_key():
     message = [3, {1: "v"}, "wamp.error.no_such_realm"]
-    with pytest.raises(error.InvalidDetailsError) as exc_info:
+    with pytest.raises(exception.InvalidDetailsError) as exc_info:
         Abort.parse(message)
 
     assert str(exc_info.value) == f"invalid type for key '1' in extra details for {Abort.TEXT}"
@@ -56,7 +56,7 @@ def test_parse_with_invalid_details_dict_key():
 
 def test_parse_with_reason_none():
     message = [3, {}, None]
-    with pytest.raises(error.InvalidUriError) as exc_info:
+    with pytest.raises(exception.InvalidUriError) as exc_info:
         Abort.parse(message)
 
     assert str(exc_info.value) == f"uri cannot be null for {Abort.TEXT}"
@@ -64,7 +64,7 @@ def test_parse_with_reason_none():
 
 def test_parse_with_invalid_reason_type():
     message = [3, {}, ["wamp.error.no_such_realm"]]
-    with pytest.raises(error.InvalidUriError) as exc_info:
+    with pytest.raises(exception.InvalidUriError) as exc_info:
         Abort.parse(message)
 
     assert str(exc_info.value) == f"uri must be of type string for {Abort.TEXT}"

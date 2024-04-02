@@ -1,7 +1,7 @@
 import pytest
 
 from wampproto.messages import util
-from wampproto.messages import error
+from wampproto.messages import exception
 from wampproto.messages.welcome import Welcome
 
 TEST_SESSION_ID = 25631
@@ -236,7 +236,7 @@ def test_parse_with_invalid_message_type():
 
 def test_parse_with_invalid_session_type():
     message = [2, ["session"], {}]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(exception.ProtocolError) as exc_info:
         Welcome.parse(message)
 
     assert str(exc_info.value) == f"session ID must be an integer for {Welcome.TEXT}"
@@ -244,7 +244,7 @@ def test_parse_with_invalid_session_type():
 
 def test_parse_with_negative_session_value():
     message = [2, -1, {}]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(exception.ProtocolError) as exc_info:
         Welcome.parse(message)
 
     assert str(exc_info.value) == f"invalid Session ID value for {Welcome.TEXT}"
@@ -252,7 +252,7 @@ def test_parse_with_negative_session_value():
 
 def test_parse_with_out_of_range_session_value():
     message = [2, 9007199254740993, "details"]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(exception.ProtocolError) as exc_info:
         Welcome.parse(message)
 
     assert str(exc_info.value) == f"invalid Session ID value for {Welcome.TEXT}"
@@ -260,7 +260,7 @@ def test_parse_with_out_of_range_session_value():
 
 def test_parse_with_invalid_details_type():
     message = [2, TEST_SESSION_ID, "details"]
-    with pytest.raises(error.InvalidDetailsError) as exc_info:
+    with pytest.raises(exception.InvalidDetailsError) as exc_info:
         Welcome.parse(message)
 
     assert str(exc_info.value) == f"details must be of type dictionary for {Welcome.TEXT}"
@@ -268,7 +268,7 @@ def test_parse_with_invalid_details_type():
 
 def test_parse_with_invalid_details_dict_key():
     message = [2, TEST_SESSION_ID, {1: "v"}]
-    with pytest.raises(error.InvalidDetailsError) as exc_info:
+    with pytest.raises(exception.InvalidDetailsError) as exc_info:
         Welcome.parse(message)
 
     assert str(exc_info.value) == f"invalid type for key '1' in extra details for {Welcome.TEXT}"
@@ -276,7 +276,7 @@ def test_parse_with_invalid_details_dict_key():
 
 def test_parse_with_invalid_role_type():
     message = [2, TEST_SESSION_ID, {"roles": "new_role"}]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(exception.ProtocolError) as exc_info:
         Welcome.parse(message)
 
     assert str(exc_info.value) == f"invalid type for 'roles' in details for {Welcome.TEXT}"
@@ -284,7 +284,7 @@ def test_parse_with_invalid_role_type():
 
 def test_parse_with_empty_role():
     message = [2, TEST_SESSION_ID, {"roles": {}}]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(exception.ProtocolError) as exc_info:
         Welcome.parse(message)
 
     assert str(exc_info.value) == f"roles are missing in details for {Welcome.TEXT}"
@@ -292,7 +292,7 @@ def test_parse_with_empty_role():
 
 # def test_parse_with_invalid_role_key():
 #     message = [2, TEST_SESSION_ID, {"roles": {"new_role": {}}}]
-#     with pytest.raises(error.ProtocolError) as exc_info:
+#     with pytest.raises(exception.ProtocolError) as exc_info:
 #         Welcome.parse(message)
 #
 #     assert str(exc_info.value) == f"invalid role 'new_role' in 'roles' details for {Welcome.WELCOME_TEXT}"
@@ -300,7 +300,7 @@ def test_parse_with_empty_role():
 
 def test_parse_with_invalid_authid():
     message = [2, TEST_SESSION_ID, {"roles": {"callee": {}}, "authid": []}]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(exception.ProtocolError) as exc_info:
         Welcome.parse(message)
 
     assert str(exc_info.value) == f"authid must be a type string for {Welcome.TEXT}"
@@ -308,7 +308,7 @@ def test_parse_with_invalid_authid():
 
 def test_parse_with_invalid_authrole():
     message = [2, TEST_SESSION_ID, {"roles": {"callee": {}}, "authrole": []}]
-    with pytest.raises(error.ProtocolError) as exc_info:
+    with pytest.raises(exception.ProtocolError) as exc_info:
         Welcome.parse(message)
 
     assert str(exc_info.value) == f"authrole must be a type string for {Welcome.TEXT}"
@@ -316,7 +316,7 @@ def test_parse_with_invalid_authrole():
 
 def test_parse_with_invalid_authmethod_type():
     message = [2, TEST_SESSION_ID, {"roles": {"callee": {}}, "authmethod": []}]
-    with pytest.raises(error.InvalidTypeError) as exc_info:
+    with pytest.raises(exception.InvalidTypeError) as exc_info:
         Welcome.parse(message)
 
     assert str(exc_info.value) == f"invalid type: expected type 'str', got 'list' for authmethod in '{Welcome.TEXT}'"
@@ -324,7 +324,7 @@ def test_parse_with_invalid_authmethod_type():
 
 def test_parse_with_invalid_authextra_type():
     message = [2, TEST_SESSION_ID, {"roles": {"callee": {}}, "authextra": "authextra"}]
-    with pytest.raises(error.InvalidTypeError) as exc_info:
+    with pytest.raises(exception.InvalidTypeError) as exc_info:
         Welcome.parse(message)
 
     assert str(exc_info.value) == f"invalid type: expected type 'dict', got 'str' for authextra in '{Welcome.TEXT}'"

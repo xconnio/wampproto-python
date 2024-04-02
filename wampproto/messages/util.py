@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any
 
-from wampproto.messages import error
+from wampproto.messages import exception
 
 
 class AllowedRoles(str, Enum):
@@ -17,20 +17,20 @@ class AllowedRoles(str, Enum):
 
 def validate_realm_or_raise(realm: str, error_msg: str) -> str:
     if realm is None:
-        raise error.InvalidRealmError(f"realm cannot be null for {error_msg}")
+        raise exception.InvalidRealmError(f"realm cannot be null for {error_msg}")
 
     if not isinstance(realm, str):
-        raise error.InvalidRealmError(f"realm must be of type string for {error_msg}")
+        raise exception.InvalidRealmError(f"realm must be of type string for {error_msg}")
 
     return realm
 
 
 def validate_uri_or_raise(uri: str, error_msg: str) -> str:
     if uri is None:
-        raise error.InvalidUriError(f"uri cannot be null for {error_msg}")
+        raise exception.InvalidUriError(f"uri cannot be null for {error_msg}")
 
     if not isinstance(uri, str):
-        raise error.InvalidUriError(f"uri must be of type string for {error_msg}")
+        raise exception.InvalidUriError(f"uri must be of type string for {error_msg}")
 
     return uri
 
@@ -39,25 +39,25 @@ def validate_details_or_raise(details: dict[str, Any], error_msg: str, field: st
     if field is None:
         field = "details"
     if not isinstance(details, dict):
-        raise error.InvalidDetailsError(f"{field} must be of type dictionary for {error_msg}")
+        raise exception.InvalidDetailsError(f"{field} must be of type dictionary for {error_msg}")
 
     for key in details.keys():
         if not isinstance(key, str):
-            raise error.InvalidDetailsError(f"invalid type for key '{key}' in extra details for {error_msg}")
+            raise exception.InvalidDetailsError(f"invalid type for key '{key}' in extra details for {error_msg}")
 
     return details
 
 
 def validate_session_id_or_raise(session_id: int, error_msg: str, field: str | None = None) -> int:
     if not isinstance(session_id, int):
-        raise error.ProtocolError(f"session ID must be an integer for {error_msg}")
+        raise exception.ProtocolError(f"session ID must be an integer for {error_msg}")
 
     # session id values lie between 1 and 2**53
     # https://wamp-proto.org/wamp_bp_latest_ietf.html#section-2.1.2-3
     if session_id < 0 or session_id > 9007199254740992:
         if field is None:
             field = "Session ID"
-        raise error.ProtocolError(f"invalid {field} value for {error_msg}")
+        raise exception.ProtocolError(f"invalid {field} value for {error_msg}")
 
     return session_id
 
