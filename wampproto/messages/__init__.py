@@ -16,6 +16,7 @@ from wampproto.messages.published import Published
 from wampproto.messages.event import Event
 from wampproto.messages.subscribe import Subscribe
 from wampproto.messages.subscribed import Subscribed
+from wampproto.messages.unsubscribe import UnSubscribe
 
 __all__ = (
     "Message",
@@ -36,4 +37,5 @@ __all__ = (
     "Event",
     "Subscribe",
     "Subscribed",
+    "UnSubscribe",
 )
