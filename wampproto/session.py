@@ -15,6 +15,7 @@ class WAMPSession:
         self._publish_requests: dict[int, int] = {}
         self._subscribe_requests: dict[int, int] = {}
         self._subscriptions: dict[int, int] = {}
+        self._unsubscribe_requests: dict[int, int] = {}
 
     def send_message(self, msg: messages.Message) -> bytes:
         if isinstance(msg, messages.Call):
@@ -46,6 +47,10 @@ class WAMPSession:
             data = self._serializer.serialize(msg)
             self._subscribe_requests[msg.request_id] = msg.request_id
             return data
+        elif isinstance(msg, messages.UnSubscribe):
+            data = self._serializer.serialize(msg)
+            self._unsubscribe_requests[msg.request_id] = msg.subscription_id
+            return data
 
     def receive(self, data: bytes) -> messages.Message:
         msg = self._serializer.deserialize(data)
@@ -75,7 +80,7 @@ class WAMPSession:
                 raise ValueError("received UNREGISTERED for invalid request_id")
 
             try:
-                self._registrations.pop(registration_id)
+                del self._registrations[registration_id]
             except KeyError:
                 raise ValueError("received UNREGISTERED for invalid registration_id")
 
@@ -103,6 +108,18 @@ class WAMPSession:
                 raise ValueError("received SUBSCRIBED for invalid request_id")
 
             self._subscriptions[msg.subscription_id] = msg.subscription_id
+
+            return msg
+        elif isinstance(msg, messages.UnSubscribed):
+            try:
+                subscription_id = self._unsubscribe_requests.pop(msg.request_id)
+            except KeyError:
+                raise ValueError("received UNSUBSCRIBED for invalid request_id")
+
+            try:
+                del self._subscriptions[subscription_id]
+            except KeyError:
+                raise ValueError("received UNSUBSCRIBED for invalid subscription_id")
 
             return msg
         elif isinstance(msg, messages.Event):
