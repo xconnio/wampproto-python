@@ -2,7 +2,7 @@ from typing import Any
 
 
 class Message:
-    MESSAGE_TYPE = None
+    TYPE = None
 
     @staticmethod
     def parse(msg: list[Any]) -> "Message":

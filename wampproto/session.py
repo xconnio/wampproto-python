@@ -5,10 +5,15 @@ class WAMPSession:
     def __init__(self, serializer: serializers.Serializer = serializers.JSONSerializer()):
         self._serializer = serializer
 
+        # data structures for RPC
         self._call_requests: dict[int, int] = {}
         self._register_requests: dict[int, int] = {}
         self._registrations: dict[int, int] = {}
         self._invocation_requests: dict[int, int] = {}
+        # data structures for PubSub
+        self._publish_requests: dict[int, int] = {}
+        self._subscribe_requests: dict[int, int] = {}
+        self._subscriptions: dict[int, int] = {}
 
     def send_message(self, msg: messages.Message) -> bytes:
         if isinstance(msg, messages.Call):
@@ -26,6 +31,16 @@ class WAMPSession:
             data = self._serializer.serialize(msg)
             self._invocation_requests.pop(msg.request_id)
             return data
+        elif isinstance(msg, messages.Publish):
+            data = self._serializer.serialize(msg)
+            if msg.options.get("acknowledge", False):
+                self._publish_requests[msg.request_id] = msg.request_id
+
+            return data
+        elif isinstance(msg, messages.Subscribe):
+            data = self._serializer.serialize(msg)
+            self._subscribe_requests[msg.request_id] = msg.request_id
+            return data
 
     def receive(self, data: bytes) -> messages.Message:
         msg = self._serializer.deserialize(data)
@@ -33,26 +48,49 @@ class WAMPSession:
 
     def receive_message(self, msg: messages.Message) -> messages.Message:
         if isinstance(msg, messages.Result):
-            if msg.request_id not in self._call_requests:
+            try:
+                self._call_requests.pop(msg.request_id)
+            except KeyError:
                 raise ValueError("received RESULT for invalid request_id")
-
-            self._call_requests.pop(msg.request_id)
 
             return msg
         elif isinstance(msg, messages.Registered):
-            if msg.request_id not in self._register_requests:
+            try:
+                self._register_requests.pop(msg.request_id)
+            except KeyError:
                 raise ValueError("received REGISTERED for invalid request_id")
 
-            self._register_requests.pop(msg.request_id)
             self._registrations[msg.registration_id] = msg.registration_id
 
             return msg
         elif isinstance(msg, messages.Invocation):
-            if msg.registration_id not in self._registrations:
+            try:
+                self._registrations.pop(msg.registration_id)
+            except KeyError:
                 raise ValueError("received INVOCATION for invalid registration_id")
 
-            self._registrations.pop(msg.registration_id)
             self._invocation_requests[msg.request_id] = msg.request_id
+
+            return msg
+        elif isinstance(msg, messages.Published):
+            try:
+                self._publish_requests.pop(msg.request_id)
+            except KeyError:
+                raise ValueError("received PUBLISHED for invalid registration_id")
+
+            return msg
+        elif isinstance(msg, messages.Subscribed):
+            try:
+                self._subscribe_requests.pop(msg.request_id)
+            except KeyError:
+                raise ValueError("received SUBSCRIBED for invalid request_id")
+
+            self._subscriptions[msg.subscription_id] = msg.subscription_id
+
+            return msg
+        elif isinstance(msg, messages.Event):
+            if msg.subscription_id not in self._subscriptions:
+                raise ValueError("received EVENT for invalid subscription_id")
 
             return msg
         else:
