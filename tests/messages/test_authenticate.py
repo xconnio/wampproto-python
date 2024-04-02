@@ -11,7 +11,7 @@ def test_parse_with_invalid_type():
 
     assert (
         str(exc_info.value)
-        == f"invalid message type {type(message).__name__} for {Authenticate.AUTHENTICATE_TEXT}, type should be a list"
+        == f"invalid message type {type(message).__name__} for {Authenticate.TEXT}, type should be a list"
     )
 
 
@@ -36,7 +36,7 @@ def test_parse_with_invalid_message_type():
     with pytest.raises(ValueError) as exc_info:
         Authenticate.parse(message)
 
-    assert str(exc_info.value) == f"invalid message id 4 for {Authenticate.AUTHENTICATE_TEXT}, expected 5"
+    assert str(exc_info.value) == f"invalid message id 4 for {Authenticate.TEXT}, expected 5"
 
 
 def test_parse_with_invalid_signature_type():
@@ -44,7 +44,7 @@ def test_parse_with_invalid_signature_type():
     with pytest.raises(error.ProtocolError) as exc_info:
         Authenticate.parse(message)
 
-    assert str(exc_info.value) == f"invalid type {type(message[1])} for 'signature' in {Authenticate.AUTHENTICATE_TEXT}"
+    assert str(exc_info.value) == f"invalid type {type(message[1])} for 'signature' in {Authenticate.TEXT}"
 
 
 def test_parse_with_invalid_extra_type():
@@ -52,7 +52,7 @@ def test_parse_with_invalid_extra_type():
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         Authenticate.parse(message)
 
-    assert str(exc_info.value) == f"details must be of type dictionary for {Authenticate.AUTHENTICATE_TEXT}"
+    assert str(exc_info.value) == f"details must be of type dictionary for {Authenticate.TEXT}"
 
 
 def test_parse_with_invalid_details_dict_key():
@@ -60,7 +60,7 @@ def test_parse_with_invalid_details_dict_key():
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         Authenticate.parse(message)
 
-    assert str(exc_info.value) == f"invalid type for key '1' in extra details for {Authenticate.AUTHENTICATE_TEXT}"
+    assert str(exc_info.value) == f"invalid type for key '1' in extra details for {Authenticate.TEXT}"
 
 
 def test_parse_correctly():

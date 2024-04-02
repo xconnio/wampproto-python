@@ -188,8 +188,7 @@ def test_parse_with_invalid_type():
         Hello.parse(message)
 
     assert (
-        str(exc_info.value)
-        == f"invalid message type {type(message).__name__} for {Hello.HELLO_TEXT}, type should be a list"
+        str(exc_info.value) == f"invalid message type {type(message).__name__} for {Hello.TEXT}, type should be a list"
     )
 
 
@@ -214,7 +213,7 @@ def test_parse_with_invalid_message_type():
     with pytest.raises(ValueError) as exc_info:
         Hello.parse(message)
 
-    assert str(exc_info.value) == f"invalid message id 2 for {Hello.HELLO_TEXT}, expected 1"
+    assert str(exc_info.value) == f"invalid message id 2 for {Hello.TEXT}, expected 1"
 
 
 def test_parse_with_realm_none():
@@ -222,7 +221,7 @@ def test_parse_with_realm_none():
     with pytest.raises(error.InvalidRealmError) as exc_info:
         Hello.parse(message)
 
-    assert str(exc_info.value) == f"realm cannot be null for {Hello.HELLO_TEXT}"
+    assert str(exc_info.value) == f"realm cannot be null for {Hello.TEXT}"
 
 
 def test_parse_with_invalid_realm_type():
@@ -230,7 +229,7 @@ def test_parse_with_invalid_realm_type():
     with pytest.raises(error.InvalidRealmError) as exc_info:
         Hello.parse(message)
 
-    assert str(exc_info.value) == f"realm must be of type string for {Hello.HELLO_TEXT}"
+    assert str(exc_info.value) == f"realm must be of type string for {Hello.TEXT}"
 
 
 def test_parse_with_invalid_details_type():
@@ -238,7 +237,7 @@ def test_parse_with_invalid_details_type():
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         Hello.parse(message)
 
-    assert str(exc_info.value) == f"details must be of type dictionary for {Hello.HELLO_TEXT}"
+    assert str(exc_info.value) == f"details must be of type dictionary for {Hello.TEXT}"
 
 
 def test_parse_with_invalid_details_dict_key():
@@ -246,7 +245,7 @@ def test_parse_with_invalid_details_dict_key():
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         Hello.parse(message)
 
-    assert str(exc_info.value) == f"invalid type for key '1' in extra details for {Hello.HELLO_TEXT}"
+    assert str(exc_info.value) == f"invalid type for key '1' in extra details for {Hello.TEXT}"
 
 
 def test_parse_with_invalid_role_type():
@@ -254,7 +253,7 @@ def test_parse_with_invalid_role_type():
     with pytest.raises(error.ProtocolError) as exc_info:
         Hello.parse(message)
 
-    assert str(exc_info.value) == f"invalid type for 'roles' in details for {Hello.HELLO_TEXT}"
+    assert str(exc_info.value) == f"invalid type for 'roles' in details for {Hello.TEXT}"
 
 
 def test_parse_with_empty_role():
@@ -262,7 +261,7 @@ def test_parse_with_empty_role():
     with pytest.raises(error.ProtocolError) as exc_info:
         Hello.parse(message)
 
-    assert str(exc_info.value) == f"roles are missing in details for {Hello.HELLO_TEXT}"
+    assert str(exc_info.value) == f"roles are missing in details for {Hello.TEXT}"
 
 
 def test_parse_with_invalid_role_key():
@@ -270,7 +269,7 @@ def test_parse_with_invalid_role_key():
     with pytest.raises(error.ProtocolError) as exc_info:
         Hello.parse(message)
 
-    assert str(exc_info.value) == f"invalid role 'new_role' in 'roles' details for {Hello.HELLO_TEXT}"
+    assert str(exc_info.value) == f"invalid role 'new_role' in 'roles' details for {Hello.TEXT}"
 
 
 def test_parse_with_invalid_authid():
@@ -278,7 +277,7 @@ def test_parse_with_invalid_authid():
     with pytest.raises(error.ProtocolError) as exc_info:
         Hello.parse(message)
 
-    assert str(exc_info.value) == f"authid must be a type string for {Hello.HELLO_TEXT}"
+    assert str(exc_info.value) == f"authid must be a type string for {Hello.TEXT}"
 
 
 def test_parse_with_invalid_authrole():
@@ -286,7 +285,7 @@ def test_parse_with_invalid_authrole():
     with pytest.raises(error.ProtocolError) as exc_info:
         Hello.parse(message)
 
-    assert str(exc_info.value) == f"authrole must be a type string for {Hello.HELLO_TEXT}"
+    assert str(exc_info.value) == f"authrole must be a type string for {Hello.TEXT}"
 
 
 def test_parse_with_invalid_authmethods_type():
@@ -294,9 +293,7 @@ def test_parse_with_invalid_authmethods_type():
     with pytest.raises(error.InvalidTypeError) as exc_info:
         Hello.parse(message)
 
-    assert (
-        str(exc_info.value) == f"invalid type: expected type 'list', got 'str' for authmethods in '{Hello.HELLO_TEXT}'"
-    )
+    assert str(exc_info.value) == f"invalid type: expected type 'list', got 'str' for authmethods in '{Hello.TEXT}'"
 
 
 def test_parse_with_invalid_authmethods_item_type():
@@ -306,7 +303,7 @@ def test_parse_with_invalid_authmethods_item_type():
 
     assert (
         str(exc_info.value)
-        == f"invalid type: expected type 'str', got 'int' for item '23' in 'authmethods' in '{Hello.HELLO_TEXT}'"
+        == f"invalid type: expected type 'str', got 'int' for item '23' in 'authmethods' in '{Hello.TEXT}'"
     )
 
 
@@ -315,7 +312,7 @@ def test_parse_with_invalid_authextra_type():
     with pytest.raises(error.InvalidTypeError) as exc_info:
         Hello.parse(message)
 
-    assert str(exc_info.value) == f"invalid type: expected type 'dict', got 'str' for authextra in '{Hello.HELLO_TEXT}'"
+    assert str(exc_info.value) == f"invalid type: expected type 'dict', got 'str' for authextra in '{Hello.TEXT}'"
 
 
 def test_parse_with_valid_roles():

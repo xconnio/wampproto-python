@@ -8,7 +8,7 @@ from wampproto.messages.message import Message
 
 
 class Authenticate(Message):
-    AUTHENTICATE_TEXT = "AUTHENTICATE"
+    TEXT = "AUTHENTICATE"
     TYPE = 5
 
     def __init__(self, signature: str, extra: dict | None = None):
@@ -18,15 +18,13 @@ class Authenticate(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> Authenticate:
-        util.sanity_check(msg, 3, 3, Authenticate.TYPE, Authenticate.AUTHENTICATE_TEXT)
+        util.sanity_check(msg, 3, 3, Authenticate.TYPE, Authenticate.TEXT)
 
         signature = msg[1]
         if not isinstance(signature, str):
-            raise error.ProtocolError(
-                f"invalid type {type(signature)} for 'signature' in {Authenticate.AUTHENTICATE_TEXT}"
-            )
+            raise error.ProtocolError(f"invalid type {type(signature)} for 'signature' in {Authenticate.TEXT}")
 
-        extra = util.validate_details_or_raise(msg[2], Authenticate.AUTHENTICATE_TEXT)
+        extra = util.validate_details_or_raise(msg[2], Authenticate.TEXT)
 
         return Authenticate(signature, extra)
 

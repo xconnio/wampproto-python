@@ -8,7 +8,7 @@ from wampproto.messages import error
 
 
 class Call(Message):
-    Call_TEXT = "CALL"
+    TEXT = "CALL"
     TYPE = 48
 
     def __init__(
@@ -28,23 +28,23 @@ class Call(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> Call:
-        util.sanity_check(msg, 4, 6, Call.TYPE, Call.Call_TEXT)
+        util.sanity_check(msg, 4, 6, Call.TYPE, Call.TEXT)
 
-        request_id = util.validate_session_id_or_raise(msg[1], Call.Call_TEXT, "request ID")
-        options = util.validate_details_or_raise(msg[2], Call.Call_TEXT, "options")
-        uri = util.validate_uri_or_raise(msg[3], Call.Call_TEXT)
+        request_id = util.validate_session_id_or_raise(msg[1], Call.TEXT, "request ID")
+        options = util.validate_details_or_raise(msg[2], Call.TEXT, "options")
+        uri = util.validate_uri_or_raise(msg[3], Call.TEXT)
 
         args = None
         if len(msg) > 4:
             args = msg[4]
             if not isinstance(args, list):
-                raise error.InvalidTypeError(list, type(msg[4]), "args", Call.Call_TEXT)
+                raise error.InvalidTypeError(list, type(msg[4]), "args", Call.TEXT)
 
         kwargs = None
         if len(msg) > 5:
             kwargs = msg[5]
             if not isinstance(kwargs, dict):
-                raise error.InvalidTypeError(dict, type(msg[5]), "kwargs", Call.Call_TEXT)
+                raise error.InvalidTypeError(dict, type(msg[5]), "kwargs", Call.TEXT)
 
         return Call(request_id, uri, args, kwargs, options)
 

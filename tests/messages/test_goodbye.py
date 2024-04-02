@@ -11,7 +11,7 @@ def test_parse_with_invalid_type():
 
     assert (
         str(exc_info.value)
-        == f"invalid message type {type(message).__name__} for {Goodbye.GOODBYE_TEXT}, type should be a list"
+        == f"invalid message type {type(message).__name__} for {Goodbye.TEXT}, type should be a list"
     )
 
 
@@ -36,7 +36,7 @@ def test_parse_with_invalid_message_type():
     with pytest.raises(ValueError) as exc_info:
         Goodbye.parse(message)
 
-    assert str(exc_info.value) == f"invalid message id 3 for {Goodbye.GOODBYE_TEXT}, expected {Goodbye.TYPE}"
+    assert str(exc_info.value) == f"invalid message id 3 for {Goodbye.TEXT}, expected {Goodbye.TYPE}"
 
 
 def test_parse_with_invalid_detail_type():
@@ -44,7 +44,7 @@ def test_parse_with_invalid_detail_type():
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         Goodbye.parse(message)
 
-    assert str(exc_info.value) == f"details must be of type dictionary for {Goodbye.GOODBYE_TEXT}"
+    assert str(exc_info.value) == f"details must be of type dictionary for {Goodbye.TEXT}"
 
 
 def test_parse_with_invalid_details_dict_key():
@@ -52,7 +52,7 @@ def test_parse_with_invalid_details_dict_key():
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         Goodbye.parse(message)
 
-    assert str(exc_info.value) == f"invalid type for key '1' in extra details for {Goodbye.GOODBYE_TEXT}"
+    assert str(exc_info.value) == f"invalid type for key '1' in extra details for {Goodbye.TEXT}"
 
 
 def test_parse_with_reason_none():
@@ -60,7 +60,7 @@ def test_parse_with_reason_none():
     with pytest.raises(error.InvalidUriError) as exc_info:
         Goodbye.parse(message)
 
-    assert str(exc_info.value) == f"uri cannot be null for {Goodbye.GOODBYE_TEXT}"
+    assert str(exc_info.value) == f"uri cannot be null for {Goodbye.TEXT}"
 
 
 def test_parse_with_invalid_reason_type():
@@ -68,7 +68,7 @@ def test_parse_with_invalid_reason_type():
     with pytest.raises(error.InvalidUriError) as exc_info:
         Goodbye.parse(message)
 
-    assert str(exc_info.value) == f"uri must be of type string for {Goodbye.GOODBYE_TEXT}"
+    assert str(exc_info.value) == f"uri must be of type string for {Goodbye.TEXT}"
 
 
 def test_parse_correctly():

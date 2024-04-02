@@ -9,7 +9,7 @@ def test_parse_with_invalid_type():
     with pytest.raises(ValueError) as exc_info:
         messages.Call.parse(message)
 
-    assert str(exc_info.value) == f"invalid message type str for {messages.Call.Call_TEXT}, type should be a list"
+    assert str(exc_info.value) == f"invalid message type str for {messages.Call.TEXT}, type should be a list"
 
 
 def test_parse_with_invalid_min_length():
@@ -34,10 +34,7 @@ def test_parse_with_invalid_message_type():
     with pytest.raises(ValueError) as exc_info:
         messages.Call.parse(message)
 
-    assert (
-        str(exc_info.value)
-        == f"invalid message id 10 for {messages.Call.Call_TEXT}, expected {messages.Call.TYPE}"
-    )
+    assert str(exc_info.value) == f"invalid message id 10 for {messages.Call.TEXT}, expected {messages.Call.TYPE}"
 
 
 def test_parse_with_negative_request_id():
@@ -45,7 +42,7 @@ def test_parse_with_negative_request_id():
     with pytest.raises(error.ProtocolError) as exc_info:
         messages.Call.parse(message)
 
-    assert str(exc_info.value) == f"invalid request ID value for {messages.Call.Call_TEXT}"
+    assert str(exc_info.value) == f"invalid request ID value for {messages.Call.TEXT}"
 
 
 def test_parse_with_out_of_range_request_value():
@@ -53,7 +50,7 @@ def test_parse_with_out_of_range_request_value():
     with pytest.raises(error.ProtocolError) as exc_info:
         messages.Call.parse(message)
 
-    assert str(exc_info.value) == f"invalid request ID value for {messages.Call.Call_TEXT}"
+    assert str(exc_info.value) == f"invalid request ID value for {messages.Call.TEXT}"
 
 
 def test_parse_with_invalid_options_type():
@@ -61,7 +58,7 @@ def test_parse_with_invalid_options_type():
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         messages.Call.parse(message)
 
-    assert str(exc_info.value) == f"options must be of type dictionary for {messages.Call.Call_TEXT}"
+    assert str(exc_info.value) == f"options must be of type dictionary for {messages.Call.TEXT}"
 
 
 def test_parse_with_invalid_options_dict_key():
@@ -69,7 +66,7 @@ def test_parse_with_invalid_options_dict_key():
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         messages.Call.parse(message)
 
-    assert str(exc_info.value) == f"invalid type for key '2' in extra details for {messages.Call.Call_TEXT}"
+    assert str(exc_info.value) == f"invalid type for key '2' in extra details for {messages.Call.TEXT}"
 
 
 def test_parse_with_uri_none():
@@ -77,7 +74,7 @@ def test_parse_with_uri_none():
     with pytest.raises(error.InvalidUriError) as exc_info:
         messages.Call.parse(message)
 
-    assert str(exc_info.value) == f"uri cannot be null for {messages.Call.Call_TEXT}"
+    assert str(exc_info.value) == f"uri cannot be null for {messages.Call.TEXT}"
 
 
 def test_parse_with_invalid_uri_type():
@@ -85,7 +82,7 @@ def test_parse_with_invalid_uri_type():
     with pytest.raises(error.InvalidUriError) as exc_info:
         messages.Call.parse(message)
 
-    assert str(exc_info.value) == f"uri must be of type string for {messages.Call.Call_TEXT}"
+    assert str(exc_info.value) == f"uri must be of type string for {messages.Call.TEXT}"
 
 
 def test_parse_with_invalid_args_type():
@@ -93,9 +90,7 @@ def test_parse_with_invalid_args_type():
     with pytest.raises(error.InvalidTypeError) as exc_info:
         messages.Call.parse(message)
 
-    assert (
-        str(exc_info.value) == f"invalid type: expected type 'list', got 'str' for args in '{messages.Call.Call_TEXT}'"
-    )
+    assert str(exc_info.value) == f"invalid type: expected type 'list', got 'str' for args in '{messages.Call.TEXT}'"
 
 
 def test_parse_with_invalid_kwargs_type():
@@ -103,10 +98,7 @@ def test_parse_with_invalid_kwargs_type():
     with pytest.raises(error.InvalidTypeError) as exc_info:
         messages.Call.parse(message)
 
-    assert (
-        str(exc_info.value)
-        == f"invalid type: expected type 'dict', got 'list' for kwargs in '{messages.Call.Call_TEXT}'"
-    )
+    assert str(exc_info.value) == f"invalid type: expected type 'dict', got 'list' for kwargs in '{messages.Call.TEXT}'"
 
 
 def test_parse_correctly():

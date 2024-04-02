@@ -7,7 +7,7 @@ from wampproto.messages.message import Message
 
 
 class Goodbye(Message):
-    GOODBYE_TEXT = "GOODBYE"
+    TEXT = "GOODBYE"
     TYPE = 6
 
     def __init__(self, details: dict, reason: str):
@@ -17,11 +17,11 @@ class Goodbye(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> Goodbye:
-        util.sanity_check(msg, 3, 3, Goodbye.TYPE, Goodbye.GOODBYE_TEXT)
+        util.sanity_check(msg, 3, 3, Goodbye.TYPE, Goodbye.TEXT)
 
-        details = util.validate_details_or_raise(msg[1], Goodbye.GOODBYE_TEXT)
+        details = util.validate_details_or_raise(msg[1], Goodbye.TEXT)
 
-        reason = util.validate_uri_or_raise(msg[2], Goodbye.GOODBYE_TEXT)
+        reason = util.validate_uri_or_raise(msg[2], Goodbye.TEXT)
 
         return Goodbye(details, reason)
 
