@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from wampproto.messages.message import Message
-from wampproto.messages import util, exception
+from wampproto.messages import util, exceptions
 
 
 class Call(Message):
@@ -37,13 +37,13 @@ class Call(Message):
         if len(msg) > 4:
             args = msg[4]
             if not isinstance(args, list):
-                raise exception.InvalidTypeError(list, type(msg[4]), "args", Call.TEXT)
+                raise exceptions.InvalidTypeError(list, type(msg[4]), "args", Call.TEXT)
 
         kwargs = None
         if len(msg) > 5:
             kwargs = msg[5]
             if not isinstance(kwargs, dict):
-                raise exception.InvalidTypeError(dict, type(msg[5]), "kwargs", Call.TEXT)
+                raise exceptions.InvalidTypeError(dict, type(msg[5]), "kwargs", Call.TEXT)
 
         return Call(request_id, uri, args, kwargs, options)
 

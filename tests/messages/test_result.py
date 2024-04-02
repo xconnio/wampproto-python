@@ -1,7 +1,7 @@
 import pytest
 
 from wampproto import messages
-from wampproto.messages import exception
+from wampproto.messages import exceptions
 
 
 def test_parse_with_invalid_type():
@@ -45,7 +45,7 @@ def test_parse_with_invalid_message_type():
 
 def test_parse_with_negative_request_id():
     message = [messages.Result.TYPE, -2, {}]
-    with pytest.raises(exception.ProtocolError) as exc_info:
+    with pytest.raises(exceptions.ProtocolError) as exc_info:
         messages.Result.parse(message)
 
     assert str(exc_info.value) == f"invalid request ID value for {messages.Result.TEXT}"
@@ -53,7 +53,7 @@ def test_parse_with_negative_request_id():
 
 def test_parse_with_out_of_range_request_value():
     message = [messages.Result.TYPE, 9007199254740993, {}]
-    with pytest.raises(exception.ProtocolError) as exc_info:
+    with pytest.raises(exceptions.ProtocolError) as exc_info:
         messages.Result.parse(message)
 
     assert str(exc_info.value) == f"invalid request ID value for {messages.Result.TEXT}"
@@ -61,7 +61,7 @@ def test_parse_with_out_of_range_request_value():
 
 def test_parse_with_invalid_options_type():
     message = [messages.Result.TYPE, 367, "options"]
-    with pytest.raises(exception.InvalidDetailsError) as exc_info:
+    with pytest.raises(exceptions.InvalidDetailsError) as exc_info:
         messages.Result.parse(message)
 
     assert str(exc_info.value) == f"options must be of type dictionary for {messages.Result.TEXT}"
@@ -69,7 +69,7 @@ def test_parse_with_invalid_options_type():
 
 def test_parse_with_invalid_options_dict_key():
     message = [messages.Result.TYPE, 367, {2: "v"}]
-    with pytest.raises(exception.InvalidDetailsError) as exc_info:
+    with pytest.raises(exceptions.InvalidDetailsError) as exc_info:
         messages.Result.parse(message)
 
     assert str(exc_info.value) == f"invalid type for key '2' in extra details for {messages.Result.TEXT}"
@@ -77,7 +77,7 @@ def test_parse_with_invalid_options_dict_key():
 
 def test_parse_with_invalid_args_type():
     message = [messages.Result.TYPE, 361, {}, "args"]
-    with pytest.raises(exception.InvalidTypeError) as exc_info:
+    with pytest.raises(exceptions.InvalidTypeError) as exc_info:
         messages.Result.parse(message)
 
     assert str(exc_info.value) == f"invalid type: expected type 'list', got 'str' for args in '{messages.Result.TEXT}'"
@@ -85,7 +85,7 @@ def test_parse_with_invalid_args_type():
 
 def test_parse_with_invalid_kwargs_type():
     message = [messages.Result.TYPE, 367, {}, [], ["kwargs"]]
-    with pytest.raises(exception.InvalidTypeError) as exc_info:
+    with pytest.raises(exceptions.InvalidTypeError) as exc_info:
         messages.Result.parse(message)
 
     assert (

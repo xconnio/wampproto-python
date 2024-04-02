@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from wampproto.messages import util, exception
+from wampproto.messages import util, exceptions
 from wampproto.messages.message import Message
 
 
@@ -21,7 +21,7 @@ class Challenge(Message):
 
         authmethod = msg[1]
         if not isinstance(authmethod, str):
-            raise exception.ProtocolError(f"invalid type {type(authmethod)} for 'authmethod' in {Challenge.TEXT}")
+            raise exceptions.ProtocolError(f"invalid type {type(authmethod)} for 'authmethod' in {Challenge.TEXT}")
 
         extra = util.validate_details_or_raise(msg[2], Challenge.TEXT)
 

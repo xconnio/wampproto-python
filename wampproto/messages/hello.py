@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from wampproto.messages import util, exception
+from wampproto.messages import util, exceptions
 from wampproto.messages.message import Message
 
 
@@ -36,40 +36,40 @@ class Hello(Message):
 
         roles = details.get("roles", {})
         if not isinstance(roles, dict):
-            raise exception.ProtocolError(f"invalid type for 'roles' in details for {Hello.TEXT}")
+            raise exceptions.ProtocolError(f"invalid type for 'roles' in details for {Hello.TEXT}")
 
         if len(roles) == 0:
-            raise exception.ProtocolError(f"roles are missing in details for {Hello.TEXT}")
+            raise exceptions.ProtocolError(f"roles are missing in details for {Hello.TEXT}")
 
         for role in roles.keys():
             if role not in util.AllowedRoles.__members__.values():
-                raise exception.ProtocolError(f"invalid role '{role}' in 'roles' details for {Hello.TEXT}")
+                raise exceptions.ProtocolError(f"invalid role '{role}' in 'roles' details for {Hello.TEXT}")
 
         authid = details.get("authid", None)
         if authid is not None:
             if not isinstance(authid, str):
-                raise exception.ProtocolError(f"authid must be a type string for {Hello.TEXT}")
+                raise exceptions.ProtocolError(f"authid must be a type string for {Hello.TEXT}")
 
         authrole = details.get("authrole", None)
         if authrole is not None:
             if not isinstance(authrole, str):
-                raise exception.ProtocolError(f"authrole must be a type string for {Hello.TEXT}")
+                raise exceptions.ProtocolError(f"authrole must be a type string for {Hello.TEXT}")
 
         authmethods = details.get("authmethods", None)
         if authmethods is not None:
             if not isinstance(authmethods, list):
-                raise exception.InvalidTypeError(list, type(authmethods), "authmethods", Hello.TEXT)
+                raise exceptions.InvalidTypeError(list, type(authmethods), "authmethods", Hello.TEXT)
 
             for authmethod in authmethods:
                 if not isinstance(authmethod, str):
-                    raise exception.InvalidTypeError(
+                    raise exceptions.InvalidTypeError(
                         str, type(authmethod), f"item '{authmethod}' in 'authmethods'", Hello.TEXT
                     )
 
         authextra = details.get("authextra", None)
         if authextra is not None:
             if not isinstance(authextra, dict):
-                raise exception.InvalidTypeError(dict, type(authextra), "authextra", Hello.TEXT)
+                raise exceptions.InvalidTypeError(dict, type(authextra), "authextra", Hello.TEXT)
 
         return Hello(
             realm=realm, roles=roles, authid=authid, authrole=authrole, authmethods=authmethods, authextra=authextra
