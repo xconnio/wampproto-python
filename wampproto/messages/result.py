@@ -9,7 +9,7 @@ from wampproto.messages.message import Message
 
 class Result(Message):
     RESULT_TEXT = "RESULT"
-    MESSAGE_TYPE = 50
+    TYPE = 50
 
     def __init__(
         self,
@@ -26,7 +26,7 @@ class Result(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> Result:
-        util.sanity_check(msg, 3, 5, Result.MESSAGE_TYPE, Result.RESULT_TEXT)
+        util.sanity_check(msg, 3, 5, Result.TYPE, Result.RESULT_TEXT)
 
         request_id = util.validate_session_id_or_raise(msg[1], Result.RESULT_TEXT, "request ID")
         options = util.validate_details_or_raise(msg[2], Result.RESULT_TEXT, "options")
@@ -46,7 +46,7 @@ class Result(Message):
         return Result(request_id, args, kwargs, options)
 
     def marshal(self) -> list[Any]:
-        message = [Result.MESSAGE_TYPE, self.request_id, self.options]
+        message = [Result.TYPE, self.request_id, self.options]
         if self.args is not None:
             message.append(self.args)
 

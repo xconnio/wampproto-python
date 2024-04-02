@@ -9,7 +9,7 @@ from wampproto.messages.message import Message
 
 class Challenge(Message):
     CHALLENGE_TEXT = "CHALLENGE"
-    MESSAGE_TYPE = 4
+    TYPE = 4
 
     def __init__(self, authmethod: str, extra: dict | None = None):
         super().__init__()
@@ -18,7 +18,7 @@ class Challenge(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> Challenge:
-        util.sanity_check(msg, 3, 3, Challenge.MESSAGE_TYPE, Challenge.CHALLENGE_TEXT)
+        util.sanity_check(msg, 3, 3, Challenge.TYPE, Challenge.CHALLENGE_TEXT)
 
         authmethod = msg[1]
         if not isinstance(authmethod, str):
@@ -29,4 +29,4 @@ class Challenge(Message):
         return Challenge(authmethod, extra)
 
     def marshal(self) -> list[Any]:
-        return [Challenge.MESSAGE_TYPE, self.authmethod, self.extra]
+        return [Challenge.TYPE, self.authmethod, self.extra]

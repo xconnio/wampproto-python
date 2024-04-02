@@ -9,7 +9,7 @@ from wampproto.messages.message import Message
 
 class Welcome(Message):
     WELCOME_TEXT = "WELCOME"
-    MESSAGE_TYPE = 2
+    TYPE = 2
 
     def __init__(
         self,
@@ -30,7 +30,7 @@ class Welcome(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> Welcome:
-        util.sanity_check(msg, 3, 3, Welcome.MESSAGE_TYPE, Welcome.WELCOME_TEXT)
+        util.sanity_check(msg, 3, 3, Welcome.TYPE, Welcome.WELCOME_TEXT)
 
         session_id = util.validate_session_id_or_raise(msg[1], Welcome.WELCOME_TEXT)
         details = util.validate_details_or_raise(msg[2], Welcome.WELCOME_TEXT)
@@ -90,4 +90,4 @@ class Welcome(Message):
         if self.authextra is not None:
             details["authextra"] = self.authextra
 
-        return [self.MESSAGE_TYPE, self.session_id, details]
+        return [self.TYPE, self.session_id, details]

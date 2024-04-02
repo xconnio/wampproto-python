@@ -8,7 +8,7 @@ from wampproto.messages.message import Message
 
 class Abort(Message):
     ABORT_TEXT = "ABORT"
-    MESSAGE_TYPE = 3
+    TYPE = 3
 
     def __init__(self, details: dict, reason: str):
         super().__init__()
@@ -17,7 +17,7 @@ class Abort(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> Abort:
-        util.sanity_check(msg, 3, 3, Abort.MESSAGE_TYPE, Abort.ABORT_TEXT)
+        util.sanity_check(msg, 3, 3, Abort.TYPE, Abort.ABORT_TEXT)
 
         details = util.validate_details_or_raise(msg[1], Abort.ABORT_TEXT)
 
@@ -26,4 +26,4 @@ class Abort(Message):
         return Abort(details, reason)
 
     def marshal(self) -> list[Any]:
-        return [Abort.MESSAGE_TYPE, self.details, self.reason]
+        return [Abort.TYPE, self.details, self.reason]

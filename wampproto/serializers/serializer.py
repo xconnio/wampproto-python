@@ -18,17 +18,17 @@ def to_message(message: list) -> messages.Message:
         raise TypeError(f"invalid message type '{type(message[0])}', expected an integer")
 
     match message_type:
-        case messages.Hello.MESSAGE_TYPE:
+        case messages.Hello.TYPE:
             return messages.Hello.parse(message)
-        case messages.Welcome.MESSAGE_TYPE:
+        case messages.Welcome.TYPE:
             return messages.Welcome.parse(message)
-        case messages.Abort.MESSAGE_TYPE:
+        case messages.Abort.TYPE:
             return messages.Abort.parse(message)
-        case messages.Challenge.MESSAGE_TYPE:
+        case messages.Challenge.TYPE:
             return messages.Challenge.parse(message)
-        case messages.Authenticate.MESSAGE_TYPE:
+        case messages.Authenticate.TYPE:
             return messages.Authenticate.parse(message)
-        case messages.Goodbye.MESSAGE_TYPE:
+        case messages.Goodbye.TYPE:
             return messages.Goodbye.parse(message)
         case _:
             raise ValueError("unknown message type")

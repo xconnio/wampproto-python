@@ -36,7 +36,7 @@ def test_parse_with_invalid_message_type():
     with pytest.raises(ValueError) as exc_info:
         Goodbye.parse(message)
 
-    assert str(exc_info.value) == f"invalid message id 3 for {Goodbye.GOODBYE_TEXT}, expected {Goodbye.MESSAGE_TYPE}"
+    assert str(exc_info.value) == f"invalid message id 3 for {Goodbye.GOODBYE_TEXT}, expected {Goodbye.TYPE}"
 
 
 def test_parse_with_invalid_detail_type():
@@ -93,7 +93,7 @@ def test_marshal_with_empty_details():
     assert isinstance(message, list)
 
     assert isinstance(message[0], int)
-    assert message[0] == Goodbye.MESSAGE_TYPE
+    assert message[0] == Goodbye.TYPE
 
     assert message[1] == dict()
 
@@ -109,7 +109,7 @@ def test_marshal_with_details():
     assert isinstance(message, list)
 
     assert isinstance(message[0], int)
-    assert message[0] == Goodbye.MESSAGE_TYPE
+    assert message[0] == Goodbye.TYPE
 
     assert isinstance(message[1], dict)
     assert message[1] == details
