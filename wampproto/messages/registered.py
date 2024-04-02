@@ -5,7 +5,7 @@ from wampproto.messages import util
 
 
 class Registered(Message):
-    Registered_Text = "REGISTERED"
+    TEXT = "REGISTERED"
     TYPE = 65
 
     def __init__(self, request_id: int, registration_id: int):
@@ -15,10 +15,10 @@ class Registered(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> "Registered":
-        util.sanity_check(msg, 3, 3, Registered.TYPE, Registered.Registered_Text)
+        util.sanity_check(msg, 3, 3, Registered.TYPE, Registered.TEXT)
 
-        request_id = util.validate_session_id_or_raise(msg[1], Registered.Registered_Text, "request ID")
-        registration_id = util.validate_session_id_or_raise(msg[2], Registered.Registered_Text, "registration ID")
+        request_id = util.validate_session_id_or_raise(msg[1], Registered.TEXT, "request ID")
+        registration_id = util.validate_session_id_or_raise(msg[2], Registered.TEXT, "registration ID")
 
         return Registered(request_id, registration_id)
 

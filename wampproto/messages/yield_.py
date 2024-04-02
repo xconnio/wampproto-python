@@ -8,7 +8,7 @@ from wampproto.messages.message import Message
 
 
 class Yield(Message):
-    YIELD_TEXT = "YIELD"
+    TEXT = "YIELD"
     TYPE = 70
 
     def __init__(
@@ -26,22 +26,22 @@ class Yield(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> Yield:
-        util.sanity_check(msg, 3, 5, Yield.TYPE, Yield.YIELD_TEXT)
+        util.sanity_check(msg, 3, 5, Yield.TYPE, Yield.TEXT)
 
-        request_id = util.validate_session_id_or_raise(msg[1], Yield.YIELD_TEXT, "request ID")
-        options = util.validate_details_or_raise(msg[2], Yield.YIELD_TEXT, "options")
+        request_id = util.validate_session_id_or_raise(msg[1], Yield.TEXT, "request ID")
+        options = util.validate_details_or_raise(msg[2], Yield.TEXT, "options")
 
         args = None
         if len(msg) > 3:
             args = msg[3]
             if not isinstance(args, list):
-                raise error.InvalidTypeError(list, type(msg[3]), "args", Yield.YIELD_TEXT)
+                raise error.InvalidTypeError(list, type(msg[3]), "args", Yield.TEXT)
 
         kwargs = None
         if len(msg) > 4:
             kwargs = msg[4]
             if not isinstance(kwargs, dict):
-                raise error.InvalidTypeError(dict, type(msg[4]), "kwargs", Yield.YIELD_TEXT)
+                raise error.InvalidTypeError(dict, type(msg[4]), "kwargs", Yield.TEXT)
 
         return Yield(request_id, args, kwargs, options)
 

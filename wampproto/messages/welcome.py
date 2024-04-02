@@ -8,7 +8,7 @@ from wampproto.messages.message import Message
 
 
 class Welcome(Message):
-    WELCOME_TEXT = "WELCOME"
+    TEXT = "WELCOME"
     TYPE = 2
 
     def __init__(
@@ -30,17 +30,17 @@ class Welcome(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> Welcome:
-        util.sanity_check(msg, 3, 3, Welcome.TYPE, Welcome.WELCOME_TEXT)
+        util.sanity_check(msg, 3, 3, Welcome.TYPE, Welcome.TEXT)
 
-        session_id = util.validate_session_id_or_raise(msg[1], Welcome.WELCOME_TEXT)
-        details = util.validate_details_or_raise(msg[2], Welcome.WELCOME_TEXT)
+        session_id = util.validate_session_id_or_raise(msg[1], Welcome.TEXT)
+        details = util.validate_details_or_raise(msg[2], Welcome.TEXT)
 
         roles = details.get("roles", {})
         if not isinstance(roles, dict):
-            raise error.ProtocolError(f"invalid type for 'roles' in details for {Welcome.WELCOME_TEXT}")
+            raise error.ProtocolError(f"invalid type for 'roles' in details for {Welcome.TEXT}")
 
         if len(roles) == 0:
-            raise error.ProtocolError(f"roles are missing in details for {Welcome.WELCOME_TEXT}")
+            raise error.ProtocolError(f"roles are missing in details for {Welcome.TEXT}")
 
         # for role in roles.keys():
         #     if role not in util.AllowedRoles.__members__.values():
@@ -49,22 +49,22 @@ class Welcome(Message):
         authid = details.get("authid", None)
         if authid is not None:
             if not isinstance(authid, str):
-                raise error.ProtocolError(f"authid must be a type string for {Welcome.WELCOME_TEXT}")
+                raise error.ProtocolError(f"authid must be a type string for {Welcome.TEXT}")
 
         authrole = details.get("authrole", None)
         if authrole is not None:
             if not isinstance(authrole, str):
-                raise error.ProtocolError(f"authrole must be a type string for {Welcome.WELCOME_TEXT}")
+                raise error.ProtocolError(f"authrole must be a type string for {Welcome.TEXT}")
 
         authmethod = details.get("authmethod", None)
         if authmethod is not None:
             if not isinstance(authmethod, str):
-                raise error.InvalidTypeError(str, type(authmethod), "authmethod", Welcome.WELCOME_TEXT)
+                raise error.InvalidTypeError(str, type(authmethod), "authmethod", Welcome.TEXT)
 
         authextra = details.get("authextra", None)
         if authextra is not None:
             if not isinstance(authextra, dict):
-                raise error.InvalidTypeError(dict, type(authextra), "authextra", Welcome.WELCOME_TEXT)
+                raise error.InvalidTypeError(dict, type(authextra), "authextra", Welcome.TEXT)
 
         return Welcome(
             session_id=session_id,

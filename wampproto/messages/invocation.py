@@ -8,7 +8,7 @@ from wampproto.messages.message import Message
 
 
 class Invocation(Message):
-    INVOCATION_TEXT = "INVOCATION"
+    TEXT = "INVOCATION"
     TYPE = 68
 
     def __init__(
@@ -28,23 +28,23 @@ class Invocation(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> Invocation:
-        util.sanity_check(msg, 4, 6, Invocation.TYPE, Invocation.INVOCATION_TEXT)
+        util.sanity_check(msg, 4, 6, Invocation.TYPE, Invocation.TEXT)
 
-        request_id = util.validate_session_id_or_raise(msg[1], Invocation.INVOCATION_TEXT, "request ID")
-        registration_id = util.validate_session_id_or_raise(msg[2], Invocation.INVOCATION_TEXT, "registration ID")
-        options = util.validate_details_or_raise(msg[3], Invocation.INVOCATION_TEXT, "options")
+        request_id = util.validate_session_id_or_raise(msg[1], Invocation.TEXT, "request ID")
+        registration_id = util.validate_session_id_or_raise(msg[2], Invocation.TEXT, "registration ID")
+        options = util.validate_details_or_raise(msg[3], Invocation.TEXT, "options")
 
         args = None
         if len(msg) > 4:
             args = msg[4]
             if not isinstance(args, list):
-                raise error.InvalidTypeError(list, type(msg[4]), "args", Invocation.INVOCATION_TEXT)
+                raise error.InvalidTypeError(list, type(msg[4]), "args", Invocation.TEXT)
 
         kwargs = None
         if len(msg) > 5:
             kwargs = msg[5]
             if not isinstance(kwargs, dict):
-                raise error.InvalidTypeError(dict, type(msg[5]), "kwargs", Invocation.INVOCATION_TEXT)
+                raise error.InvalidTypeError(dict, type(msg[5]), "kwargs", Invocation.TEXT)
 
         return Invocation(request_id, registration_id, args, kwargs, options)
 

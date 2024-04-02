@@ -8,7 +8,7 @@ from wampproto.messages.message import Message
 
 
 class Result(Message):
-    RESULT_TEXT = "RESULT"
+    TEXT = "RESULT"
     TYPE = 50
 
     def __init__(
@@ -26,22 +26,22 @@ class Result(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> Result:
-        util.sanity_check(msg, 3, 5, Result.TYPE, Result.RESULT_TEXT)
+        util.sanity_check(msg, 3, 5, Result.TYPE, Result.TEXT)
 
-        request_id = util.validate_session_id_or_raise(msg[1], Result.RESULT_TEXT, "request ID")
-        options = util.validate_details_or_raise(msg[2], Result.RESULT_TEXT, "options")
+        request_id = util.validate_session_id_or_raise(msg[1], Result.TEXT, "request ID")
+        options = util.validate_details_or_raise(msg[2], Result.TEXT, "options")
 
         args = None
         if len(msg) > 3:
             args = msg[3]
             if not isinstance(args, list):
-                raise error.InvalidTypeError(list, type(msg[3]), "args", Result.RESULT_TEXT)
+                raise error.InvalidTypeError(list, type(msg[3]), "args", Result.TEXT)
 
         kwargs = None
         if len(msg) > 4:
             kwargs = msg[4]
             if not isinstance(kwargs, dict):
-                raise error.InvalidTypeError(dict, type(msg[4]), "kwargs", Result.RESULT_TEXT)
+                raise error.InvalidTypeError(dict, type(msg[4]), "kwargs", Result.TEXT)
 
         return Result(request_id, args, kwargs, options)
 

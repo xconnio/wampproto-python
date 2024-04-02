@@ -11,7 +11,7 @@ def test_parse_with_invalid_type():
 
     assert (
         str(exc_info.value)
-        == f"invalid message type {type(message).__name__} for {messages.Yield.YIELD_TEXT}, type should be a list"
+        == f"invalid message type {type(message).__name__} for {messages.Yield.TEXT}, type should be a list"
     )
 
 
@@ -37,10 +37,7 @@ def test_parse_with_invalid_message_type():
     with pytest.raises(ValueError) as exc_info:
         messages.Yield.parse(message)
 
-    assert (
-        str(exc_info.value)
-        == f"invalid message id 11 for {messages.Yield.YIELD_TEXT}, expected {messages.Yield.TYPE}"
-    )
+    assert str(exc_info.value) == f"invalid message id 11 for {messages.Yield.TEXT}, expected {messages.Yield.TYPE}"
 
 
 def test_parse_with_negative_request_id():
@@ -48,7 +45,7 @@ def test_parse_with_negative_request_id():
     with pytest.raises(error.ProtocolError) as exc_info:
         messages.Yield.parse(message)
 
-    assert str(exc_info.value) == f"invalid request ID value for {messages.Yield.YIELD_TEXT}"
+    assert str(exc_info.value) == f"invalid request ID value for {messages.Yield.TEXT}"
 
 
 def test_parse_with_out_of_range_request_value():
@@ -56,7 +53,7 @@ def test_parse_with_out_of_range_request_value():
     with pytest.raises(error.ProtocolError) as exc_info:
         messages.Yield.parse(message)
 
-    assert str(exc_info.value) == f"invalid request ID value for {messages.Yield.YIELD_TEXT}"
+    assert str(exc_info.value) == f"invalid request ID value for {messages.Yield.TEXT}"
 
 
 def test_parse_with_invalid_options_type():
@@ -64,7 +61,7 @@ def test_parse_with_invalid_options_type():
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         messages.Yield.parse(message)
 
-    assert str(exc_info.value) == f"options must be of type dictionary for {messages.Yield.YIELD_TEXT}"
+    assert str(exc_info.value) == f"options must be of type dictionary for {messages.Yield.TEXT}"
 
 
 def test_parse_with_invalid_options_dict_key():
@@ -72,7 +69,7 @@ def test_parse_with_invalid_options_dict_key():
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         messages.Yield.parse(message)
 
-    assert str(exc_info.value) == f"invalid type for key '2' in extra details for {messages.Yield.YIELD_TEXT}"
+    assert str(exc_info.value) == f"invalid type for key '2' in extra details for {messages.Yield.TEXT}"
 
 
 def test_parse_with_invalid_args_type():
@@ -80,10 +77,7 @@ def test_parse_with_invalid_args_type():
     with pytest.raises(error.InvalidTypeError) as exc_info:
         messages.Yield.parse(message)
 
-    assert (
-        str(exc_info.value)
-        == f"invalid type: expected type 'list', got 'str' for args in '{messages.Yield.YIELD_TEXT}'"
-    )
+    assert str(exc_info.value) == f"invalid type: expected type 'list', got 'str' for args in '{messages.Yield.TEXT}'"
 
 
 def test_parse_with_invalid_kwargs_type():
@@ -92,8 +86,7 @@ def test_parse_with_invalid_kwargs_type():
         messages.Yield.parse(message)
 
     assert (
-        str(exc_info.value)
-        == f"invalid type: expected type 'dict', got 'list' for kwargs in '{messages.Yield.YIELD_TEXT}'"
+        str(exc_info.value) == f"invalid type: expected type 'dict', got 'list' for kwargs in '{messages.Yield.TEXT}'"
     )
 
 

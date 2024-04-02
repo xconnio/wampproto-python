@@ -9,10 +9,7 @@ def test_parse_with_invalid_type():
     with pytest.raises(ValueError) as exc_info:
         messages.Invocation.parse(message)
 
-    assert (
-        str(exc_info.value)
-        == f"invalid message type str for {messages.Invocation.INVOCATION_TEXT}, type should be a list"
-    )
+    assert str(exc_info.value) == f"invalid message type str for {messages.Invocation.TEXT}, type should be a list"
 
 
 def test_parse_with_invalid_list_min_length():
@@ -38,7 +35,7 @@ def test_parse_with_invalid_message_type():
         messages.Invocation.parse(message)
 
     assert (
-        str(exc_info.value) == f"invalid message id 9 for {messages.Invocation.INVOCATION_TEXT}, "
+        str(exc_info.value) == f"invalid message id 9 for {messages.Invocation.TEXT}, "
         f"expected {messages.Invocation.TYPE}"
     )
 
@@ -48,7 +45,7 @@ def test_parse_with_negative_request_id():
     with pytest.raises(error.ProtocolError) as exc_info:
         messages.Invocation.parse(message)
 
-    assert str(exc_info.value) == f"invalid request ID value for {messages.Invocation.INVOCATION_TEXT}"
+    assert str(exc_info.value) == f"invalid request ID value for {messages.Invocation.TEXT}"
 
 
 def test_parse_with_out_of_range_request_value():
@@ -56,7 +53,7 @@ def test_parse_with_out_of_range_request_value():
     with pytest.raises(error.ProtocolError) as exc_info:
         messages.Invocation.parse(message)
 
-    assert str(exc_info.value) == f"invalid request ID value for {messages.Invocation.INVOCATION_TEXT}"
+    assert str(exc_info.value) == f"invalid request ID value for {messages.Invocation.TEXT}"
 
 
 def test_parse_with_negative_registration_id():
@@ -64,7 +61,7 @@ def test_parse_with_negative_registration_id():
     with pytest.raises(error.ProtocolError) as exc_info:
         messages.Invocation.parse(message)
 
-    assert str(exc_info.value) == f"invalid registration ID value for {messages.Invocation.INVOCATION_TEXT}"
+    assert str(exc_info.value) == f"invalid registration ID value for {messages.Invocation.TEXT}"
 
 
 def test_parse_with_out_of_range_registration_value():
@@ -72,7 +69,7 @@ def test_parse_with_out_of_range_registration_value():
     with pytest.raises(error.ProtocolError) as exc_info:
         messages.Invocation.parse(message)
 
-    assert str(exc_info.value) == f"invalid registration ID value for {messages.Invocation.INVOCATION_TEXT}"
+    assert str(exc_info.value) == f"invalid registration ID value for {messages.Invocation.TEXT}"
 
 
 def test_parse_with_invalid_options_type():
@@ -80,7 +77,7 @@ def test_parse_with_invalid_options_type():
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         messages.Invocation.parse(message)
 
-    assert str(exc_info.value) == f"options must be of type dictionary for {messages.Invocation.INVOCATION_TEXT}"
+    assert str(exc_info.value) == f"options must be of type dictionary for {messages.Invocation.TEXT}"
 
 
 def test_parse_with_invalid_options_dict_key():
@@ -88,9 +85,7 @@ def test_parse_with_invalid_options_dict_key():
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         messages.Invocation.parse(message)
 
-    assert (
-        str(exc_info.value) == f"invalid type for key '98' in extra details for {messages.Invocation.INVOCATION_TEXT}"
-    )
+    assert str(exc_info.value) == f"invalid type for key '98' in extra details for {messages.Invocation.TEXT}"
 
 
 def test_parse_with_invalid_args_type():
@@ -99,8 +94,7 @@ def test_parse_with_invalid_args_type():
         messages.Invocation.parse(message)
 
     assert (
-        str(exc_info.value)
-        == f"invalid type: expected type 'list', got 'str' for args in '{messages.Invocation.INVOCATION_TEXT}'"
+        str(exc_info.value) == f"invalid type: expected type 'list', got 'str' for args in '{messages.Invocation.TEXT}'"
     )
 
 
@@ -111,7 +105,7 @@ def test_parse_with_invalid_kwargs_type():
 
     assert (
         str(exc_info.value)
-        == f"invalid type: expected type 'dict', got 'list' for kwargs in '{messages.Invocation.INVOCATION_TEXT}'"
+        == f"invalid type: expected type 'dict', got 'list' for kwargs in '{messages.Invocation.TEXT}'"
     )
 
 

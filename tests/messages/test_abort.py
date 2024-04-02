@@ -10,8 +10,7 @@ def test_parse_with_invalid_type():
         Abort.parse(message)
 
     assert (
-        str(exc_info.value)
-        == f"invalid message type {type(message).__name__} for {Abort.ABORT_TEXT}, type should be a list"
+        str(exc_info.value) == f"invalid message type {type(message).__name__} for {Abort.TEXT}, type should be a list"
     )
 
 
@@ -36,7 +35,7 @@ def test_parse_with_invalid_message_type():
     with pytest.raises(ValueError) as exc_info:
         Abort.parse(message)
 
-    assert str(exc_info.value) == f"invalid message id 2 for {Abort.ABORT_TEXT}, expected {Abort.TYPE}"
+    assert str(exc_info.value) == f"invalid message id 2 for {Abort.TEXT}, expected {Abort.TYPE}"
 
 
 def test_parse_with_invalid_detail_type():
@@ -44,7 +43,7 @@ def test_parse_with_invalid_detail_type():
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         Abort.parse(message)
 
-    assert str(exc_info.value) == f"details must be of type dictionary for {Abort.ABORT_TEXT}"
+    assert str(exc_info.value) == f"details must be of type dictionary for {Abort.TEXT}"
 
 
 def test_parse_with_invalid_details_dict_key():
@@ -52,7 +51,7 @@ def test_parse_with_invalid_details_dict_key():
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         Abort.parse(message)
 
-    assert str(exc_info.value) == f"invalid type for key '1' in extra details for {Abort.ABORT_TEXT}"
+    assert str(exc_info.value) == f"invalid type for key '1' in extra details for {Abort.TEXT}"
 
 
 def test_parse_with_reason_none():
@@ -60,7 +59,7 @@ def test_parse_with_reason_none():
     with pytest.raises(error.InvalidUriError) as exc_info:
         Abort.parse(message)
 
-    assert str(exc_info.value) == f"uri cannot be null for {Abort.ABORT_TEXT}"
+    assert str(exc_info.value) == f"uri cannot be null for {Abort.TEXT}"
 
 
 def test_parse_with_invalid_reason_type():
@@ -68,7 +67,7 @@ def test_parse_with_invalid_reason_type():
     with pytest.raises(error.InvalidUriError) as exc_info:
         Abort.parse(message)
 
-    assert str(exc_info.value) == f"uri must be of type string for {Abort.ABORT_TEXT}"
+    assert str(exc_info.value) == f"uri must be of type string for {Abort.TEXT}"
 
 
 def test_parse_correctly():

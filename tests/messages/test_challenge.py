@@ -11,7 +11,7 @@ def test_parse_with_invalid_type():
 
     assert (
         str(exc_info.value)
-        == f"invalid message type {type(message).__name__} for {Challenge.CHALLENGE_TEXT}, type should be a list"
+        == f"invalid message type {type(message).__name__} for {Challenge.TEXT}, type should be a list"
     )
 
 
@@ -36,9 +36,7 @@ def test_parse_with_invalid_message_type():
     with pytest.raises(ValueError) as exc_info:
         Challenge.parse(message)
 
-    assert (
-        str(exc_info.value) == f"invalid message id 2 for {Challenge.CHALLENGE_TEXT}, expected {Challenge.TYPE}"
-    )
+    assert str(exc_info.value) == f"invalid message id 2 for {Challenge.TEXT}, expected {Challenge.TYPE}"
 
 
 def test_parse_with_invalid_authmethod_type():
@@ -46,7 +44,7 @@ def test_parse_with_invalid_authmethod_type():
     with pytest.raises(error.ProtocolError) as exc_info:
         Challenge.parse(message)
 
-    assert str(exc_info.value) == f"invalid type {type(message[1])} for 'authmethod' in {Challenge.CHALLENGE_TEXT}"
+    assert str(exc_info.value) == f"invalid type {type(message[1])} for 'authmethod' in {Challenge.TEXT}"
 
 
 def test_parse_with_invalid_extra_type():
@@ -54,7 +52,7 @@ def test_parse_with_invalid_extra_type():
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         Challenge.parse(message)
 
-    assert str(exc_info.value) == f"details must be of type dictionary for {Challenge.CHALLENGE_TEXT}"
+    assert str(exc_info.value) == f"details must be of type dictionary for {Challenge.TEXT}"
 
 
 def test_parse_with_invalid_details_dict_key():
@@ -62,7 +60,7 @@ def test_parse_with_invalid_details_dict_key():
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         Challenge.parse(message)
 
-    assert str(exc_info.value) == f"invalid type for key '1' in extra details for {Challenge.CHALLENGE_TEXT}"
+    assert str(exc_info.value) == f"invalid type for key '1' in extra details for {Challenge.TEXT}"
 
 
 def test_parse_correctly():

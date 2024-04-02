@@ -206,7 +206,7 @@ def test_parse_with_invalid_type():
 
     assert (
         str(exc_info.value)
-        == f"invalid message type {type(message).__name__} for {Welcome.WELCOME_TEXT}, type should be a list"
+        == f"invalid message type {type(message).__name__} for {Welcome.TEXT}, type should be a list"
     )
 
 
@@ -231,7 +231,7 @@ def test_parse_with_invalid_message_type():
     with pytest.raises(ValueError) as exc_info:
         Welcome.parse(message)
 
-    assert str(exc_info.value) == f"invalid message id 1 for {Welcome.WELCOME_TEXT}, expected {Welcome.TYPE}"
+    assert str(exc_info.value) == f"invalid message id 1 for {Welcome.TEXT}, expected {Welcome.TYPE}"
 
 
 def test_parse_with_invalid_session_type():
@@ -239,7 +239,7 @@ def test_parse_with_invalid_session_type():
     with pytest.raises(error.ProtocolError) as exc_info:
         Welcome.parse(message)
 
-    assert str(exc_info.value) == f"session ID must be an integer for {Welcome.WELCOME_TEXT}"
+    assert str(exc_info.value) == f"session ID must be an integer for {Welcome.TEXT}"
 
 
 def test_parse_with_negative_session_value():
@@ -247,7 +247,7 @@ def test_parse_with_negative_session_value():
     with pytest.raises(error.ProtocolError) as exc_info:
         Welcome.parse(message)
 
-    assert str(exc_info.value) == f"invalid Session ID value for {Welcome.WELCOME_TEXT}"
+    assert str(exc_info.value) == f"invalid Session ID value for {Welcome.TEXT}"
 
 
 def test_parse_with_out_of_range_session_value():
@@ -255,7 +255,7 @@ def test_parse_with_out_of_range_session_value():
     with pytest.raises(error.ProtocolError) as exc_info:
         Welcome.parse(message)
 
-    assert str(exc_info.value) == f"invalid Session ID value for {Welcome.WELCOME_TEXT}"
+    assert str(exc_info.value) == f"invalid Session ID value for {Welcome.TEXT}"
 
 
 def test_parse_with_invalid_details_type():
@@ -263,7 +263,7 @@ def test_parse_with_invalid_details_type():
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         Welcome.parse(message)
 
-    assert str(exc_info.value) == f"details must be of type dictionary for {Welcome.WELCOME_TEXT}"
+    assert str(exc_info.value) == f"details must be of type dictionary for {Welcome.TEXT}"
 
 
 def test_parse_with_invalid_details_dict_key():
@@ -271,7 +271,7 @@ def test_parse_with_invalid_details_dict_key():
     with pytest.raises(error.InvalidDetailsError) as exc_info:
         Welcome.parse(message)
 
-    assert str(exc_info.value) == f"invalid type for key '1' in extra details for {Welcome.WELCOME_TEXT}"
+    assert str(exc_info.value) == f"invalid type for key '1' in extra details for {Welcome.TEXT}"
 
 
 def test_parse_with_invalid_role_type():
@@ -279,7 +279,7 @@ def test_parse_with_invalid_role_type():
     with pytest.raises(error.ProtocolError) as exc_info:
         Welcome.parse(message)
 
-    assert str(exc_info.value) == f"invalid type for 'roles' in details for {Welcome.WELCOME_TEXT}"
+    assert str(exc_info.value) == f"invalid type for 'roles' in details for {Welcome.TEXT}"
 
 
 def test_parse_with_empty_role():
@@ -287,7 +287,7 @@ def test_parse_with_empty_role():
     with pytest.raises(error.ProtocolError) as exc_info:
         Welcome.parse(message)
 
-    assert str(exc_info.value) == f"roles are missing in details for {Welcome.WELCOME_TEXT}"
+    assert str(exc_info.value) == f"roles are missing in details for {Welcome.TEXT}"
 
 
 # def test_parse_with_invalid_role_key():
@@ -303,7 +303,7 @@ def test_parse_with_invalid_authid():
     with pytest.raises(error.ProtocolError) as exc_info:
         Welcome.parse(message)
 
-    assert str(exc_info.value) == f"authid must be a type string for {Welcome.WELCOME_TEXT}"
+    assert str(exc_info.value) == f"authid must be a type string for {Welcome.TEXT}"
 
 
 def test_parse_with_invalid_authrole():
@@ -311,7 +311,7 @@ def test_parse_with_invalid_authrole():
     with pytest.raises(error.ProtocolError) as exc_info:
         Welcome.parse(message)
 
-    assert str(exc_info.value) == f"authrole must be a type string for {Welcome.WELCOME_TEXT}"
+    assert str(exc_info.value) == f"authrole must be a type string for {Welcome.TEXT}"
 
 
 def test_parse_with_invalid_authmethod_type():
@@ -319,10 +319,7 @@ def test_parse_with_invalid_authmethod_type():
     with pytest.raises(error.InvalidTypeError) as exc_info:
         Welcome.parse(message)
 
-    assert (
-        str(exc_info.value)
-        == f"invalid type: expected type 'str', got 'list' for authmethod in '{Welcome.WELCOME_TEXT}'"
-    )
+    assert str(exc_info.value) == f"invalid type: expected type 'str', got 'list' for authmethod in '{Welcome.TEXT}'"
 
 
 def test_parse_with_invalid_authextra_type():
@@ -330,10 +327,7 @@ def test_parse_with_invalid_authextra_type():
     with pytest.raises(error.InvalidTypeError) as exc_info:
         Welcome.parse(message)
 
-    assert (
-        str(exc_info.value)
-        == f"invalid type: expected type 'dict', got 'str' for authextra in '{Welcome.WELCOME_TEXT}'"
-    )
+    assert str(exc_info.value) == f"invalid type: expected type 'dict', got 'str' for authextra in '{Welcome.TEXT}'"
 
 
 def test_parse_with_valid_roles():
