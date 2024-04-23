@@ -1,3 +1,8 @@
+from dataclasses import dataclass
+
+from wampproto import messages
+
+
 class SessionDetails:
     def __init__(self, session_id: int, realm: str, authid: str, authrole: str):
         self._session_id = session_id
@@ -31,3 +36,9 @@ class SessionDetails:
             and self.authid == __value.authid
             and self.authrole == __value.authrole
         )
+
+
+@dataclass
+class MessageWithRecipient:
+    message: messages.Message
+    recipient: int
