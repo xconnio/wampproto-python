@@ -60,6 +60,7 @@ def to_message(message: list) -> messages.Message:
             return messages.Published.parse(message)
         case messages.Event.TYPE:
             return messages.Event.parse(message)
-
+        case messages.Error.TYPE:
+            return messages.Error.parse(message)
         case _:
             raise ValueError("unknown message type")
