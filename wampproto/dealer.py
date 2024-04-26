@@ -30,9 +30,10 @@ class Dealer:
 
     def receive_message(self, session_id: int, message: messages.Message) -> types.MessageWithRecipient:
         if isinstance(message, messages.Call):
-            registrations = self.registrations_by_procedure[message.uri]
+            registrations = self.registrations_by_procedure.get(message.uri)
             if registrations is None or len(registrations) == 0:
-                raise ValueError("procedure has no registrations")
+                err = messages.Error(message.TYPE, message.request_id, "wamp.error.no_such_procedure")
+                return types.MessageWithRecipient(err, session_id)
 
             callee: int = 0
             registration: int = 0
@@ -41,6 +42,9 @@ class Dealer:
                 callee = session
                 break
 
+            if callee not in self.pending_calls:
+                self.pending_calls[callee] = {}
+
             self.pending_calls[callee][message.request_id] = session_id
             invocation = messages.Invocation(
                 request_id=message.request_id,
@@ -48,23 +52,25 @@ class Dealer:
                 args=message.args,
                 kwargs=message.kwargs,
             )
-            return types.MessageWithRecipient(invocation, session_id)
+
+            return types.MessageWithRecipient(invocation, callee)
         elif isinstance(message, messages.Yield):
             calls = self.pending_calls[session_id]
             if calls is None or len(calls) == 0:
                 raise ValueError(f"no pending calls for session {session_id}")
 
+            caller = calls[message.request_id]
             del self.pending_calls[session_id][message.request_id]
 
             result = messages.Result(request_id=message.request_id, args=message.args, kwargs=message.kwargs)
-            return types.MessageWithRecipient(result, session_id)
+            return types.MessageWithRecipient(result, caller)
         elif isinstance(message, messages.Register):
             if session_id not in self.registrations_by_session:
                 raise ValueError(f"cannot register, session {session_id} doesn't exist")
 
             registration_id = self.id_gen.next()
-            self.registrations_by_procedure[message.uri][registration_id] = session_id
-            self.registrations_by_session[session_id][registration_id] = message.uri
+            self.registrations_by_procedure[message.uri] = {registration_id: session_id}
+            self.registrations_by_session[session_id] = {registration_id: message.uri}
 
             registered = messages.Registered(message.request_id, registration_id)
             return types.MessageWithRecipient(registered, session_id)
