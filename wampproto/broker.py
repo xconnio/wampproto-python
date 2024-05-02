@@ -62,7 +62,7 @@ class Broker:
                 raise ValueError(f"cannot publish, session {session_id} doesn't exist")
 
             subscriptions = self.subscriptions_by_topic.get(message.uri, [])
-            if subscriptions is None:
+            if len(subscriptions) == 0:
                 return None
 
             publication_id = self.id_gen.next()
