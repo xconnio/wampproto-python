@@ -36,6 +36,9 @@ class Broker:
 
             subscription_id = self.id_gen.next()
             self.subscriptions_by_session[session_id][subscription_id] = message.topic
+            if message.topic not in self.subscriptions_by_topic:
+                self.subscriptions_by_topic[message.topic] = {}
+
             self.subscriptions_by_topic[message.topic][subscription_id] = session_id
 
             subscribed = messages.Subscribed(message.request_id, subscription_id)
@@ -59,7 +62,7 @@ class Broker:
                 raise ValueError(f"cannot publish, session {session_id} doesn't exist")
 
             subscriptions = self.subscriptions_by_topic.get(message.uri, [])
-            if subscriptions is None:
+            if len(subscriptions) == 0:
                 return None
 
             publication_id = self.id_gen.next()
