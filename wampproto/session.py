@@ -56,8 +56,6 @@ class WAMPSession:
                 self._call_requests.pop(msg.request_id)
             except KeyError:
                 raise ValueError("received RESULT for invalid request_id")
-
-            return msg
         elif isinstance(msg, messages.Registered):
             try:
                 self._register_requests.pop(msg.request_id)
@@ -65,8 +63,6 @@ class WAMPSession:
                 raise ValueError("received REGISTERED for invalid request_id")
 
             self._registrations[msg.registration_id] = msg.registration_id
-
-            return msg
         elif isinstance(msg, messages.UnRegistered):
             try:
                 registration_id = self._unregister_requests.pop(msg.request_id)
@@ -77,8 +73,6 @@ class WAMPSession:
                 del self._registrations[registration_id]
             except KeyError:
                 raise ValueError("received UNREGISTERED for invalid registration_id")
-
-            return msg
         elif isinstance(msg, messages.Invocation):
             try:
                 self._registrations.pop(msg.registration_id)
@@ -86,15 +80,11 @@ class WAMPSession:
                 raise ValueError("received INVOCATION for invalid registration_id")
 
             self._invocation_requests[msg.request_id] = msg.request_id
-
-            return msg
         elif isinstance(msg, messages.Published):
             try:
                 self._publish_requests.pop(msg.request_id)
             except KeyError:
                 raise ValueError("received PUBLISHED for invalid registration_id")
-
-            return msg
         elif isinstance(msg, messages.Subscribed):
             try:
                 self._subscribe_requests.pop(msg.request_id)
@@ -102,8 +92,6 @@ class WAMPSession:
                 raise ValueError("received SUBSCRIBED for invalid request_id")
 
             self._subscriptions[msg.subscription_id] = msg.subscription_id
-
-            return msg
         elif isinstance(msg, messages.UnSubscribed):
             try:
                 subscription_id = self._unsubscribe_requests.pop(msg.request_id)
@@ -114,13 +102,9 @@ class WAMPSession:
                 del self._subscriptions[subscription_id]
             except KeyError:
                 raise ValueError("received UNSUBSCRIBED for invalid subscription_id")
-
-            return msg
         elif isinstance(msg, messages.Event):
             if msg.subscription_id not in self._subscriptions:
                 raise ValueError("received EVENT for invalid subscription_id")
-
-            return msg
         elif isinstance(msg, messages.Error):
             match msg.message_type:
                 case messages.Call.TYPE:
@@ -155,7 +139,7 @@ class WAMPSession:
                         raise ValueError("received ERROR for invalid publish request")
                 case _:
                     raise ValueError(f"unknown error message type {type(msg)}")
-
-            return msg
         else:
             raise ValueError(f"unknown message {type(msg)}")
+
+        return msg
