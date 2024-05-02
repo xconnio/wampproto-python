@@ -68,6 +68,12 @@ class Dealer:
             if session_id not in self.registrations_by_session:
                 raise ValueError(f"cannot register, session {session_id} doesn't exist")
 
+            if message.uri in self.registrations_by_procedure:
+                registered = messages.Error(
+                    messages.Register.TYPE, message.request_id, "wamp.error.procedure_already_exists"
+                )
+                return types.MessageWithRecipient(registered, session_id)
+
             registration_id = self.id_gen.next()
             self.registrations_by_session[session_id][registration_id] = message.uri
             if message.uri not in self.registrations_by_procedure:
@@ -85,6 +91,8 @@ class Dealer:
             procedure = registrations.get(message.registration_id)
             del self.registrations_by_session[session_id][message.registration_id]
             del self.registrations_by_procedure[procedure][message.registration_id]
+            if len(self.registrations_by_procedure[procedure]) == 0:
+                del self.registrations_by_procedure[procedure]
 
             unregistered = messages.UnRegistered(message.request_id)
             return types.MessageWithRecipient(unregistered, session_id)
