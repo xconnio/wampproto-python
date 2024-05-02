@@ -91,6 +91,8 @@ class Dealer:
             procedure = registrations.get(message.registration_id)
             del self.registrations_by_session[session_id][message.registration_id]
             del self.registrations_by_procedure[procedure][message.registration_id]
+            if len(self.registrations_by_procedure[procedure]) == 0:
+                del self.registrations_by_procedure[procedure]
 
             unregistered = messages.UnRegistered(message.request_id)
             return types.MessageWithRecipient(unregistered, session_id)
