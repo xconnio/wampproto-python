@@ -93,9 +93,7 @@ class WAMPSession:
 
             return msg
         elif isinstance(msg, messages.Invocation):
-            try:
-                self._registrations.pop(msg.registration_id)
-            except KeyError:
+            if msg.registration_id not in self._registrations:
                 raise ValueError("received INVOCATION for invalid registration_id")
 
             self._invocation_requests[msg.request_id] = msg.request_id
