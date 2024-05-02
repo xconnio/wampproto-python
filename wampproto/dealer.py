@@ -69,8 +69,11 @@ class Dealer:
                 raise ValueError(f"cannot register, session {session_id} doesn't exist")
 
             registration_id = self.id_gen.next()
-            self.registrations_by_procedure[message.uri] = {registration_id: session_id}
-            self.registrations_by_session[session_id] = {registration_id: message.uri}
+            self.registrations_by_session[session_id][registration_id] = message.uri
+            if message.uri not in self.registrations_by_procedure:
+                self.registrations_by_procedure[message.uri] = {}
+
+            self.registrations_by_procedure[message.uri][registration_id] = session_id
 
             registered = messages.Registered(message.request_id, registration_id)
             return types.MessageWithRecipient(registered, session_id)
