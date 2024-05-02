@@ -19,45 +19,32 @@ class WAMPSession:
 
     def send_message(self, msg: messages.Message) -> bytes:
         if isinstance(msg, messages.Call):
-            data = self._serializer.serialize(msg)
             self._call_requests[msg.request_id] = msg.request_id
-            return data
         elif isinstance(msg, messages.Register):
-            data = self._serializer.serialize(msg)
             self._register_requests[msg.request_id] = msg.request_id
-            return data
         elif isinstance(msg, messages.UnRegister):
-            data = self._serializer.serialize(msg)
             self._unregister_requests[msg.request_id] = msg.registration_id
-            return data
         elif isinstance(msg, messages.Yield):
             if msg.request_id not in self._invocation_requests:
                 raise ValueError("cannot yield for unknown invocation request")
 
-            data = self._serializer.serialize(msg)
             self._invocation_requests.pop(msg.request_id)
-            return data
         elif isinstance(msg, messages.Publish):
-            data = self._serializer.serialize(msg)
             if msg.options.get("acknowledge", False):
                 self._publish_requests[msg.request_id] = msg.request_id
-
-            return data
         elif isinstance(msg, messages.Subscribe):
-            data = self._serializer.serialize(msg)
             self._subscribe_requests[msg.request_id] = msg.request_id
-            return data
         elif isinstance(msg, messages.UnSubscribe):
-            data = self._serializer.serialize(msg)
             self._unsubscribe_requests[msg.request_id] = msg.subscription_id
-            return data
         elif isinstance(msg, messages.Error):
             if msg.message_type != messages.Invocation.TYPE:
                 raise ValueError("send only supported for invocation error")
 
-            data = self._serializer.serialize(msg)
             del self._invocation_requests[msg.request_id]
-            return data
+        else:
+            raise ValueError(f"unknown message type {type(msg)}")
+
+        return self._serializer.serialize(msg)
 
     def receive(self, data: bytes) -> messages.Message:
         msg = self._serializer.deserialize(data)
