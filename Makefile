@@ -6,14 +6,13 @@ install_uv:
 setup:
 	make install_uv
 	uv venv
-	uv pip install -r requirements-pinned.txt
+	uv pip install .[test]
 
 lint:
 	. .venv/bin/activate; ruff format .
 
 check-lint:
 	. .venv/bin/activate; ruff check .
-
 
 test:
 	. .venv/bin/activate; pytest -v tests/
