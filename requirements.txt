@@ -1,4 +1,3 @@
-ruff
 cbor2
 pynacl
 msgpack
