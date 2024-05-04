@@ -10,7 +10,7 @@ with open("requirements-pinned.txt") as f:
 setup(
     name="wampproto",
     version="0.0.1",
-    description="Sans-IO implementation of the WAMP protocol in Python",
+    description="Sans-IO WAMP protocol implementation in Python",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/xconnio/wampproto.py",
