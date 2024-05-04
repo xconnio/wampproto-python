@@ -1,11 +1,20 @@
+from dataclasses import dataclass
+
 from wampproto import idgen, types, messages
+
+
+@dataclass
+class PendingInvocation:
+    request_id: int
+    caller_id: int
+    callee_id: int
 
 
 class Dealer:
     def __init__(self):
         self.registrations_by_procedure: dict[str, dict[int, int]] = {}
         self.registrations_by_session: dict[int, dict[int, str]] = {}
-        self.pending_calls: dict[int, dict[int, int]] = {}
+        self.pending_calls: dict[int, PendingInvocation] = {}
 
         self.id_gen = idgen.SessionScopeIDGenerator()
 
@@ -35,35 +44,34 @@ class Dealer:
                 err = messages.Error(message.TYPE, message.request_id, "wamp.error.no_such_procedure")
                 return types.MessageWithRecipient(err, session_id)
 
-            callee: int = 0
+            callee_id: int = 0
             registration: int = 0
             for reg_id, session in registrations.items():
                 registration = reg_id
-                callee = session
+                callee_id = session
                 break
 
-            if callee not in self.pending_calls:
-                self.pending_calls[callee] = {}
-
-            self.pending_calls[callee][message.request_id] = session_id
+            request_id = self.id_gen.next()
+            self.pending_calls[request_id] = PendingInvocation(message.request_id, session_id, callee_id)
             invocation = messages.Invocation(
-                request_id=message.request_id,
+                request_id=request_id,
                 registration_id=registration,
                 args=message.args,
                 kwargs=message.kwargs,
             )
 
-            return types.MessageWithRecipient(invocation, callee)
+            return types.MessageWithRecipient(invocation, callee_id)
         elif isinstance(message, messages.Yield):
-            calls = self.pending_calls[session_id]
-            if calls is None or len(calls) == 0:
+            try:
+                invocation = self.pending_calls.pop(message.request_id)
+            except KeyError:
                 raise ValueError(f"no pending calls for session {session_id}")
 
-            caller = calls[message.request_id]
-            del self.pending_calls[session_id][message.request_id]
+            if session_id != invocation.callee_id:
+                raise ValueError(f"received unexpected yield from session={session_id}")
 
-            result = messages.Result(request_id=message.request_id, args=message.args, kwargs=message.kwargs)
-            return types.MessageWithRecipient(result, caller)
+            result = messages.Result(request_id=invocation.request_id, args=message.args, kwargs=message.kwargs)
+            return types.MessageWithRecipient(result, invocation.caller_id)
         elif isinstance(message, messages.Register):
             if session_id not in self.registrations_by_session:
                 raise ValueError(f"cannot register, session {session_id} doesn't exist")
