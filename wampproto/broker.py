@@ -62,7 +62,8 @@ class Broker:
                 raise ValueError(f"cannot publish, session {session_id} doesn't exist")
 
             subscriptions = self.subscriptions_by_topic.get(message.uri, [])
-            if len(subscriptions) == 0:
+            acknowledge = message.options.get("acknowledge", False)
+            if len(subscriptions) == 0 and not acknowledge:
                 return None
 
             publication_id = self.id_gen.next()
@@ -70,6 +71,10 @@ class Broker:
             for subscription_id, recipient_id in subscriptions.items():
                 event = messages.Event(subscription_id, publication_id, message.args, message.kwargs)
                 result.append(types.MessageWithRecipient(event, recipient_id))
+
+            if acknowledge:
+                published = messages.Published(message.request_id, publication_id)
+                result.append(types.MessageWithRecipient(published, session_id))
 
             return result
         else:
