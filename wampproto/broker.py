@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Optional
 
 from wampproto import messages, types, idgen
 
@@ -40,7 +39,7 @@ class Broker:
     def has_subscription(self, topic: str):
         return topic in self.subscriptions_by_topic
 
-    def receive_message(self, session_id: int, message: messages.Message) -> list[types.MessageWithRecipient]:
+    def receive_message(self, session_id: int, message: messages.Message) -> types.MessageWithRecipient:
         if isinstance(message, messages.Subscribe):
             if session_id not in self.subscriptions_by_session:
                 raise ValueError(f"cannot subscribe, session {session_id} doesn't exist")
@@ -55,7 +54,7 @@ class Broker:
             self.subscriptions_by_session[session_id][subscription.id] = subscription
 
             subscribed = messages.Subscribed(message.request_id, subscription.id)
-            return [types.MessageWithRecipient(subscribed, session_id)]
+            return types.MessageWithRecipient(subscribed, session_id)
         elif isinstance(message, messages.UnSubscribe):
             if session_id not in self.subscriptions_by_session:
                 raise ValueError(f"cannot unsubscribe, session {session_id} doesn't exist")
@@ -72,7 +71,7 @@ class Broker:
             del self.subscriptions_by_session[session_id][message.subscription_id]
 
             unsubscribed = messages.UnSubscribed(message.request_id)
-            return [types.MessageWithRecipient(unsubscribed, session_id)]
+            return types.MessageWithRecipient(unsubscribed, session_id)
         else:
             raise ValueError("message type not supported")
 
