@@ -1,5 +1,3 @@
-from typing import Optional
-
 from wampproto import messages, types, idgen
 
 
@@ -29,7 +27,7 @@ class Broker:
     def has_subscription(self, topic: str):
         return len(self.subscriptions_by_topic[topic]) != 0
 
-    def receive_message(self, session_id: int, message: messages.Message) -> Optional[list[types.MessageWithRecipient]]:
+    def receive_message(self, session_id: int, message: messages.Message) -> list[types.MessageWithRecipient]:
         if isinstance(message, messages.Subscribe):
             if session_id not in self.subscriptions_by_session:
                 raise ValueError(f"cannot subscribe, session {session_id} doesn't exist")
@@ -61,15 +59,18 @@ class Broker:
             if session_id not in self.subscriptions_by_session:
                 raise ValueError(f"cannot publish, session {session_id} doesn't exist")
 
-            subscriptions = self.subscriptions_by_topic.get(message.uri, [])
-            if len(subscriptions) == 0:
-                return None
-
-            publication_id = self.id_gen.next()
             result: list[types.MessageWithRecipient] = []
+            publication_id = self.id_gen.next()
+
+            subscriptions = self.subscriptions_by_topic.get(message.uri, {})
             for subscription_id, recipient_id in subscriptions.items():
                 event = messages.Event(subscription_id, publication_id, message.args, message.kwargs)
                 result.append(types.MessageWithRecipient(event, recipient_id))
+
+            ack = message.options.get("acknowledge", False)
+            if ack:
+                published = messages.Published(message.request_id, publication_id)
+                result.append(types.MessageWithRecipient(published, session_id))
 
             return result
         else:
