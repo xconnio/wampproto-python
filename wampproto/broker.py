@@ -75,24 +75,23 @@ class Broker:
         else:
             raise ValueError("message type not supported")
 
-    def publish(self, session_id: int, message: messages.Publish) -> types.PublicationWithRecipients:
+    def receive_publish(self, session_id: int, message: messages.Publish) -> types.Publication:
         if session_id not in self.subscriptions_by_session:
             raise ValueError(f"cannot publish, session {session_id} doesn't exist")
 
-        result = types.PublicationWithRecipients(recipients=[])
+        result = types.Publication(recipients=[])
         publication_id = self.id_gen.next()
 
-        subscriptions = self.subscriptions_by_topic.get(message.uri, {})
-        for subscription_id, recipient_id in subscriptions.items():
-            if result.event is None:
-                event = messages.Event(subscription_id, publication_id, message.args, message.kwargs)
-                result.event = event
-
-            result.recipients.append(recipient_id)
+        subscription = self.subscriptions_by_topic.get(message.uri)
+        if subscription is not None:
+            event = messages.Event(subscription.id, publication_id, message.args, message.kwargs)
+            result.event = event
+            for subscriber_id in subscription.subscribers.keys():
+                result.recipients.append(subscriber_id)
 
         ack = message.options.get("acknowledge", False)
         if ack:
             published = messages.Published(message.request_id, publication_id)
-            result.ack = published
+            result.ack = types.MessageWithRecipient(published, session_id)
 
         return result

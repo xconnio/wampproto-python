@@ -45,7 +45,7 @@ class MessageWithRecipient:
 
 
 @dataclass
-class PublicationWithRecipients:
+class Publication:
     event: messages.Event | None = None
     recipients: list[int] = None
-    ack: messages.Published | None = None
+    ack: MessageWithRecipient | None = None
