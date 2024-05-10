@@ -25,4 +25,4 @@ class Published(Message):
         return Published(request_id, publication_id)
 
     def marshal(self) -> list[Any]:
-        return [Published.TEXT, self.request_id, self.publication_id]
+        return [Published.TYPE, self.request_id, self.publication_id]
