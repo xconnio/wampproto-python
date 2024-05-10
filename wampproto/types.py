@@ -42,3 +42,10 @@ class SessionDetails:
 class MessageWithRecipient:
     message: messages.Message
     recipient: int
+
+
+@dataclass
+class PublicationWithRecipients:
+    event: messages.Event | None = None
+    recipients: list[int] = None
+    ack: messages.Published | None = None
