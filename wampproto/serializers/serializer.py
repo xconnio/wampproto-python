@@ -62,5 +62,9 @@ def to_message(message: list) -> messages.Message:
             return messages.Event.parse(message)
         case messages.Error.TYPE:
             return messages.Error.parse(message)
+        case messages.Cancel.TYPE:
+            return messages.Cancel.parse(message)
+        case messages.Interrupt.TYPE:
+            return messages.Interrupt.parse(message)
         case _:
             raise ValueError("unknown message type")
