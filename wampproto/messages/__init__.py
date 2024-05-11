@@ -21,6 +21,8 @@ from wampproto.messages.subscribed import Subscribed
 from wampproto.messages.unsubscribe import UnSubscribe
 from wampproto.messages.unsubscribed import UnSubscribed
 from wampproto.messages.error import Error
+from wampproto.messages.cancel import Cancel
+from wampproto.messages.interrupt import Interrupt
 
 __all__ = (
     "Message",
@@ -46,4 +48,6 @@ __all__ = (
     "UnSubscribe",
     "UnSubscribed",
     "Error",
+    "Cancel",
+    "Interrupt",
 )
