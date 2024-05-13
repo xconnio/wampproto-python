@@ -25,3 +25,11 @@ build-wheel:
 
 clean:
 	rm -rf .venv build dist wampproto.egg-info
+
+publish-build:
+	rm -rf ./dist ./build
+	.venv/bin/python -m build --sdist
+	.venv/bin/twine check dist/*
+	@echo ========================================================
+	@echo
+	@echo now run .venv/bin/twine upload dist/newly_created.tar.gz
