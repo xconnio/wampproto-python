@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from wampproto import idgen, types, messages
 
 OPTION_RECEIVE_PROGRESS = "receive_progress"
-DETAIL_PROGRESS = "progress"
+OPTION_PROGRESS = "progress"
 
 
 @dataclass
@@ -11,6 +11,7 @@ class PendingInvocation:
     request_id: int
     caller_id: int
     callee_id: int
+    progress: bool
     receive_progress: bool
 
 
@@ -27,6 +28,7 @@ class Dealer:
         self.registrations_by_procedure: dict[str, Registration] = {}
         self.registrations_by_session: dict[int, dict[int, Registration]] = {}
         self.pending_calls: dict[int, PendingInvocation] = {}
+        self.call_to_invocation_id: dict[tuple[int, int], int] = {}
 
         self.id_gen = idgen.SessionScopeIDGenerator()
 
@@ -52,6 +54,12 @@ class Dealer:
     def has_registration(self, procedure: str) -> bool:
         return procedure in self.registrations_by_procedure
 
+    def _add_call(
+        self, call_id: int, invocation_id: int, caller_id: int, callee_id: int, progress: bool, receive_progress: bool
+    ) -> None:
+        self.pending_calls[invocation_id] = PendingInvocation(call_id, caller_id, callee_id, progress, receive_progress)
+        self.call_to_invocation_id[(caller_id, call_id)] = invocation_id
+
     def receive_message(self, session_id: int, message: messages.Message) -> types.MessageWithRecipient:
         if isinstance(message, messages.Call):
             registration = self.registrations_by_procedure.get(message.uri)
@@ -65,17 +73,29 @@ class Dealer:
                 break
 
             receive_progress = message.options.get(OPTION_RECEIVE_PROGRESS, False)
-            request_id = self.id_gen.next()
-            self.pending_calls[request_id] = PendingInvocation(
-                message.request_id, session_id, callee_id, receive_progress
-            )
+            progress = message.options.get(OPTION_PROGRESS, False)
+            if progress:
+                invocation_id = self.call_to_invocation_id.get((session_id, message.request_id))
+                if invocation_id is None:
+                    invocation_id = self.id_gen.next()
+                    self._add_call(message.request_id, invocation_id, session_id, callee_id, progress, receive_progress)
+            else:
+                invocation_id = self.id_gen.next()
+                self._add_call(message.request_id, invocation_id, session_id, callee_id, progress, receive_progress)
+
+            details = {}
+            if receive_progress:
+                details[OPTION_RECEIVE_PROGRESS] = True
+
+            if progress:
+                details[OPTION_PROGRESS] = True
 
             invocation = messages.Invocation(
-                request_id=request_id,
+                request_id=invocation_id,
                 registration_id=registration.id,
                 args=message.args,
                 kwargs=message.kwargs,
-                details={OPTION_RECEIVE_PROGRESS: receive_progress} if receive_progress else {},
+                details=details,
             )
 
             return types.MessageWithRecipient(invocation, callee_id)
@@ -89,11 +109,12 @@ class Dealer:
                 raise ValueError(f"received unexpected yield from session={session_id}")
 
             details = {}
-            receive_progress = message.options.get(DETAIL_PROGRESS, False)
+            receive_progress = message.options.get(OPTION_PROGRESS, False)
             if receive_progress and invocation.receive_progress:
-                details.update({DETAIL_PROGRESS: receive_progress})
+                details.update({OPTION_PROGRESS: receive_progress})
             else:
                 del self.pending_calls[message.request_id]
+                del self.call_to_invocation_id[(invocation.caller_id, invocation.request_id)]
 
             result = messages.Result(
                 request_id=invocation.request_id, args=message.args, kwargs=message.kwargs, options=details

@@ -1,7 +1,7 @@
 import pytest
 
 from wampproto import messages
-from wampproto.dealer import Dealer, OPTION_RECEIVE_PROGRESS, DETAIL_PROGRESS
+from wampproto.dealer import Dealer, OPTION_RECEIVE_PROGRESS, OPTION_PROGRESS
 
 
 def test_add_and_remove_session():
@@ -175,20 +175,49 @@ def test_progressive_call_results():
     assert msg.message.details.get(OPTION_RECEIVE_PROGRESS)
 
     for _ in range(10):
-        yield_ = messages.Yield(msg.message.request_id, options={DETAIL_PROGRESS: True})
+        yield_ = messages.Yield(msg.message.request_id, options={OPTION_PROGRESS: True})
         msg = dealer.receive_message(callee_id, yield_)
         assert isinstance(msg.message, messages.Result)
         assert msg.message.request_id == call.request_id
-        assert msg.message.options.get(DETAIL_PROGRESS)
+        assert msg.message.options.get(OPTION_PROGRESS)
 
     yield_ = messages.Yield(msg.message.request_id)
     msg = dealer.receive_message(callee_id, yield_)
     assert isinstance(msg.message, messages.Result)
     assert msg.message.request_id == call.request_id
-    assert msg.message.options.get(DETAIL_PROGRESS, False) is False
+    assert msg.message.options.get(OPTION_PROGRESS, False) is False
 
     yield_ = messages.Yield(msg.message.request_id)
     with pytest.raises(ValueError) as exc:
         dealer.receive_message(callee_id, yield_)
 
     assert str(exc.value).startswith("no pending calls for session")
+
+
+def test_progressive_call_invocations():
+    dealer = Dealer()
+    callee_id = 1
+    caller_id = 2
+    dealer.add_session(callee_id)
+    dealer.add_session(caller_id)
+
+    register = messages.Register(1, "foo.bar")
+    dealer.receive_message(callee_id, register)
+
+    call = messages.Call(2, "foo.bar", options={OPTION_PROGRESS: True})
+    msg = dealer.receive_message(caller_id, call)
+    assert isinstance(msg.message, messages.Invocation)
+    assert msg.message.details.get(OPTION_PROGRESS)
+    invocation_request_id = msg.message.request_id
+
+    for _ in range(10):
+        call = messages.Call(2, "foo.bar", options={OPTION_PROGRESS: True})
+        msg = dealer.receive_message(caller_id, call)
+        assert isinstance(msg.message, messages.Invocation)
+        assert msg.message.details.get(OPTION_PROGRESS)
+        assert msg.message.request_id == invocation_request_id
+
+    call = messages.Call(2, "foo.bar")
+    msg = dealer.receive_message(caller_id, call)
+    assert isinstance(msg.message, messages.Invocation)
+    assert OPTION_PROGRESS not in msg.message.details
