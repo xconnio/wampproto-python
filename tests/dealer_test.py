@@ -1,7 +1,7 @@
 import pytest
 
 from wampproto import messages
-from wampproto.dealer import Dealer
+from wampproto.dealer import Dealer, OPTION_RECEIVE_PROGRESS, DETAIL_PROGRESS
 
 
 def test_add_and_remove_session():
@@ -157,3 +157,38 @@ def test_receive_invalid_message():
         dealer.receive_message(session_id, subscribe)
 
     assert str(exc.value) == "message type not supported"
+
+
+def test_progressive_call_results():
+    dealer = Dealer()
+    callee_id = 1
+    caller_id = 2
+    dealer.add_session(callee_id)
+    dealer.add_session(caller_id)
+
+    register = messages.Register(1, "foo.bar")
+    dealer.receive_message(callee_id, register)
+
+    call = messages.Call(2, "foo.bar", options={OPTION_RECEIVE_PROGRESS: True})
+    msg = dealer.receive_message(caller_id, call)
+    assert isinstance(msg.message, messages.Invocation)
+    assert msg.message.details.get(OPTION_RECEIVE_PROGRESS)
+
+    for _ in range(10):
+        yield_ = messages.Yield(msg.message.request_id, options={DETAIL_PROGRESS: True})
+        msg = dealer.receive_message(callee_id, yield_)
+        assert isinstance(msg.message, messages.Result)
+        assert msg.message.request_id == call.request_id
+        assert msg.message.options.get(DETAIL_PROGRESS)
+
+    yield_ = messages.Yield(msg.message.request_id)
+    msg = dealer.receive_message(callee_id, yield_)
+    assert isinstance(msg.message, messages.Result)
+    assert msg.message.request_id == call.request_id
+    assert msg.message.options.get(DETAIL_PROGRESS, False) is False
+
+    yield_ = messages.Yield(msg.message.request_id)
+    with pytest.raises(ValueError) as exc:
+        dealer.receive_message(callee_id, yield_)
+
+    assert str(exc.value).startswith("no pending calls for session")
