@@ -2,12 +2,16 @@ from dataclasses import dataclass
 
 from wampproto import idgen, types, messages
 
+OPTION_RECEIVE_PROGRESS = "receive_progress"
+DETAIL_PROGRESS = "progress"
+
 
 @dataclass
 class PendingInvocation:
     request_id: int
     caller_id: int
     callee_id: int
+    receive_progress: bool
 
 
 @dataclass
@@ -60,26 +64,40 @@ class Dealer:
                 callee_id = session
                 break
 
+            receive_progress = message.options.get(OPTION_RECEIVE_PROGRESS, False)
             request_id = self.id_gen.next()
-            self.pending_calls[request_id] = PendingInvocation(message.request_id, session_id, callee_id)
+            self.pending_calls[request_id] = PendingInvocation(
+                message.request_id, session_id, callee_id, receive_progress
+            )
+
             invocation = messages.Invocation(
                 request_id=request_id,
                 registration_id=registration.id,
                 args=message.args,
                 kwargs=message.kwargs,
+                details={OPTION_RECEIVE_PROGRESS: receive_progress} if receive_progress else {},
             )
 
             return types.MessageWithRecipient(invocation, callee_id)
         elif isinstance(message, messages.Yield):
             try:
-                invocation = self.pending_calls.pop(message.request_id)
+                invocation = self.pending_calls[message.request_id]
             except KeyError:
                 raise ValueError(f"no pending calls for session {session_id}")
 
             if session_id != invocation.callee_id:
                 raise ValueError(f"received unexpected yield from session={session_id}")
 
-            result = messages.Result(request_id=invocation.request_id, args=message.args, kwargs=message.kwargs)
+            details = {}
+            receive_progress = message.options.get(DETAIL_PROGRESS, False)
+            if receive_progress and invocation.receive_progress:
+                details.update({DETAIL_PROGRESS: receive_progress})
+            else:
+                del self.pending_calls[message.request_id]
+
+            result = messages.Result(
+                request_id=invocation.request_id, args=message.args, kwargs=message.kwargs, options=details
+            )
             return types.MessageWithRecipient(result, invocation.caller_id)
         elif isinstance(message, messages.Register):
             if session_id not in self.registrations_by_session:
