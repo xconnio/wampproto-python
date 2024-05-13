@@ -28,6 +28,7 @@ classifiers = [
 
 [project.optional-dependencies]
 test = ["coverage", "pytest", "ruff"]
+publish = ["twine", "build"]
 
 [project.urls]
 "Homepage" = "https://github.com/xconnio/wampproto.py"
