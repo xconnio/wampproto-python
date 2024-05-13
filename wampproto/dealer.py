@@ -105,6 +105,11 @@ class Dealer:
                 raise ValueError(f"cannot unregister, session {session_id} doesn't exist")
 
             registration = registrations.get(message.registration_id)
+            if registration is None:
+                raise ValueError(
+                    f"cannot unregister, session {session_id} haven't registered for {message.registration_id}"
+                )
+
             try:
                 registration.registrants.pop(session_id)
             except KeyError:
