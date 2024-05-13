@@ -45,7 +45,7 @@ def test_subscribing_to_topic():
     with pytest.raises(ValueError) as exc:
         broker.receive_message(3, subscribe)
 
-    assert str(exc.value) == f"cannot subscribe, session 3 doesn't exist"
+    assert str(exc.value) == "cannot subscribe, session 3 doesn't exist"
 
 
 def test_unsubscribing_from_topic():
@@ -71,7 +71,7 @@ def test_unsubscribing_from_topic():
     with pytest.raises(ValueError) as exc:
         broker.receive_message(2, unsubscribe)
 
-    assert str(exc.value) == f"cannot unsubscribe, session 2 doesn't exist"
+    assert str(exc.value) == "cannot unsubscribe, session 2 doesn't exist"
 
     # Unsubscribe with invalid subscriptionID
     invalid_unsubscribe = messages.UnSubscribe(1, 2)

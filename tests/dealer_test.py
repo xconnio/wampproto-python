@@ -138,7 +138,7 @@ def test_unregister_procedure():
     with pytest.raises(ValueError) as exc:
         dealer.receive_message(2, unregister)
 
-    assert str(exc.value) == f"cannot unregister, session 2 doesn't exist"
+    assert str(exc.value) == "cannot unregister, session 2 doesn't exist"
 
     # Unregister with invalid registrationID
     invalid_unregister = messages.UnRegister(session_id, 3)
