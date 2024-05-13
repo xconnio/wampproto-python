@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "wampproto"
-version = "0.1.0"
+version = "0.2.0"
 authors = [
   {name="Omer Akram", email="omer@thing.com"},
   {name="Mahad Munir", email="mahad@xconn.io"},
