@@ -11,9 +11,7 @@ class Published(Message):
     TYPE = 17
 
     def __init__(self, request_id: int, publication_id: int):
-        super().__init__()
-        self.request_id = request_id
-        self.publication_id = publication_id
+        super().__init__(request_id=request_id, publication_id=publication_id)
 
     @staticmethod
     def parse(msg: list[Any]) -> Published:

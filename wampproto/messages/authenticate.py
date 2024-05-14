@@ -10,10 +10,8 @@ class Authenticate(Message):
     TEXT = "AUTHENTICATE"
     TYPE = 5
 
-    def __init__(self, signature: str, extra: dict | None = None):
-        super().__init__()
-        self.signature = signature
-        self.extra = {} if extra is None else extra
+    def __init__(self, signature: str, extra: dict[str, Any] | None = None):
+        super().__init__(signature=signature, extra=extra)
 
     @staticmethod
     def parse(msg: list[Any]) -> Authenticate:

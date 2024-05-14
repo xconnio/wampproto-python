@@ -18,12 +18,7 @@ class Call(Message):
         kwargs: dict | None = None,
         options: dict | None = None,
     ):
-        super().__init__()
-        self.request_id = request_id
-        self.uri = uri
-        self.args = args
-        self.kwargs = kwargs
-        self.options = options if options is not None else {}
+        super().__init__(request_id=request_id, options=options, uri=uri, args=args, kwargs=kwargs)
 
     @staticmethod
     def parse(msg: list[Any]) -> Call:

@@ -19,13 +19,9 @@ class Hello(Message):
         authmethods: list[str] | None = None,
         authextra: dict | None = None,
     ):
-        super().__init__()
-        self.realm = realm
-        self.roles = roles
-        self.authid = authid
-        self.authrole = authrole
-        self.authmethods = authmethods
-        self.authextra = authextra
+        super().__init__(
+            realm=realm, roles=roles, authid=authid, authrole=authrole, authmethods=authmethods, authextra=authextra
+        )
 
     @staticmethod
     def parse(msg: list[Any]) -> Hello:

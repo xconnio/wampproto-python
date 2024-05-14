@@ -17,15 +17,16 @@ class Welcome(Message):
         authid: str | None = None,
         authrole: str | None = None,
         authmethod: str | None = None,
-        authextra: str | None = None,
+        authextra: dict[str, Any] | None = None,
     ):
-        super().__init__()
-        self.session_id = session_id
-        self.roles = roles
-        self.authid = authid
-        self.authrole = authrole
-        self.authmethod = authmethod
-        self.authextra = authextra
+        super().__init__(
+            session_id=session_id,
+            roles=roles,
+            authid=authid,
+            authrole=authrole,
+            authmethod=authmethod,
+            authextra=authextra,
+        )
 
     @staticmethod
     def parse(msg: list[Any]) -> Welcome:

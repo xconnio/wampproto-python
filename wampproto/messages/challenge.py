@@ -11,9 +11,7 @@ class Challenge(Message):
     TYPE = 4
 
     def __init__(self, authmethod: str, extra: dict | None = None):
-        super().__init__()
-        self.authmethod = authmethod
-        self.extra = {} if extra is None else extra
+        super().__init__(authmethod=authmethod, extra=extra)
 
     @staticmethod
     def parse(msg: list[Any]) -> Challenge:

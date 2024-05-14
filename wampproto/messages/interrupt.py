@@ -16,9 +16,7 @@ class Interrupt(Message):
         inv_request_id: int,
         options: dict | None = None,
     ):
-        super().__init__()
-        self.inv_request_id = inv_request_id
-        self.options = options if options is not None else {}
+        super().__init__(request_id=inv_request_id, options=options)
 
     @staticmethod
     def parse(msg: list[Any]) -> Interrupt:
@@ -30,4 +28,4 @@ class Interrupt(Message):
         return Interrupt(request_id, options)
 
     def marshal(self) -> list[Any]:
-        return [Interrupt.TYPE, self.inv_request_id, self.options]
+        return [Interrupt.TYPE, self.request_id, self.options]

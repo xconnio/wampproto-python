@@ -11,9 +11,7 @@ class Goodbye(Message):
     TYPE = 6
 
     def __init__(self, details: dict, reason: str):
-        super().__init__()
-        self.details = details
-        self.reason = reason
+        super().__init__(details=details, reason=reason)
 
     @staticmethod
     def parse(msg: list[Any]) -> Goodbye:

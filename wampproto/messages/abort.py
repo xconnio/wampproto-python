@@ -10,10 +10,8 @@ class Abort(Message):
     TEXT = "ABORT"
     TYPE = 3
 
-    def __init__(self, details: dict, reason: str):
-        super().__init__()
-        self.details = details
-        self.reason = reason
+    def __init__(self, details: dict[str, Any], reason: str):
+        super().__init__(details=details, reason=reason)
 
     @staticmethod
     def parse(msg: list[Any]) -> Abort:

@@ -10,11 +10,8 @@ class Register(Message):
     TEXT = "REGISTER"
     TYPE = 64
 
-    def __init__(self, request_id: int, uri: str, options: dict = None):
-        super().__init__()
-        self.request_id = request_id
-        self.uri = uri
-        self.options = options
+    def __init__(self, request_id: int, uri: str, options: dict[str, Any] = None):
+        super().__init__(request_id=request_id, options=options, uri=uri)
 
     @staticmethod
     def parse(msg: list[Any]) -> Register:

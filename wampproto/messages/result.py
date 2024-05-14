@@ -17,7 +17,7 @@ class Result(Message):
         kwargs: dict | None = None,
         options: dict | None = None,
     ):
-        super().__init__()
+        super().__init__(request_id=request_id, options=options, args=args, kwargs=kwargs)
         self.request_id = request_id
         self.args = args
         self.kwargs = kwargs

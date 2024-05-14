@@ -18,7 +18,9 @@ class Event(Message):
         kwargs: dict | None = None,
         details: dict | None = None,
     ):
-        super().__init__()
+        super().__init__(
+            subscription_id=subscription_id, publication_id=publication_id, details=details, args=args, kwargs=kwargs
+        )
         self.subscription_id = subscription_id
         self.publication_id = publication_id
         self.args = args

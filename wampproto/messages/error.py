@@ -19,13 +19,9 @@ class Error(Message):
         kwargs: dict | None = None,
         details: dict | None = None,
     ):
-        super().__init__()
-        self.message_type = message_type
-        self.request_id = request_id
-        self.uri = uri
-        self.args = args
-        self.kwargs = kwargs
-        self.details = details if details is not None else {}
+        super().__init__(
+            message_type=message_type, request_id=request_id, details=details, uri=uri, args=args, kwargs=kwargs
+        )
 
     @staticmethod
     def parse(msg: list[Any]) -> Error:

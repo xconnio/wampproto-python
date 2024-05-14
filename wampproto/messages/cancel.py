@@ -16,9 +16,7 @@ class Cancel(Message):
         call_request_id: int,
         options: dict | None = None,
     ):
-        super().__init__()
-        self.call_request_id = call_request_id
-        self.options = options if options is not None else {}
+        super().__init__(request_id=call_request_id, options=options)
 
     @staticmethod
     def parse(msg: list[Any]) -> Cancel:
@@ -30,4 +28,4 @@ class Cancel(Message):
         return Cancel(request_id, options)
 
     def marshal(self) -> list[Any]:
-        return [Cancel.TYPE, self.call_request_id, self.options]
+        return [Cancel.TYPE, self.request_id, self.options]

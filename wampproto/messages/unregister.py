@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any
 
 from wampproto.messages.message import Message
@@ -9,12 +11,10 @@ class UnRegister(Message):
     TYPE = 66
 
     def __init__(self, request_id: int, registration_id: int):
-        super().__init__()
-        self.request_id = request_id
-        self.registration_id = registration_id
+        super().__init__(request_id=request_id, registration_id=registration_id)
 
     @staticmethod
-    def parse(msg: list[Any]) -> "UnRegister":
+    def parse(msg: list[Any]) -> UnRegister:
         util.sanity_check(msg, 3, 3, UnRegister.TYPE, UnRegister.TEXT)
 
         request_id = util.validate_session_id_or_raise(msg[1], UnRegister.TEXT, "request ID")

@@ -18,12 +18,9 @@ class Invocation(Message):
         kwargs: dict | None = None,
         details: dict | None = None,
     ):
-        super().__init__()
-        self.request_id = request_id
-        self.registration_id = registration_id
-        self.args = args
-        self.kwargs = kwargs
-        self.details = details if details is not None else {}
+        super().__init__(
+            request_id=request_id, registration_id=registration_id, details=details, args=args, kwargs=kwargs
+        )
 
     @staticmethod
     def parse(msg: list[Any]) -> Invocation:

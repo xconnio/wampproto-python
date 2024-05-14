@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any
 
 from wampproto.messages.message import Message
@@ -9,13 +11,10 @@ class Subscribe(Message):
     TYPE = 32
 
     def __init__(self, request_id: int, topic: str, options: dict = None):
-        super().__init__()
-        self.request_id = request_id
-        self.topic: str = topic
-        self.options = options if options else {}
+        super().__init__(request_id=request_id, options=options, topic=topic)
 
     @staticmethod
-    def parse(msg: list[Any]) -> "Subscribe":
+    def parse(msg: list[Any]) -> Subscribe:
         util.sanity_check(msg, 4, 4, Subscribe.TYPE, Subscribe.TEXT)
 
         request_id = util.validate_session_id_or_raise(msg[1], Subscribe.TEXT, "request ID")

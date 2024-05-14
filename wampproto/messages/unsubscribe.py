@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any
 
 from wampproto.messages.message import Message
@@ -9,12 +11,10 @@ class UnSubscribe(Message):
     TYPE = 34
 
     def __init__(self, request_id: int, subscription_id: int):
-        super().__init__()
-        self.request_id = request_id
-        self.subscription_id = subscription_id
+        super().__init__(request_id=request_id, subscription_id=subscription_id)
 
     @staticmethod
-    def parse(msg: list[Any]) -> "UnSubscribe":
+    def parse(msg: list[Any]) -> UnSubscribe:
         util.sanity_check(msg, 3, 3, UnSubscribe.TYPE, UnSubscribe.TEXT)
 
         request_id = util.validate_session_id_or_raise(msg[1], UnSubscribe.TEXT, "request ID")
