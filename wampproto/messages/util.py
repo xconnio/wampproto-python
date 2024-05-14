@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Any
 
 from wampproto.messages import exceptions
+from wampproto.messages.validation_spec import ValidationSpec
 
 
 class AllowedRoles(str, Enum):
@@ -75,3 +76,84 @@ def sanity_check(wamp_message: list[Any], min_length: int, max_length: int, expe
     message_id = wamp_message[0]
     if message_id != expected_id:
         raise ValueError(f"invalid message id {message_id} for {name}, expected {expected_id}")
+
+
+class Fields:
+    def __init__(self):
+        super().__init__()
+        self.request_id: int | None = None
+        self.uri: str | None = None
+        self.args: list[Any] | None = None
+        self.kwargs: dict[str, Any] | None = None
+
+        self.extra: dict[str, Any] | None = None
+        self.options: dict[str, Any] | None = None
+        self.details: dict[str, Any] | None = None
+
+        self.subscription_id: int | None = None
+        self.publication_id: int | None = None
+
+        self.registration_id: int | None = None
+
+
+def validate_request_id(msg: list[Any], index, fields: Fields):
+    assert isinstance(msg[index], int)
+    validate_session_id_or_raise(msg[index], "CALL", "request ID")
+    fields.request_id = msg[index]
+
+
+def validate_uri(msg: list[Any], index, fields: Fields):
+    assert isinstance(msg[index], str)
+    fields.uri = msg[index]
+
+
+def validate_args(msg: list[Any], index, fields: Fields):
+    if len(msg) > index:
+        assert isinstance(msg[index], list)
+        fields.args = msg[index]
+
+
+def validate_kwargs(msg: list[Any], index, fields: Fields):
+    if len(msg) > index:
+        assert isinstance(msg[index], dict)
+        fields.kwargs = msg[index]
+
+
+def validate_extra(msg: list[Any], index, fields: Fields):
+    assert isinstance(msg[index], dict)
+    fields.extra = msg[index]
+
+
+def validate_options(msg: list[Any], index, fields: Fields):
+    assert isinstance(msg[index], dict)
+    fields.options = msg[index]
+
+
+def validate_details(msg: list[Any], index, fields: Fields):
+    assert isinstance(msg[index], dict)
+    fields.details = msg[index]
+
+
+def validate_subscription_id(msg: list[Any], index, fields: Fields):
+    assert isinstance(msg[index], int)
+    fields.subscription_id = msg[index]
+
+
+def validate_publication_id(msg: list[Any], index, fields: Fields):
+    assert isinstance(msg[index], int)
+    fields.publication_id = msg[index]
+
+
+def validate_registration_id(msg: list[Any], index, fields: Fields):
+    assert isinstance(msg[index], int)
+    fields.registration_id = msg[index]
+
+
+def validate_message(msg: list[Any], type_: int, name: str, val_spec: ValidationSpec) -> Fields:
+    sanity_check(msg, val_spec.min_length, val_spec.max_length, type_, name)
+
+    f = Fields()
+    for idx, func in val_spec.spec.items():
+        func(msg, idx, f)
+
+    return f
