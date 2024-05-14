@@ -11,7 +11,7 @@ ROUTER_ROLES = {
 
 
 def get_session_id() -> int:
-    return random.randint(0, 9007199254740992)
+    return random.randint(1, 9007199254740992)
 
 
 class Acceptor:
