@@ -13,9 +13,9 @@ class Call(Message):
 
     # index number mapped to validation interface
     VALIDATION_SPEC = ValidationSpec(
-        4,
-        6,
-        {
+        min_length=4,
+        max_length=6,
+        spec={
             1: util.validate_request_id,
             2: util.validate_options,
             3: util.validate_uri,
