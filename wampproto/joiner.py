@@ -30,10 +30,13 @@ class Joiner:
 
         self._session_details: SessionDetails = None
 
-    def send_hello(self) -> bytes:
+    def send_hello(self, roles: dict[str, dict[str, dict[str, bool]]] = None) -> bytes:
+        if roles is None:
+            roles = CLIENT_ROLES
+
         hello = messages.Hello(
             realm=self._realm,
-            roles=CLIENT_ROLES,
+            roles=roles,
             authid=self._authenticator.authid,
             authmethods=[self._authenticator.auth_method],
             authextra=self._authenticator.auth_extra,
