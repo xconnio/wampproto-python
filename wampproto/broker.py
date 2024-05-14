@@ -15,13 +15,15 @@ class Broker:
         super().__init__()
         self.subscriptions_by_topic: dict[str, Subscription] = {}
         self.subscriptions_by_session: dict[int, dict[int, Subscription]] = {}
-        self.id_gen = idgen.SessionScopeIDGenerator()
+        self.sessions: dict[int, types.SessionDetails] = {}
+        self.idgen = idgen.SessionScopeIDGenerator()
 
-    def add_session(self, sid: int):
-        if sid in self.subscriptions_by_session:
+    def add_session(self, details: types.SessionDetails):
+        if details.session_id in self.subscriptions_by_session:
             raise ValueError("cannot add session twice")
 
-        self.subscriptions_by_session[sid] = {}
+        self.subscriptions_by_session[details.session_id] = {}
+        self.sessions[details.session_id] = details
 
     def remove_session(self, sid: int):
         if sid not in self.subscriptions_by_session:
@@ -36,6 +38,8 @@ class Broker:
             if len(subscription.subscribers) == 0:
                 del self.subscriptions_by_topic[subscription.topic]
 
+        del self.sessions[sid]
+
     def has_subscription(self, topic: str):
         return topic in self.subscriptions_by_topic
 
@@ -46,7 +50,7 @@ class Broker:
 
             subscription = self.subscriptions_by_topic.get(message.topic)
             if subscription is None:
-                subscription = Subscription(self.id_gen.next(), message.topic, {session_id: session_id})
+                subscription = Subscription(self.idgen.next(), message.topic, {session_id: session_id})
                 self.subscriptions_by_topic[message.topic] = subscription
             else:
                 subscription.subscribers[session_id] = session_id
@@ -80,7 +84,7 @@ class Broker:
             raise ValueError(f"cannot publish, session {session_id} doesn't exist")
 
         result = types.Publication(recipients=[])
-        publication_id = self.id_gen.next()
+        publication_id = self.idgen.next()
 
         subscription = self.subscriptions_by_topic.get(message.uri)
         if subscription is not None:

@@ -25,7 +25,7 @@ class Acceptor:
         self,
         serializer: serializers.Serializer = serializers.JSONSerializer(),
         authenticator: auth.IServerAuthenticator = None,
-        roles: dict[str, dict[str, dict[str, bool]]] = None
+        roles: dict[str, dict[str, dict[str, bool]]] = None,
     ):
         self._serializer = serializer
         self._authenticator = authenticator
