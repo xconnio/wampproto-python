@@ -29,10 +29,7 @@ class Acceptor:
     ):
         self._serializer = serializer
         self._authenticator = authenticator
-        if roles is None:
-            self._roles = ROUTER_ROLES
-        else:
-            self._roles = roles
+        self._roles = roles if roles is not None else ROUTER_ROLES
 
         self._state = Acceptor.STATE_NONE
         self._session_id = get_session_id()
