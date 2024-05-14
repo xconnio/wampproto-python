@@ -29,14 +29,16 @@ class Dealer:
         self.registrations_by_session: dict[int, dict[int, Registration]] = {}
         self.pending_calls: dict[int, PendingInvocation] = {}
         self.call_to_invocation_id: dict[tuple[int, int], int] = {}
+        self.sessions: dict[int, types.SessionDetails] = {}
 
         self.idgen = idgen.SessionScopeIDGenerator()
 
-    def add_session(self, sid: int):
-        if sid in self.registrations_by_session:
+    def add_session(self, details: types.SessionDetails):
+        if details.session_id in self.registrations_by_session:
             raise ValueError("cannot add session twice")
 
-        self.registrations_by_session[sid] = {}
+        self.registrations_by_session[details.session_id] = {}
+        self.sessions[details.session_id] = details
 
     def remove_session(self, sid: int):
         if sid not in self.registrations_by_session:
@@ -50,6 +52,8 @@ class Dealer:
 
             if len(registration.registrants) == 0:
                 del self.registrations_by_procedure[registration.procedure]
+
+        del self.sessions[sid]
 
     def has_registration(self, procedure: str) -> bool:
         return procedure in self.registrations_by_procedure
