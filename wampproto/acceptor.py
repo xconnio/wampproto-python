@@ -4,7 +4,10 @@ import random
 from wampproto import messages, auth, serializers
 from wampproto.types import SessionDetails
 
-ROUTER_ROLES = {"dealer": {}, "broker": {}}
+ROUTER_ROLES = {
+    "dealer": {"features": {}},
+    "broker": {"features": {}},
+}
 
 
 def get_session_id() -> int:
@@ -22,9 +25,15 @@ class Acceptor:
         self,
         serializer: serializers.Serializer = serializers.JSONSerializer(),
         authenticator: auth.IServerAuthenticator = None,
+        roles: dict[str, dict[str, dict[str, bool]]] = None
     ):
         self._serializer = serializer
         self._authenticator = authenticator
+        if roles is None:
+            self._roles = ROUTER_ROLES
+        else:
+            self._roles = roles
+
         self._state = Acceptor.STATE_NONE
         self._session_id = get_session_id()
 
@@ -53,7 +62,7 @@ class Acceptor:
 
             if self._authenticator is None:
                 self._state = Acceptor.STATE_WELCOME_SENT
-                welcome = messages.Welcome(self._session_id, ROUTER_ROLES, "anonymous", "anonymous", "anonymous")
+                welcome = messages.Welcome(self._session_id, self._roles, "anonymous", "anonymous", "anonymous")
                 self._session_details = SessionDetails(welcome.session_id, msg.realm, welcome.authid, welcome.authrole)
 
                 return welcome
@@ -69,7 +78,7 @@ class Acceptor:
                     self._state = Acceptor.STATE_WELCOME_SENT
 
                     welcome = messages.Welcome(
-                        self._session_id, ROUTER_ROLES, response.authid, response.authrole, method
+                        self._session_id, self._roles, response.authid, response.authrole, method
                     )
                     self._session_details = SessionDetails(
                         welcome.session_id, msg.realm, welcome.authid, welcome.authrole
@@ -119,7 +128,7 @@ class Acceptor:
                     auth.verify_cryptosign_signature(msg.signature, binascii.unhexlify(self._public_key))
                     self._state = Acceptor.STATE_WELCOME_SENT
                     welcome = messages.Welcome(
-                        self._session_id, ROUTER_ROLES, authid=self._response.authid, authrole=self._response.authrole
+                        self._session_id, self._roles, authid=self._response.authid, authrole=self._response.authrole
                     )
                     self._session_details = SessionDetails(
                         welcome.session_id, self._hello.realm, welcome.authid, welcome.authrole
@@ -129,7 +138,7 @@ class Acceptor:
                     auth.verify_wampcra_signature(msg.signature, self._challenge, self._secret.encode())
                     self._state = Acceptor.STATE_WELCOME_SENT
                     welcome = messages.Welcome(
-                        self._session_id, ROUTER_ROLES, authid=self._response.authid, authrole=self._response.authrole
+                        self._session_id, self._roles, authid=self._response.authid, authrole=self._response.authrole
                     )
                     self._session_details = SessionDetails(
                         welcome.session_id, self._hello.realm, welcome.authid, welcome.authrole
@@ -142,7 +151,7 @@ class Acceptor:
                     response = self._authenticator.authenticate(request)
                     self._state = Acceptor.STATE_WELCOME_SENT
                     welcome = messages.Welcome(
-                        self._session_id, ROUTER_ROLES, authid=response.authid, authrole=response.authrole
+                        self._session_id, self._roles, authid=response.authid, authrole=response.authrole
                     )
                     self._session_details = SessionDetails(
                         welcome.session_id, self._hello.realm, welcome.authid, welcome.authrole
