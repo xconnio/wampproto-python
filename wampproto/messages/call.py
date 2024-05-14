@@ -2,13 +2,27 @@ from __future__ import annotations
 
 from typing import Any
 
+from wampproto.messages import util
 from wampproto.messages.message import Message
-from wampproto.messages import util, exceptions
+from wampproto.messages.validation_spec import ValidationSpec
 
 
 class Call(Message):
     TEXT = "CALL"
     TYPE = 48
+
+    # index number mapped to validation interface
+    VALIDATION_SPEC = ValidationSpec(
+        4,
+        6,
+        {
+            1: util.validate_request_id,
+            2: util.validate_options,
+            3: util.validate_uri,
+            4: util.validate_args,
+            5: util.validate_kwargs,
+        },
+    )
 
     def __init__(
         self,
@@ -27,25 +41,8 @@ class Call(Message):
 
     @staticmethod
     def parse(msg: list[Any]) -> Call:
-        util.sanity_check(msg, 4, 6, Call.TYPE, Call.TEXT)
-
-        request_id = util.validate_session_id_or_raise(msg[1], Call.TEXT, "request ID")
-        options = util.validate_details_or_raise(msg[2], Call.TEXT, "options")
-        uri = util.validate_uri_or_raise(msg[3], Call.TEXT)
-
-        args = None
-        if len(msg) > 4:
-            args = msg[4]
-            if not isinstance(args, list):
-                raise exceptions.InvalidTypeError(list, type(msg[4]), "args", Call.TEXT)
-
-        kwargs = None
-        if len(msg) > 5:
-            kwargs = msg[5]
-            if not isinstance(kwargs, dict):
-                raise exceptions.InvalidTypeError(dict, type(msg[5]), "kwargs", Call.TEXT)
-
-        return Call(request_id, uri, args, kwargs, options)
+        f = util.validate_message(msg, Call.TYPE, Call.TEXT, Call.VALIDATION_SPEC)
+        return Call(f.request_id, f.uri, f.args, f.kwargs, f.options)
 
     def marshal(self) -> list[Any]:
         message = [Call.TYPE, self.request_id, self.options, self.uri]
