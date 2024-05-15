@@ -23,29 +23,29 @@ class Result(Message):
         self.kwargs = kwargs
         self.options = options if options is not None else {}
 
-    @staticmethod
-    def parse(msg: list[Any]) -> Result:
-        util.sanity_check(msg, 3, 5, Result.TYPE, Result.TEXT)
+    @classmethod
+    def parse(cls, msg: list[Any]) -> Result:
+        util.sanity_check(msg, 3, 5, cls.TYPE, cls.TEXT)
 
-        request_id = util.validate_session_id_or_raise(msg[1], Result.TEXT, "request ID")
-        options = util.validate_details_or_raise(msg[2], Result.TEXT, "options")
+        request_id = util.validate_session_id_or_raise(msg[1], cls.TEXT, "request ID")
+        options = util.validate_details_or_raise(msg[2], cls.TEXT, "options")
 
         args = None
         if len(msg) > 3:
             args = msg[3]
             if not isinstance(args, list):
-                raise exceptions.InvalidTypeError(list, type(msg[3]), "args", Result.TEXT)
+                raise exceptions.InvalidTypeError(list, type(msg[3]), "args", cls.TEXT)
 
         kwargs = None
         if len(msg) > 4:
             kwargs = msg[4]
             if not isinstance(kwargs, dict):
-                raise exceptions.InvalidTypeError(dict, type(msg[4]), "kwargs", Result.TEXT)
+                raise exceptions.InvalidTypeError(dict, type(msg[4]), "kwargs", cls.TEXT)
 
         return Result(request_id, args, kwargs, options)
 
     def marshal(self) -> list[Any]:
-        message = [Result.TYPE, self.request_id, self.options]
+        message = [self.TYPE, self.request_id, self.options]
         if self.args is not None:
             message.append(self.args)
 

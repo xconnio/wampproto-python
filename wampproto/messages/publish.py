@@ -25,13 +25,13 @@ class Publish(Message):
         self.kwargs = kwargs
         self.options = options if options is not None else {}
 
-    @staticmethod
-    def parse(msg: list[Any]) -> Publish:
-        util.sanity_check(msg, 4, 6, Publish.TYPE, Publish.TEXT)
+    @classmethod
+    def parse(cls, msg: list[Any]) -> Publish:
+        util.sanity_check(msg, 4, 6, cls.TYPE, cls.TEXT)
 
-        request_id = util.validate_session_id_or_raise(msg[1], Publish.TEXT, "request ID")
-        options = util.validate_details_or_raise(msg[2], Publish.TEXT, "options")
-        uri = util.validate_uri_or_raise(msg[3], Publish.TEXT)
+        request_id = util.validate_session_id_or_raise(msg[1], cls.TEXT, "request ID")
+        options = util.validate_details_or_raise(msg[2], cls.TEXT, "options")
+        uri = util.validate_uri_or_raise(msg[3], cls.TEXT)
 
         args = []
         if len(msg) > 4:
@@ -44,7 +44,7 @@ class Publish(Message):
         return Publish(request_id, uri, args, kwargs, options)
 
     def marshal(self) -> list[Any]:
-        message = [Publish.TYPE, self.request_id, self.options, self.uri]
+        message = [self.TYPE, self.request_id, self.options, self.uri]
         if self.args is not None:
             message.append(self.args)
 

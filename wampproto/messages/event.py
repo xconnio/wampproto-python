@@ -25,13 +25,13 @@ class Event(Message):
         self.kwargs = kwargs
         self.details = details if details is not None else {}
 
-    @staticmethod
-    def parse(msg: list[Any]) -> Event:
-        util.sanity_check(msg, 4, 6, Event.TYPE, Event.TEXT)
+    @classmethod
+    def parse(cls, msg: list[Any]) -> Event:
+        util.sanity_check(msg, 4, 6, cls.TYPE, cls.TEXT)
 
-        subscription_id = util.validate_session_id_or_raise(msg[1], Event.TEXT, "subscription ID")
-        publication_id = util.validate_session_id_or_raise(msg[2], Event.TEXT, "publication ID")
-        options = util.validate_details_or_raise(msg[3], Event.TEXT, "options")
+        subscription_id = util.validate_session_id_or_raise(msg[1], cls.TEXT, "subscription ID")
+        publication_id = util.validate_session_id_or_raise(msg[2], cls.TEXT, "publication ID")
+        options = util.validate_details_or_raise(msg[3], cls.TEXT, "options")
 
         args = []
         if len(msg) > 4:
@@ -44,7 +44,7 @@ class Event(Message):
         return Event(subscription_id, publication_id, args, kwargs, options)
 
     def marshal(self) -> list[Any]:
-        message = [Event.TYPE, self.subscription_id, self.publication_id, self.details]
+        message = [self.TYPE, self.subscription_id, self.publication_id, self.details]
         if self.args is not None:
             message.append(self.args)
 

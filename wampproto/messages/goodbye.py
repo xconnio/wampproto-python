@@ -15,15 +15,15 @@ class Goodbye(Message):
         self.details = details
         self.reason = reason
 
-    @staticmethod
-    def parse(msg: list[Any]) -> Goodbye:
-        util.sanity_check(msg, 3, 3, Goodbye.TYPE, Goodbye.TEXT)
+    @classmethod
+    def parse(cls, msg: list[Any]) -> Goodbye:
+        util.sanity_check(msg, 3, 3, cls.TYPE, cls.TEXT)
 
-        details = util.validate_details_or_raise(msg[1], Goodbye.TEXT)
+        details = util.validate_details_or_raise(msg[1], cls.TEXT)
 
-        reason = util.validate_uri_or_raise(msg[2], Goodbye.TEXT)
+        reason = util.validate_uri_or_raise(msg[2], cls.TEXT)
 
         return Goodbye(details, reason)
 
     def marshal(self) -> list[Any]:
-        return [Goodbye.TYPE, self.details, self.reason]
+        return [self.TYPE, self.details, self.reason]

@@ -20,14 +20,14 @@ class Interrupt(Message):
         self.inv_request_id = inv_request_id
         self.options = options if options is not None else {}
 
-    @staticmethod
-    def parse(msg: list[Any]) -> Interrupt:
-        util.sanity_check(msg, Interrupt.MIN_LENGTH, Interrupt.MAX_LENGTH, Interrupt.TYPE, Interrupt.TEXT)
+    @classmethod
+    def parse(cls, msg: list[Any]) -> Interrupt:
+        util.sanity_check(msg, cls.MIN_LENGTH, cls.MAX_LENGTH, cls.TYPE, cls.TEXT)
 
-        request_id = util.validate_session_id_or_raise(msg[1], Interrupt.TEXT, "invocation request ID")
-        options = util.validate_details_or_raise(msg[2], Interrupt.TEXT, "options")
+        request_id = util.validate_session_id_or_raise(msg[1], cls.TEXT, "invocation request ID")
+        options = util.validate_details_or_raise(msg[2], cls.TEXT, "options")
 
         return Interrupt(request_id, options)
 
     def marshal(self) -> list[Any]:
-        return [Interrupt.TYPE, self.inv_request_id, self.options]
+        return [self.TYPE, self.inv_request_id, self.options]

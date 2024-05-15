@@ -20,14 +20,14 @@ class Cancel(Message):
         self.call_request_id = call_request_id
         self.options = options if options is not None else {}
 
-    @staticmethod
-    def parse(msg: list[Any]) -> Cancel:
-        util.sanity_check(msg, Cancel.MIN_LENGTH, Cancel.MAX_LENGTH, Cancel.TYPE, Cancel.TEXT)
+    @classmethod
+    def parse(cls, msg: list[Any]) -> Cancel:
+        util.sanity_check(msg, cls.MIN_LENGTH, cls.MAX_LENGTH, cls.TYPE, cls.TEXT)
 
-        request_id = util.validate_session_id_or_raise(msg[1], Cancel.TEXT, "call request ID")
-        options = util.validate_details_or_raise(msg[2], Cancel.TEXT, "options")
+        request_id = util.validate_session_id_or_raise(msg[1], cls.TEXT, "call request ID")
+        options = util.validate_details_or_raise(msg[2], cls.TEXT, "options")
 
         return Cancel(request_id, options)
 
     def marshal(self) -> list[Any]:
-        return [Cancel.TYPE, self.call_request_id, self.options]
+        return [self.TYPE, self.call_request_id, self.options]
