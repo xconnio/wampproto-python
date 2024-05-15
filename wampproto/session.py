@@ -40,7 +40,7 @@ class WAMPSession:
             if msg.message_type != messages.Invocation.TYPE:
                 raise ValueError("send only supported for invocation error")
 
-            del self._invocation_requests[msg.request_id]
+            self._invocation_requests.pop(msg.request_id, None)
         else:
             raise ValueError(f"unknown message type {type(msg)}")
 
