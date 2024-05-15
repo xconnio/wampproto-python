@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any
 
 
@@ -5,8 +7,8 @@ class Message:
     TYPE = None
     TEXT = None
 
-    @staticmethod
-    def parse(msg: list[Any]) -> "Message":
+    @classmethod
+    def parse(cls, msg: list[Any]) -> Message:
         raise NotImplementedError()
 
     def marshal(self) -> list[Any]:

@@ -39,13 +39,13 @@ class Call(Message):
         self.kwargs = kwargs
         self.options = options if options is not None else {}
 
-    @staticmethod
-    def parse(msg: list[Any]) -> Call:
-        f = util.validate_message(msg, Call.TYPE, Call.TEXT, Call.VALIDATION_SPEC)
+    @classmethod
+    def parse(cls, msg: list[Any]) -> Call:
+        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
         return Call(f.request_id, f.uri, f.args, f.kwargs, f.options)
 
     def marshal(self) -> list[Any]:
-        message = [Call.TYPE, self.request_id, self.options, self.uri]
+        message = [self.TYPE, self.request_id, self.options, self.uri]
         if self.args is not None:
             message.append(self.args)
 

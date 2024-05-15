@@ -16,15 +16,15 @@ class Register(Message):
         self.uri = uri
         self.options = options
 
-    @staticmethod
-    def parse(msg: list[Any]) -> Register:
-        util.sanity_check(msg, 4, 4, Register.TYPE, Register.TEXT)
+    @classmethod
+    def parse(cls, msg: list[Any]) -> Register:
+        util.sanity_check(msg, 4, 4, cls.TYPE, cls.TEXT)
 
-        request_id = util.validate_session_id_or_raise(msg[1], Register.TEXT, "request ID")
-        options = util.validate_details_or_raise(msg[2], Register.TEXT, "options")
-        uri = util.validate_uri_or_raise(msg[3], Register.TEXT)
+        request_id = util.validate_session_id_or_raise(msg[1], cls.TEXT, "request ID")
+        options = util.validate_details_or_raise(msg[2], cls.TEXT, "options")
+        uri = util.validate_uri_or_raise(msg[3], cls.TEXT)
 
         return Register(request_id, uri, options)
 
     def marshal(self) -> list[Any]:
-        return [Register.TYPE, self.request_id, self.options, self.uri]
+        return [self.TYPE, self.request_id, self.options, self.uri]

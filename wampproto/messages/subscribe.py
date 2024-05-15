@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any
 
 from wampproto.messages.message import Message
@@ -14,15 +16,15 @@ class Subscribe(Message):
         self.topic: str = topic
         self.options = options if options else {}
 
-    @staticmethod
-    def parse(msg: list[Any]) -> "Subscribe":
-        util.sanity_check(msg, 4, 4, Subscribe.TYPE, Subscribe.TEXT)
+    @classmethod
+    def parse(cls, msg: list[Any]) -> Subscribe:
+        util.sanity_check(msg, 4, 4, cls.TYPE, cls.TEXT)
 
-        request_id = util.validate_session_id_or_raise(msg[1], Subscribe.TEXT, "request ID")
-        options = util.validate_details_or_raise(msg[2], Subscribe.TEXT, "options")
+        request_id = util.validate_session_id_or_raise(msg[1], cls.TEXT, "request ID")
+        options = util.validate_details_or_raise(msg[2], cls.TEXT, "options")
         topic = util.validate_uri_or_raise(msg[3], "topic")
 
         return Subscribe(request_id, topic, options)
 
     def marshal(self) -> list[Any]:
-        return [Subscribe.TYPE, self.request_id, self.options, self.topic]
+        return [self.TYPE, self.request_id, self.options, self.topic]

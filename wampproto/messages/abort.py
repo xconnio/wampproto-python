@@ -15,15 +15,15 @@ class Abort(Message):
         self.details = details
         self.reason = reason
 
-    @staticmethod
-    def parse(msg: list[Any]) -> Abort:
-        util.sanity_check(msg, 3, 3, Abort.TYPE, Abort.TEXT)
+    @classmethod
+    def parse(cls, msg: list[Any]) -> Abort:
+        util.sanity_check(msg, 3, 3, cls.TYPE, cls.TEXT)
 
-        details = util.validate_details_or_raise(msg[1], Abort.TEXT)
+        details = util.validate_details_or_raise(msg[1], cls.TEXT)
 
-        reason = util.validate_uri_or_raise(msg[2], Abort.TEXT)
+        reason = util.validate_uri_or_raise(msg[2], cls.TEXT)
 
         return Abort(details, reason)
 
     def marshal(self) -> list[Any]:
-        return [Abort.TYPE, self.details, self.reason]
+        return [self.TYPE, self.details, self.reason]
