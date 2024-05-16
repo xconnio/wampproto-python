@@ -1,7 +1,7 @@
 import pytest
 
 from wampproto import messages
-from wampproto.messages import exceptions
+from wampproto.messages import util
 
 
 def test_parse_with_invalid_type():
@@ -39,48 +39,63 @@ def test_parse_with_invalid_message_type():
 
 def test_parse_with_negative_request_id():
     message = [messages.Call.TYPE, -1, {}, "io.xconn.ping"]
-    with pytest.raises(exceptions.ProtocolError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         messages.Call.parse(message)
 
-    assert str(exc_info.value) == f"invalid request ID value for {messages.Call.TEXT}"
+    assert str(exc_info.value) == f"invalid request ID -1 for {messages.Call.TEXT}, must be between 1 and {util.MAX_ID}"
 
 
 def test_parse_with_out_of_range_request_value():
+    req_id = 9007199254740993
     message = [messages.Call.TYPE, 9007199254740993, {}, "io.xconn.ping"]
-    with pytest.raises(exceptions.ProtocolError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         messages.Call.parse(message)
 
-    assert str(exc_info.value) == f"invalid request ID value for {messages.Call.TEXT}"
+    assert (
+        str(exc_info.value)
+        == f"invalid request ID {req_id} for {messages.Call.TEXT}, must be between 1 and {util.MAX_ID}"
+    )
 
 
 def test_parse_with_invalid_options_type():
     message = [messages.Call.TYPE, 367, "options", "io.xconn.ping"]
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError) as exc_info:
         messages.Call.parse(message)
+
+    assert str(exc_info.value) == f"invalid options 'options' for {messages.Call.TEXT}, type should be a dictionary"
 
 
 def test_parse_with_uri_none():
     message = [messages.Call.TYPE, 367, {}, None]
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError) as exc_info:
         messages.Call.parse(message)
+
+    assert str(exc_info.value) == f"invalid uri 'None' for {messages.Call.TEXT}, type should be a string"
 
 
 def test_parse_with_invalid_uri_type():
-    message = [messages.Call.TYPE, 367, {}, {"uri": "io.xconn.ping"}]
-    with pytest.raises(AssertionError):
+    uri = {"uri": "io.xconn.ping"}
+    message = [messages.Call.TYPE, 367, {}, uri]
+    with pytest.raises(ValueError) as exc_info:
         messages.Call.parse(message)
+
+    assert str(exc_info.value) == f"invalid uri '{uri}' for {messages.Call.TEXT}, type should be a string"
 
 
 def test_parse_with_invalid_args_type():
     message = [messages.Call.TYPE, 367, {}, "io.xconn.ping", "args"]
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError) as exc_info:
         messages.Call.parse(message)
+
+    assert str(exc_info.value) == "invalid args 'args' for CALL, type should be a list"
 
 
 def test_parse_with_invalid_kwargs_type():
     message = [messages.Call.TYPE, 367, {}, "io.xconn.ping", [], ["kwargs"]]
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError) as exc_info:
         messages.Call.parse(message)
+
+    assert str(exc_info.value) == "invalid kwargs '['kwargs']' for CALL, type should be a dictionary"
 
 
 def test_parse_correctly():

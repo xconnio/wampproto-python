@@ -15,6 +15,7 @@ class Call(Message):
     VALIDATION_SPEC = ValidationSpec(
         min_length=4,
         max_length=6,
+        message=TEXT,
         spec={
             1: util.validate_request_id,
             2: util.validate_options,

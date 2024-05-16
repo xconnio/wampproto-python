@@ -5,6 +5,9 @@ from wampproto.messages import exceptions
 from wampproto.messages.validation_spec import ValidationSpec
 
 
+MAX_ID = 9007199254740992
+
+
 class AllowedRoles(str, Enum):
     CALLEE = "callee"
     CALLER = "caller"
@@ -86,6 +89,21 @@ class Fields:
         self.args: list[Any] | None = None
         self.kwargs: dict[str, Any] | None = None
 
+        self.session_id: int | None = None
+
+        self.realm: str | None = None
+        self.authid: str | None = None
+        self.authrole: str | None = None
+        self.authmethod: str | None = None
+        self.authmethods: list[str] | None = None
+        self.authextra: dict[str, Any] | None = None
+        self.roles: dict[str, Any] | None = None
+
+        self.message_type: int | None = None
+        self.signature: str | None = None
+        self.reason: str | None = None
+        self.topic: str | None = None
+
         self.extra: dict[str, Any] | None = None
         self.options: dict[str, Any] | None = None
         self.details: dict[str, Any] | None = None
@@ -96,56 +114,145 @@ class Fields:
         self.registration_id: int | None = None
 
 
-def validate_request_id(msg: list[Any], index, fields: Fields):
-    assert isinstance(msg[index], int)
-    validate_session_id_or_raise(msg[index], "CALL", "request ID")
+def validate_int_or_raise(value: int, field: str, name: str):
+    if not isinstance(value, int):
+        raise ValueError(f"invalid {field} '{value}' for {name}, type should be an integer")
+
+
+def validate_string_or_raise(value: str, field: str, name: str):
+    if not isinstance(value, str):
+        raise ValueError(f"invalid {field} '{value}' for {name}, type should be a string")
+
+
+def validate_list_or_raise(value: str, field: str, name: str):
+    if not isinstance(value, list):
+        raise ValueError(f"invalid {field} '{value}' for {name}, type should be a list")
+
+
+def validate_dict_or_raise(value: dict[str, Any], field: str, name: str):
+    if not isinstance(value, dict):
+        raise ValueError(f"invalid {field} '{value}' for {name}, type should be a dictionary")
+
+    for key in value.keys():
+        if not isinstance(key, str):
+            raise ValueError(f"invalid type for key {key} in {field} for {name}, key should be a string")
+
+
+def validate_id_or_raise(value: int, field: str, name: str):
+    validate_int_or_raise(value, field, name)
+    if value < 0 or value > MAX_ID:
+        raise ValueError(f"invalid {field} {value} for {name}, must be between 1 and {MAX_ID}")
+
+
+def validate_request_id(msg: list[Any], index: int, fields: Fields, name: str) -> None:
+    validate_id_or_raise(msg[index], "request ID", name)
     fields.request_id = msg[index]
 
 
-def validate_uri(msg: list[Any], index, fields: Fields):
-    assert isinstance(msg[index], str)
+def validate_uri(msg: list[Any], index: int, fields: Fields, name: str):
+    validate_string_or_raise(msg[index], "uri", name)
     fields.uri = msg[index]
 
 
-def validate_args(msg: list[Any], index, fields: Fields):
+def validate_args(msg: list[Any], index: int, fields: Fields, name: str):
     if len(msg) > index:
-        assert isinstance(msg[index], list)
+        validate_list_or_raise(msg[index], "args", name)
         fields.args = msg[index]
 
 
-def validate_kwargs(msg: list[Any], index, fields: Fields):
+def validate_kwargs(msg: list[Any], index: int, fields: Fields, name: str):
     if len(msg) > index:
-        assert isinstance(msg[index], dict)
+        validate_dict_or_raise(msg[index], "kwargs", name)
         fields.kwargs = msg[index]
 
 
-def validate_extra(msg: list[Any], index, fields: Fields):
-    assert isinstance(msg[index], dict)
+def validate_session_id(msg: list[Any], index: int, fields: Fields, name: str) -> None:
+    validate_id_or_raise(msg[index], "session ID", name)
+    fields.session_id = msg[index]
+
+
+def validate_realm(msg: list[Any], index: int, fields: Fields, name: str):
+    validate_string_or_raise(msg[index], "realm", name)
+    fields.realm = msg[index]
+
+
+def validate_authid(msg: list[Any], index: int, fields: Fields, name: str):
+    validate_string_or_raise(msg[index], "authID", name)
+    fields.authid = msg[index]
+
+
+def validate_authrole(msg: list[Any], index: int, fields: Fields, name: str):
+    validate_string_or_raise(msg[index], "authrole", name)
+    fields.authrole = msg[index]
+
+
+def validate_authmethod(msg: list[Any], index: int, fields: Fields, name: str):
+    validate_string_or_raise(msg[index], "authmethod", name)
+    fields.authmethod = msg[index]
+
+
+def validate_authmethods(msg: list[Any], index: int, fields: Fields, name: str):
+    validate_list_or_raise(msg[index], "authmethods", name)
+    fields.authmethods = msg[index]
+
+
+def validate_authextra(msg: list[Any], index: int, fields: Fields, name: str):
+    validate_dict_or_raise(msg[index], "authextra", name)
+    fields.authextra = msg[index]
+
+
+def validate_roles(msg: list[Any], index: int, fields: Fields, name: str):
+    validate_dict_or_raise(msg[index], "roles", name)
+    fields.roles = msg[index]
+
+
+def validate_message_type(msg: list[Any], index: int, fields: Fields, name: str):
+    validate_int_or_raise(msg[index], "message_type", name)
+    fields.message_type = msg[index]
+
+
+def validate_signature(msg: list[Any], index: int, fields: Fields, name: str):
+    validate_string_or_raise(msg[index], "signature", name)
+    fields.signature = msg[index]
+
+
+def validate_reason(msg: list[Any], index: int, fields: Fields, name: str):
+    validate_string_or_raise(msg[index], "reason", name)
+    fields.reason = msg[index]
+
+
+def validate_topic(msg: list[Any], index: int, fields: Fields, name: str):
+    validate_string_or_raise(msg[index], "topic", name)
+    fields.topic = msg[index]
+
+
+def validate_extra(msg: list[Any], index: int, fields: Fields, name: str):
+    validate_dict_or_raise(msg[index], "extra", name)
     fields.extra = msg[index]
 
 
-def validate_options(msg: list[Any], index, fields: Fields):
-    assert isinstance(msg[index], dict)
+def validate_options(msg: list[Any], index: int, fields: Fields, name: str):
+    validate_dict_or_raise(msg[index], "options", name)
     fields.options = msg[index]
 
 
-def validate_details(msg: list[Any], index, fields: Fields):
-    assert isinstance(msg[index], dict)
+def validate_details(msg: list[Any], index: int, fields: Fields, name: str):
+    validate_dict_or_raise(msg[index], "details", name)
     fields.details = msg[index]
 
 
-def validate_subscription_id(msg: list[Any], index, fields: Fields):
-    assert isinstance(msg[index], int)
+def validate_subscription_id(msg: list[Any], index: int, fields: Fields, name: str):
+    validate_id_or_raise(msg[index], "subscription ID", name)
     fields.subscription_id = msg[index]
 
 
-def validate_publication_id(msg: list[Any], index, fields: Fields):
-    assert isinstance(msg[index], int)
+def validate_publication_id(msg: list[Any], index: int, fields: Fields, name: str):
+    validate_id_or_raise(msg[index], "publication ID", name)
     fields.publication_id = msg[index]
 
 
-def validate_registration_id(msg: list[Any], index, fields: Fields):
-    assert isinstance(msg[index], int)
+def validate_registration_id(msg: list[Any], index: int, fields: Fields, name: str):
+    validate_id_or_raise(msg[index], "registration ID", name)
     fields.registration_id = msg[index]
 
 
@@ -154,6 +261,6 @@ def validate_message(msg: list[Any], type_: int, name: str, val_spec: Validation
 
     f = Fields()
     for idx, func in val_spec.spec.items():
-        func(msg, idx, f)
+        func(msg, idx, f, val_spec.message)
 
     return f
