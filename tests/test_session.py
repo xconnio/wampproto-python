@@ -23,7 +23,7 @@ def test_register(session: WAMPSession):
     # Send Register message and receive Registered message
     register = messages.Register(2, "io.xconn.test")
     to_send = session.send_message(register)
-    assert to_send.decode() == f'[{messages.Register.TYPE}, {register.request_id}, null, "{register.uri}"]'
+    assert to_send == f'[{messages.Register.TYPE}, {register.request_id}, null, "{register.uri}"]'
 
     registered = messages.Registered(2, 3)
     received = session.receive_message(registered)
@@ -50,7 +50,7 @@ def test_call(session: WAMPSession, register_procedure):
 
     yield_msg = messages.Yield(2)
     received = session.send_message(yield_msg)
-    assert received.decode() == "[70, 2, {}]"
+    assert received == "[70, 2, {}]"
 
     result = messages.Result(2)
     received = session.receive_message(result)
@@ -72,7 +72,7 @@ def test_unregister(session: WAMPSession, register_procedure):
     # Send UnRegister message and receive UnRegistered message
     unregister = messages.UnRegister(1, 1)
     to_send = session.send_message(unregister)
-    assert to_send.decode() == f"[{messages.UnRegister.TYPE}, {unregister.request_id}, {unregister.registration_id}]"
+    assert to_send == f"[{messages.UnRegister.TYPE}, {unregister.request_id}, {unregister.registration_id}]"
 
     unregistered = messages.UnRegistered(1)
     received = session.receive_message(unregistered)
@@ -92,10 +92,7 @@ def test_unregister_error(session: WAMPSession):
 def test_subscribe(session: WAMPSession):
     subscribe = messages.Subscribe(7, "topic")
     to_send = session.send_message(subscribe)
-    assert (
-        to_send.decode()
-        == f'[{messages.Subscribe.TYPE}, {subscribe.request_id}, {subscribe.options}, "{subscribe.topic}"]'
-    )
+    assert to_send == f'[{messages.Subscribe.TYPE}, {subscribe.request_id}, {subscribe.options}, "{subscribe.topic}"]'
 
     subscribed = messages.Subscribed(7, 8)
     received = session.receive_message(subscribed)
@@ -125,7 +122,7 @@ def test_unsubscribe(session: WAMPSession):
 
     unsubscribe = messages.UnSubscribe(8, 8)
     to_send = session.send_message(unsubscribe)
-    assert to_send.decode() == f"[{messages.UnSubscribe.TYPE}, {unsubscribe.request_id}, {unsubscribe.subscription_id}]"
+    assert to_send == f"[{messages.UnSubscribe.TYPE}, {unsubscribe.request_id}, {unsubscribe.subscription_id}]"
 
     unsubscribed = messages.UnSubscribed(8)
     received = session.receive_message(unsubscribed)
@@ -146,10 +143,7 @@ def test_publish(session: WAMPSession):
     # Send Publish message with acknowledge true and receive Published message
     publish = messages.Publish(6, "topic", options={"acknowledge": True})
     to_send = session.send_message(publish)
-    assert (
-        to_send.decode()
-        == f'[{messages.Publish.TYPE}, {publish.request_id}, {json.dumps(publish.options)}, "{publish.uri}"]'
-    )
+    assert to_send == f'[{messages.Publish.TYPE}, {publish.request_id}, {json.dumps(publish.options)}, "{publish.uri}"]'
 
     published = messages.Published(6, 6)
     received = session.receive_message(published)
@@ -171,7 +165,7 @@ def test_error(session: WAMPSession):
     error = messages.Error(messages.Invocation.TYPE, 10, uris.PROCEDURE_ALREADY_EXISTS)
     to_send = session.send_message(error)
     assert (
-        to_send.decode()
+        to_send
         == f'[{messages.Error.TYPE}, {messages.Invocation.TYPE}, {error.request_id}, {error.details}, "{error.uri}"]'
     )
 
