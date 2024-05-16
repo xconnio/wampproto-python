@@ -24,16 +24,25 @@ class Authenticator(auth.IServerAuthenticator):
     "serializer", [serializers.JSONSerializer(), serializers.CBORSerializer(), serializers.MsgPackSerializer()]
 )
 def test_join_no_auth(serializer):
+    serializer_is_json = isinstance(serializer, serializers.JSONSerializer)
+
     authenticator = auth.AnonymousAuthenticator("anonymous", {})
     j = joiner.Joiner("realm1", serializer, authenticator)
     hello = j.send_hello()
     assert hello is not None
-    assert isinstance(hello, bytes)
+    if serializer_is_json:
+        assert isinstance(hello, str)
+    else:
+        assert isinstance(hello, bytes)
 
     a = acceptor.Acceptor(serializer)
     data, final = a.receive(hello)
-    assert data is not None and isinstance(data, bytes)
+    assert data is not None
     assert final
+    if serializer_is_json:
+        assert isinstance(data, str)
+    else:
+        assert isinstance(data, bytes)
 
     # for WAMP joiner, when the call to Joiner.receive() returns None
     # that means the session has been joined
@@ -52,14 +61,20 @@ def test_join_no_auth(serializer):
     ],
 )
 def test_join_auth(serializer, authenticator):
+    serializer_is_json = isinstance(serializer, serializers.JSONSerializer)
+
     j = joiner.Joiner("realm1", serializer, authenticator)
     hello = j.send_hello()
     assert hello is not None
 
     a = acceptor.Acceptor(serializer=serializer, authenticator=Authenticator())
     data, final = a.receive(hello)
-    assert data is not None and isinstance(data, bytes)
+    assert data is not None
     assert final is False
+    if serializer_is_json:
+        assert isinstance(hello, str)
+    else:
+        assert isinstance(hello, bytes)
 
     data = j.receive(data)
     assert data is not None
@@ -67,8 +82,12 @@ def test_join_auth(serializer, authenticator):
     # for acceptor to know if the "welcome" as been sent
     # it may check if the "final" bool is true.
     data, final = a.receive(data)
-    assert data is not None and isinstance(data, bytes)
+    assert data is not None
     assert final
+    if serializer_is_json:
+        assert isinstance(data, str)
+    else:
+        assert isinstance(data, bytes)
 
     data = j.receive(data)
     assert data is None

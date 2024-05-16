@@ -2,7 +2,7 @@ from wampproto import messages
 
 
 class Serializer:
-    def serialize(self, message: messages.Message) -> bytes:
+    def serialize(self, message: messages.Message) -> bytes | str:
         raise NotImplementedError()
 
     def deserialize(self, data: bytes | str) -> messages.Message:

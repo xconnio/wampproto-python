@@ -7,7 +7,7 @@ def test_serializer():
     hello = Hello.parse([1, "realm1", {"roles": {"callee": {}}}])
 
     data = serializer.serialize(hello)
-    assert isinstance(data, bytes)
+    assert isinstance(data, str)
 
     obj = serializer.deserialize(data)
     assert isinstance(obj, Hello)
