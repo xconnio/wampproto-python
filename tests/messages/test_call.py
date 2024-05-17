@@ -61,11 +61,14 @@ def test_parse_with_multiple_errors():
 
 
 def test_parse_with_negative_request_id():
-    message = [messages.Call.TYPE, "1", {}, "io.xconn.ping"]
+    message = [messages.Call.TYPE, -1, {}, "io.xconn.ping"]
     with pytest.raises(ValueError) as exc_info:
         messages.Call.parse(message)
 
-    assert str(exc_info.value) == f"{messages.Call.TEXT}: value at index 1 must be of type 'int' but was str"
+    assert (
+        str(exc_info.value)
+        == f"{messages.Call.TEXT}: value at index 1 must be between '{util.MIN_ID}' and '{util.MAX_ID}' but was -1"
+    )
 
 
 def test_parse_with_out_of_range_request_value():
