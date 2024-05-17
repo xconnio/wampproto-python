@@ -10,7 +10,7 @@ MAX_ID = 9007199254740992
 INT = "int"
 STRING = "string"
 LIST = "list"
-DICT = "dictionary"
+DICT = "dict"
 
 
 class AllowedRoles(str, Enum):
@@ -121,46 +121,50 @@ class Fields:
 
 def validate_int_or_raise(value: int, index: int, message: str):
     if not isinstance(value, int):
-        return exceptions.InvalidDataTypeError(message, index, INT, type(value).__name__)
+        return exceptions.InvalidDataTypeError.format(
+            message=message, index=index, expected_type=INT, actual_type=type(value).__name__
+        )
 
     return None
 
 
 def validate_string_or_raise(value: str, index: int, message: str):
     if not isinstance(value, str):
-        return exceptions.InvalidDataTypeError(message, index, STRING, type(value).__name__)
+        return exceptions.InvalidDataTypeError.format(
+            message=message, index=index, expected_type=STRING, actual_type=type(value).__name__
+        )
 
     return None
 
 
 def validate_list_or_raise(value: str, index: int, message: str):
     if not isinstance(value, list):
-        return exceptions.InvalidDataTypeError(message, index, LIST, type(value).__name__)
+        return exceptions.InvalidDataTypeError.format(
+            message=message, index=index, expected_type=LIST, actual_type=type(value).__name__
+        )
 
     return None
 
 
 def validate_dict_or_raise(value: dict[str, Any], index: int, message: str):
     if not isinstance(value, dict):
-        return exceptions.InvalidDataTypeError(message, index, DICT, type(value).__name__)
+        return exceptions.InvalidDataTypeError.format(
+            message=message, index=index, expected_type=DICT, actual_type=type(value).__name__
+        )
 
     return None
 
 
-def validate_id_or_raise(
-    value: int, index: int, message: str
-) -> exceptions.InvalidDataTypeError | exceptions.InvalidRangeError | None:
+def validate_id_or_raise(value: int, index: int, message: str) -> str | None:
     if (error := validate_int_or_raise(value, index, message)) is not None:
         return error
     elif value < MIN_ID or value > MAX_ID:
-        return exceptions.InvalidRangeError(message, index, MIN_ID, MAX_ID, value)
+        return exceptions.InvalidRangeError.format(message=message, index=index, start=MIN_ID, end=MAX_ID, actual=value)
 
     return None
 
 
-def validate_request_id(
-    msg: list[Any], index: int, fields: Fields, message: str
-) -> exceptions.InvalidDataTypeError | exceptions.InvalidRangeError | None:
+def validate_request_id(msg: list[Any], index: int, fields: Fields, message: str) -> str | None:
     if (error := validate_id_or_raise(msg[index], index, message)) is not None:
         return error
 
@@ -348,6 +352,6 @@ def validate_message(msg: list[Any], type_: int, name: str, val_spec: Validation
             errors.append(error)
 
     if len(errors) != 0:
-        raise ValueError(errors)
+        raise ValueError(*errors)
 
     return f
