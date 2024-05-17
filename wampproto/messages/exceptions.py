@@ -26,6 +26,18 @@ class InvalidTypeError(Exception):
         super().__init__(error_msg)
 
 
+class InvalidDataTypeError(Exception):
+    def __init__(self, message: str, index: int, expected_type: str, actual_type: str):
+        error_msg = f"{message}: value at index {index} must be of type '{expected_type}' but was {actual_type}"
+        super().__init__(error_msg)
+
+
+class InvalidRangeError(Exception):
+    def __init__(self, message: str, index: int, start: int, end: int, actual: int):
+        error_msg = f"{message}: value at index {index} must be between '{start}' and '{end}' but was {actual}"
+        super().__init__(error_msg)
+
+
 class InvalidMessageLengthError(Exception):
     def __init__(self, expected_length: str, actual_length: int, message_name: str):
         error_msg = (
