@@ -1,6 +1,6 @@
 import pytest
 
-from wampproto.messages import exceptions
+from wampproto.messages import exceptions, util
 from wampproto.messages.challenge import Challenge
 
 
@@ -41,26 +41,18 @@ def test_parse_with_invalid_message_type():
 
 def test_parse_with_invalid_authmethod_type():
     message = [4, ["authmethod"], {}]
-    with pytest.raises(exceptions.ProtocolError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Challenge.parse(message)
 
-    assert str(exc_info.value) == f"invalid type {type(message[1])} for 'authmethod' in {Challenge.TEXT}"
+    assert str(exc_info.value) == f"{Challenge.TEXT}: value at index 1 must be of type '{util.STRING}' but was list"
 
 
 def test_parse_with_invalid_extra_type():
     message = [4, "anonymous", "extra"]
-    with pytest.raises(exceptions.InvalidDetailsError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Challenge.parse(message)
 
-    assert str(exc_info.value) == f"details must be of type dictionary for {Challenge.TEXT}"
-
-
-def test_parse_with_invalid_details_dict_key():
-    message = [4, "anonymous", {1: "v"}]
-    with pytest.raises(exceptions.InvalidDetailsError) as exc_info:
-        Challenge.parse(message)
-
-    assert str(exc_info.value) == f"invalid type for key '1' in extra details for {Challenge.TEXT}"
+    assert str(exc_info.value) == f"{Challenge.TEXT}: value at index 2 must be of type '{util.DICT}' but was str"
 
 
 def test_parse_correctly():

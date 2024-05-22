@@ -4,11 +4,25 @@ from typing import Any
 
 from wampproto.messages import util
 from wampproto.messages.message import Message
+from wampproto.messages.validation_spec import ValidationSpec
 
 
 class Event(Message):
     TEXT = "EVENT"
     TYPE = 36
+
+    VALIDATION_SPEC = ValidationSpec(
+        min_length=4,
+        max_length=6,
+        message=TEXT,
+        spec={
+            1: util.validate_subscription_id,
+            2: util.validate_publication_id,
+            3: util.validate_options,
+            4: util.validate_args,
+            5: util.validate_kwargs,
+        },
+    )
 
     def __init__(
         self,
@@ -27,21 +41,8 @@ class Event(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Event:
-        util.sanity_check(msg, 4, 6, cls.TYPE, cls.TEXT)
-
-        subscription_id = util.validate_session_id_or_raise(msg[1], cls.TEXT, "subscription ID")
-        publication_id = util.validate_session_id_or_raise(msg[2], cls.TEXT, "publication ID")
-        options = util.validate_details_or_raise(msg[3], cls.TEXT, "options")
-
-        args = []
-        if len(msg) > 4:
-            args = msg[4]
-
-        kwargs = {}
-        if len(msg) > 5:
-            kwargs = msg[5]
-
-        return Event(subscription_id, publication_id, args, kwargs, options)
+        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        return Event(f.subscription_id, f.publication_id, f.args, f.kwargs, f.options)
 
     def marshal(self) -> list[Any]:
         message = [self.TYPE, self.subscription_id, self.publication_id, self.details]

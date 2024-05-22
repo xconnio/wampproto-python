@@ -2,13 +2,28 @@ from __future__ import annotations
 
 from typing import Any
 
+from wampproto.messages import util
 from wampproto.messages.message import Message
-from wampproto.messages import util, exceptions
+from wampproto.messages.validation_spec import ValidationSpec
 
 
 class Error(Message):
     TEXT = "ERROR"
     TYPE = 8
+
+    VALIDATION_SPEC = ValidationSpec(
+        min_length=5,
+        max_length=7,
+        message=TEXT,
+        spec={
+            1: util.validate_session_id,
+            2: util.validate_request_id,
+            3: util.validate_details,
+            4: util.validate_uri,
+            5: util.validate_args,
+            6: util.validate_kwargs,
+        },
+    )
 
     def __init__(
         self,
@@ -29,26 +44,8 @@ class Error(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Error:
-        util.sanity_check(msg, 5, 7, cls.TYPE, cls.TEXT)
-
-        message_type = util.validate_session_id_or_raise(msg[1], cls.TEXT, "error ID")
-        request_id = util.validate_session_id_or_raise(msg[2], cls.TEXT, "request ID")
-        details = util.validate_details_or_raise(msg[3], cls.TEXT, "details")
-        uri = util.validate_uri_or_raise(msg[4], cls.TEXT)
-
-        args = None
-        if len(msg) > 5:
-            args = msg[5]
-            if not isinstance(args, list):
-                raise exceptions.InvalidTypeError(list, type(msg[5]), "args", cls.TEXT)
-
-        kwargs = None
-        if len(msg) == 7:
-            kwargs = msg[6]
-            if not isinstance(kwargs, dict):
-                raise exceptions.InvalidTypeError(dict, type(msg[6]), "kwargs", cls.TEXT)
-
-        return Error(message_type, request_id, uri, args, kwargs, details)
+        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        return Error(f.message_type, f.request_id, f.uri, f.args, f.kwargs, f.details)
 
     def marshal(self) -> list[Any]:
         message = [self.TYPE, self.message_type, self.request_id, self.details, self.uri]

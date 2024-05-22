@@ -4,11 +4,22 @@ from typing import Any
 
 from wampproto.messages.message import Message
 from wampproto.messages import util
+from wampproto.messages.validation_spec import ValidationSpec
 
 
 class UnSubscribe(Message):
     TEXT = "UNSUBSCRIBE"
     TYPE = 34
+
+    VALIDATION_SPEC = ValidationSpec(
+        min_length=3,
+        max_length=3,
+        message=TEXT,
+        spec={
+            1: util.validate_request_id,
+            2: util.validate_subscription_id,
+        },
+    )
 
     def __init__(self, request_id: int, subscription_id: int):
         super().__init__()
@@ -17,12 +28,8 @@ class UnSubscribe(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> UnSubscribe:
-        util.sanity_check(msg, 3, 3, cls.TYPE, cls.TEXT)
-
-        request_id = util.validate_session_id_or_raise(msg[1], cls.TEXT, "request ID")
-        subscription_id = util.validate_session_id_or_raise(msg[2], cls.TEXT, "subscription ID")
-
-        return UnSubscribe(request_id, subscription_id)
+        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        return UnSubscribe(f.request_id, f.subscription_id)
 
     def marshal(self) -> list[Any]:
         return [self.TYPE, self.request_id, self.subscription_id]

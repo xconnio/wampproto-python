@@ -4,11 +4,25 @@ from typing import Any
 
 from wampproto.messages.message import Message
 from wampproto.messages import util
+from wampproto.messages.validation_spec import ValidationSpec
 
 
 class Publish(Message):
     TEXT = "PUBLISH"
     TYPE = 16
+
+    VALIDATION_SPEC = ValidationSpec(
+        min_length=4,
+        max_length=6,
+        message=TEXT,
+        spec={
+            1: util.validate_request_id,
+            2: util.validate_options,
+            3: util.validate_uri,
+            4: util.validate_args,
+            5: util.validate_kwargs,
+        },
+    )
 
     def __init__(
         self,
@@ -27,21 +41,8 @@ class Publish(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Publish:
-        util.sanity_check(msg, 4, 6, cls.TYPE, cls.TEXT)
-
-        request_id = util.validate_session_id_or_raise(msg[1], cls.TEXT, "request ID")
-        options = util.validate_details_or_raise(msg[2], cls.TEXT, "options")
-        uri = util.validate_uri_or_raise(msg[3], cls.TEXT)
-
-        args = []
-        if len(msg) > 4:
-            args = msg[4]
-
-        kwargs = {}
-        if len(msg) > 5:
-            kwargs = msg[5]
-
-        return Publish(request_id, uri, args, kwargs, options)
+        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        return Publish(f.request_id, f.uri, f.args, f.kwargs, f.options)
 
     def marshal(self) -> list[Any]:
         message = [self.TYPE, self.request_id, self.options, self.uri]

@@ -3,13 +3,22 @@ from __future__ import annotations
 from typing import Any
 
 from wampproto.messages import util, Message
+from wampproto.messages.validation_spec import ValidationSpec
 
 
 class Interrupt(Message):
     TEXT = "INTERRUPT"
     TYPE = 69
-    MIN_LENGTH = 3
-    MAX_LENGTH = 3
+
+    VALIDATION_SPEC = ValidationSpec(
+        min_length=3,
+        max_length=3,
+        message=TEXT,
+        spec={
+            1: util.validate_request_id,
+            2: util.validate_options,
+        },
+    )
 
     def __init__(
         self,
@@ -22,12 +31,8 @@ class Interrupt(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Interrupt:
-        util.sanity_check(msg, cls.MIN_LENGTH, cls.MAX_LENGTH, cls.TYPE, cls.TEXT)
-
-        request_id = util.validate_session_id_or_raise(msg[1], cls.TEXT, "invocation request ID")
-        options = util.validate_details_or_raise(msg[2], cls.TEXT, "options")
-
-        return Interrupt(request_id, options)
+        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        return Interrupt(f.request_id, f.options)
 
     def marshal(self) -> list[Any]:
         return [self.TYPE, self.inv_request_id, self.options]
