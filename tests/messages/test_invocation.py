@@ -47,7 +47,8 @@ def test_parse_with_negative_request_id():
 
     assert (
         str(exc_info.value)
-        == f"{messages.Invocation.TEXT}: value at index 1 must be between '{util.MIN_ID}' and '{util.MAX_ID}' but was -1"
+        == f"{messages.Invocation.TEXT}: value at index 1 must be between '{util.MIN_ID}' and '{util.MAX_ID}' "
+           f"but was -1"
     )
 
 
@@ -59,7 +60,8 @@ def test_parse_with_out_of_range_request_value():
 
     assert (
         str(exc_info.value)
-        == f"{messages.Invocation.TEXT}: value at index 1 must be between '{util.MIN_ID}' and '{util.MAX_ID}' but was {value}"
+        == f"{messages.Invocation.TEXT}: value at index 1 must be between '{util.MIN_ID}' and '{util.MAX_ID}' "
+           f"but was {value}"
     )
 
 
@@ -70,7 +72,8 @@ def test_parse_with_negative_registration_id():
 
     assert (
         str(exc_info.value)
-        == f"{messages.Invocation.TEXT}: value at index 2 must be between '{util.MIN_ID}' and '{util.MAX_ID}' but was -39"
+        == f"{messages.Invocation.TEXT}: value at index 2 must be between '{util.MIN_ID}' and '{util.MAX_ID}' "
+           f"but was -39"
     )
 
 
@@ -82,7 +85,8 @@ def test_parse_with_out_of_range_registration_value():
 
     assert (
         str(exc_info.value)
-        == f"{messages.Invocation.TEXT}: value at index 2 must be between '{util.MIN_ID}' and '{util.MAX_ID}' but was {value}"
+        == f"{messages.Invocation.TEXT}: value at index 2 must be between '{util.MIN_ID}' and '{util.MAX_ID}' "
+           f"but was {value}"
     )
 
 

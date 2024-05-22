@@ -59,7 +59,8 @@ def test_parse_with_out_of_range_request_value():
 
     assert (
         str(exc_info.value)
-        == f"{messages.Yield.TEXT}: value at index 1 must be between '{util.MIN_ID}' and '{util.MAX_ID}' but was {value}"
+        == f"{messages.Yield.TEXT}: value at index 1 must be between '{util.MIN_ID}' and '{util.MAX_ID}' "
+           f"but was {value}"
     )
 
 
