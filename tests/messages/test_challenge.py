@@ -1,6 +1,6 @@
 import pytest
 
-from wampproto.messages import exceptions, util
+from wampproto.messages import util
 from wampproto.messages.challenge import Challenge
 
 

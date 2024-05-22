@@ -1,7 +1,7 @@
 import pytest
 
 from wampproto import messages
-from wampproto.messages import exceptions, util
+from wampproto.messages import util
 
 
 def test_parse_with_invalid_type():
