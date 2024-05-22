@@ -46,7 +46,10 @@ def sign_wampcra_challenge(challenge: str, key: bytes) -> str:
 
 
 def verify_wampcra_signature(signature: str, challenge: str, key: bytes) -> bool:
-    sig_bytes = binascii.unhexlify(signature)
-    local_signature = sign_wampcra_challenge(challenge, key)
+    try:
+        sig_bytes = binascii.unhexlify(signature)
+        local_signature = sign_wampcra_challenge(challenge, key)
+    except binascii.Error:
+        return False
 
     return hmac.compare_digest(sig_bytes, binascii.unhexlify(local_signature))
