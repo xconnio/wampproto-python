@@ -18,6 +18,8 @@ class AllowedRoles(str, Enum):
     CALLER = "caller"
     PUBLISHER = "publisher"
     SUBSCRIBER = "subscriber"
+    DEALER = "dealer"
+    BROKER = "broker"
 
     @classmethod
     def get_allowed_roles(cls) -> list[str]:
@@ -216,8 +218,10 @@ def validate_realm(msg: list[Any], index: int, fields: Fields, name: str):
 
 def validate_authid(details: dict[str, Any], index: int, fields: Fields, name: str):
     if (authid := details.get("authid", None)) is not None:
-        if (error := validate_string_or_raise(authid, index, name)) is not None:
-            return error
+        if validate_string_or_raise(authid, index, name) is not None:
+            return exceptions.InvalidDetailError.format(
+                message=name, index=index, key="authid", expected_type=STRING, actual_type=type(authid).__name__
+            )
 
     fields.authid = authid
     return None
@@ -225,8 +229,10 @@ def validate_authid(details: dict[str, Any], index: int, fields: Fields, name: s
 
 def validate_authrole(details: dict[str, Any], index: int, fields: Fields, name: str):
     if (authrole := details.get("authrole", None)) is not None:
-        if (error := validate_string_or_raise(authrole, index, name)) is not None:
-            return error
+        if validate_string_or_raise(authrole, index, name) is not None:
+            return exceptions.InvalidDetailError.format(
+                message=name, index=index, key="authrole", expected_type=STRING, actual_type=type(authrole).__name__
+            )
 
     fields.authrole = authrole
     return None
@@ -243,28 +249,59 @@ def validate_authmethod(msg: list[Any], index: int, fields: Fields, name: str):
 def validate_authmethods(details: dict[str, Any], index: int, fields: Fields, name: str):
     authmethods = details.get("authmethods", None)
     if authmethods is not None:
-        if (error := validate_list_or_raise(authmethods, index, name)) is not None:
-            return error
+        if validate_list_or_raise(authmethods, index, name) is not None:
+            return exceptions.InvalidDetailError.format(
+                message=name, index=index, key="authmethods", expected_type=LIST, actual_type=type(authmethods).__name__
+            )
 
     fields.authmethods = authmethods
+    return None
+
+
+def validate_welcome_authmethod(details: dict[str, Any], index: int, fields: Fields, name: str):
+    if (authmethod := details.get("authmethod", None)) is not None:
+        if validate_string_or_raise(authmethod, index, name) is not None:
+            return exceptions.InvalidDetailError.format(
+                message=name, index=index, key="authmethod", expected_type=STRING, actual_type=type(authmethod).__name__
+            )
+
+    fields.authmethod = authmethod
     return None
 
 
 def validate_authextra(details: dict[str, Any], index: int, fields: Fields, name: str):
     authextra = details.get("authextra", None)
     if authextra is not None:
-        if (error := validate_dict_or_raise(authextra, index, name)) is not None:
-            return error
+        if validate_dict_or_raise(authextra, index, name) is not None:
+            return exceptions.InvalidDetailError.format(
+                message=name, index=index, key="authextra", expected_type=DICT, actual_type=type(authextra).__name__
+            )
 
     fields.authextra = authextra
     return None
 
 
-def validate_roles(msg: list[Any], index: int, fields: Fields, name: str):
-    if (error := validate_dict_or_raise(msg[index], index, name)) is not None:
-        return error
+def validate_roles(details: dict[str, Any], index: int, fields: Fields, name: str):
+    roles = details.get("roles", None)
+    if validate_dict_or_raise(roles, index, name) is not None:
+        return exceptions.InvalidDetailError.format(
+            message=name, index=index, key="roles", expected_type=DICT, actual_type=type(roles).__name__
+        )
 
-    fields.roles = msg[index]
+    if len(roles) == 0:
+        return (
+            f"{name}: value at index {index} for roles key must be in {AllowedRoles.get_allowed_roles()} "
+            f"but was empty"
+        )
+
+    for role in roles:
+        if role not in AllowedRoles.get_allowed_roles():
+            return (
+                f"{name}: value at index {index} for roles key must be in {AllowedRoles.get_allowed_roles()} "
+                f"but was {role}"
+            )
+
+    fields.roles = roles
     return None
 
 
@@ -325,65 +362,57 @@ def validate_details(msg: list[Any], index: int, fields: Fields, name: str):
 
 
 def validate_hello_details(msg: list[Any], index: int, fields: Fields, name: str):
+    errors = []
     if (error := validate_dict_or_raise(msg[index], index, name)) is not None:
         return error
 
     if (error := validate_authid(msg[index], index, fields, name)) is not None:
-        return error
+        errors.append(error)
 
     if (error := validate_authrole(msg[index], index, fields, name)) is not None:
-        return error
+        errors.append(error)
 
     if (error := validate_authmethods(msg[index], index, fields, name)) is not None:
-        return error
+        errors.append(error)
 
     if (error := validate_roles(msg[index], index, fields, name)) is not None:
-        return error
+        errors.append(error)
 
     if (error := validate_authextra(msg[index], index, fields, name)) is not None:
-        return error
+        errors.append(error)
+
+    if len(errors) > 0:
+        return errors
 
     fields.details = msg[index]
     return None
 
 
-# def validate_details(msg: list[Any], index: int, fields: Fields, name: str):
-#     if (error := validate_dict_or_raise(msg[index], index, name)) is not None:
-#         return error
-#
-#     fields.details = msg[index]
-#
-#     if name in [messages.Hello.TEXT, messages.Welcome.TEXT]:
-#         if name == messages.Hello.TEXT:
-#             if (error := validate_authmethods(msg[index], index, fields, name)) is not None:
-#                 return error
-#
-#         else:
-#             if (err_auth_role := validate_string_or_raise(fields.details.get("authrole"), 1, name)) is not None:
-#                 return err_auth_role
-#
-#             err_auth_method = validate_string_or_raise(fields.details.get("authmethod"), 1, name)
-#             if err_auth_method is not None:
-#                 return f"authmethod must be of type string in details for {name}"
-#
-#         err = validate_roles(fields.details.get("roles"), name)
-#         if err is not None:
-#             return err
-#
-#         fields.details["roles"] = dict(fields.details["roles"])
-#
-#         err_auth_id = validate_string_or_raise(fields.details.get("authid"), 1, "authid")
-#         if err_auth_id is not None:
-#             return f"authid must be of type string in details for {name}"
-#
-#         if "authextra" in fields.details and fields.details["authextra"] is not None:
-#             err = validate_dict_or_raise(fields.details["authextra"], 1, "authextra")
-#             if err is not None:
-#                 return f"authextra must be of type map in details for {name}"
-#
-#             fields.details["authextra"] = dict(fields.details["authextra"])
-#
-#     return None
+def validate_welcome_details(msg: list[Any], index: int, fields: Fields, name: str):
+    errors = []
+    if (error := validate_dict_or_raise(msg[index], index, name)) is not None:
+        return error
+
+    if (error := validate_roles(msg[index], index, fields, name)) is not None:
+        errors.append(error)
+
+    if (error := validate_authid(msg[index], index, fields, name)) is not None:
+        errors.append(error)
+
+    if (error := validate_authrole(msg[index], index, fields, name)) is not None:
+        errors.append(error)
+
+    if (error := validate_authextra(msg[index], index, fields, name)) is not None:
+        errors.append(error)
+
+    if (error := validate_welcome_authmethod(msg[index], index, fields, name)) is not None:
+        errors.append(error)
+
+    if len(errors) > 0:
+        return errors
+
+    fields.details = msg[index]
+    return None
 
 
 def validate_subscription_id(msg: list[Any], index: int, fields: Fields, name: str):
@@ -417,7 +446,7 @@ def validate_message(msg: list[Any], type_: int, name: str, val_spec: Validation
     f = Fields()
     for idx, func in val_spec.spec.items():
         if (error := func(msg, idx, f, val_spec.message)) is not None:
-            errors.append(error)
+            errors.append(error) if isinstance(error, str) else errors.extend(error)
 
     if len(errors) != 0:
         raise ValueError(*errors)
