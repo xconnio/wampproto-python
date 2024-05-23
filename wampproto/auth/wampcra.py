@@ -1,3 +1,4 @@
+import base64
 import binascii
 import datetime
 import hashlib
@@ -42,14 +43,15 @@ def generate_wampcra_challenge(session_id: int, authid: str, authrole: str, prov
 
 
 def sign_wampcra_challenge(challenge: str, key: bytes) -> str:
-    return hmac.new(key, challenge.encode(), hashlib.sha256).hexdigest()
+    signature = hmac.new(key, challenge.encode(), hashlib.sha256).digest()
+    return base64.b64encode(signature).decode()
 
 
 def verify_wampcra_signature(signature: str, challenge: str, key: bytes) -> bool:
     try:
-        sig_bytes = binascii.unhexlify(signature)
+        sig_bytes = base64.b64decode(signature)
         local_signature = sign_wampcra_challenge(challenge, key)
     except binascii.Error:
         return False
 
-    return hmac.compare_digest(sig_bytes, binascii.unhexlify(local_signature))
+    return hmac.compare_digest(sig_bytes, base64.b64decode(local_signature))
