@@ -246,13 +246,12 @@ def test_parse_with_invalid_realm_and_details():
 
     expected_errors = [
         "HELLO: value at index 1 must be of type 'string' but was dict",
-        "HELLO: value at index 2 must be of type 'string' but was int",
-        "HELLO: value at index 2 must be of type 'string' but was list",
+        "HELLO: value at index 2 for key 'authid' must be of type 'string' but was int",
+        "HELLO: value at index 2 for key 'authrole' must be of type 'string' but was list",
         "HELLO: value at index 2 for key 'roles' must be of type 'dict' but was NoneType",
     ]
 
-    print(str(exc_info.value))
-    # assert str(exc_info.value) == str(ValueError(*expected_errors))
+    assert str(exc_info.value) == str(ValueError(*expected_errors))
 
 
 def test_parse_with_invalid_details_dict_key():

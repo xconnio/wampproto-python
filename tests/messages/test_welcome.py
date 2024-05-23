@@ -1,7 +1,6 @@
 import pytest
 
 from wampproto.messages import util
-from wampproto.messages import exceptions
 from wampproto.messages.welcome import Welcome
 
 TEST_SESSION_ID = 25631
@@ -299,7 +298,8 @@ def test_parse_with_empty_role():
 
     assert (
         str(exc_info.value)
-        == f"{Welcome.TEXT}: value at index 2 for roles key must be in {util.AllowedRoles.get_allowed_roles()} but was empty"
+        == f"{Welcome.TEXT}: value at index 2 for roles key must be in {util.AllowedRoles.get_allowed_roles()} "
+           f"but was empty"
     )
 
 
@@ -310,7 +310,8 @@ def test_parse_with_invalid_role_key():
 
     assert (
         str(exc_info.value)
-        == f"{Welcome.TEXT}: value at index 2 for roles key must be in {util.AllowedRoles.get_allowed_roles()} but was new_role"
+        == f"{Welcome.TEXT}: value at index 2 for roles key must be in {util.AllowedRoles.get_allowed_roles()} "
+           f"but was new_role"
     )
 
 

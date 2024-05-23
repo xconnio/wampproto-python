@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from wampproto.messages import util, exceptions
+from wampproto.messages import util
 from wampproto.messages.message import Message
 from wampproto.messages.validation_spec import ValidationSpec
 
