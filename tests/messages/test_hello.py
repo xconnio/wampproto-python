@@ -1,14 +1,14 @@
 import pytest
 
 from wampproto.messages import util
-from wampproto.messages.hello import Hello
+from wampproto.messages.hello import Hello, HelloFields
 
 
 def test_marshal_with_no_roles_and_details():
     realm = "realm"
     roles = {}
     details = {}
-    message = Hello(realm, roles, **details).marshal()
+    message = Hello(HelloFields(realm, roles, **details)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 3
@@ -27,7 +27,7 @@ def test_marshal_with_role_and_no_details():
     realm = "realm"
     roles = {"callee": {}}
     details = {}
-    message = Hello(realm, roles, **details).marshal()
+    message = Hello(HelloFields(realm, roles, **details)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 3
@@ -46,7 +46,7 @@ def test_marshal_with_authid():
     realm = "realm"
     roles = {"callee": {}}
     details = {"authid": "mahad"}
-    message = Hello(realm, roles, **details).marshal()
+    message = Hello(HelloFields(realm, roles, **details)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 3
@@ -65,7 +65,7 @@ def test_marshal_with_authrole():
     realm = "realm"
     roles = {"callee": {}}
     details = {"authrole": "admin"}
-    message = Hello(realm, roles, **details).marshal()
+    message = Hello(HelloFields(realm, roles, **details)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 3
@@ -84,7 +84,7 @@ def test_marshal_with_authmethods():
     realm = "realm"
     roles = {"callee": {}}
     details = {"authmethods": ["ticket"]}
-    message = Hello(realm, roles, **details).marshal()
+    message = Hello(HelloFields(realm, roles, **details)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 3
@@ -103,7 +103,7 @@ def test_marshal_with_authextra():
     realm = "realm"
     roles = {"callee": {}}
     details = {"authextra": {"authproivder": "static"}}
-    message = Hello(realm, roles, **details).marshal()
+    message = Hello(HelloFields(realm, roles, **details)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 3
@@ -122,7 +122,7 @@ def test_marshal_with_role_authid_and_authrole():
     realm = "realm"
     roles = {"callee": {}}
     details = {"authid": "mahad", "authrole": "admin"}
-    message = Hello(realm, roles, **details).marshal()
+    message = Hello(HelloFields(realm, roles, **details)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 3
@@ -141,7 +141,7 @@ def test_marshal_with_role_authid_authrole_authmethods():
     realm = "realm"
     roles = {"callee": {}}
     details = {"authid": "mahad", "authrole": "admin", "authmethods": ["ticket"]}
-    message = Hello(realm, roles, **details).marshal()
+    message = Hello(HelloFields(realm, roles, **details)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 3
@@ -160,7 +160,7 @@ def test_marshal_with_role_authid_authrole_authmethods_authextra():
     realm = "realm"
     roles = {"callee": {}}
     details = {"authid": "mahad", "authrole": "admin", "authmethods": ["ticket"], "authextra": {"extra": True}}
-    message = Hello(realm, roles, **details).marshal()
+    message = Hello(HelloFields(realm, roles, **details)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 3

@@ -7,6 +7,7 @@ import json
 import random
 
 from wampproto import messages, auth
+from wampproto.messages.authenticate import AuthenticateFields
 
 
 class WAMPCRAAuthenticator(auth.IClientAuthenticator):
@@ -18,7 +19,7 @@ class WAMPCRAAuthenticator(auth.IClientAuthenticator):
 
     def authenticate(self, challenge: messages.Challenge) -> messages.Authenticate:
         signed = sign_wampcra_challenge(challenge.extra["challenge"], self._secret.encode())
-        return messages.Authenticate(signed, {})
+        return messages.Authenticate(AuthenticateFields(signed, {}))
 
 
 def utcnow() -> str:

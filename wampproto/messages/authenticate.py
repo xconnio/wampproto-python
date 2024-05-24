@@ -7,6 +7,31 @@ from wampproto.messages.message import Message
 from wampproto.messages.validation_spec import ValidationSpec
 
 
+class IAuthenticateFields:
+    @property
+    def signature(self) -> str:
+        raise NotImplementedError()
+
+    @property
+    def extra(self) -> dict:
+        raise NotImplementedError()
+
+
+class AuthenticateFields(IAuthenticateFields):
+    def __init__(self, signature: str, extra: dict | None = None):
+        super().__init__()
+        self._signature = signature
+        self._extra = {} if extra is None else extra
+
+    @property
+    def signature(self) -> str:
+        return self._signature
+
+    @property
+    def extra(self) -> dict:
+        return self._extra
+
+
 class Authenticate(Message):
     TEXT = "AUTHENTICATE"
     TYPE = 5
@@ -21,15 +46,22 @@ class Authenticate(Message):
         },
     )
 
-    def __init__(self, signature: str, extra: dict | None = None):
+    def __init__(self, fields: AuthenticateFields):
         super().__init__()
-        self.signature = signature
-        self.extra = {} if extra is None else extra
+        self._fields = fields
+
+    @property
+    def signature(self) -> str:
+        return self._fields.signature
+
+    @property
+    def extra(self) -> dict:
+        return self._fields.extra
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Authenticate:
         f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
-        return Authenticate(f.signature, f.extra)
+        return Authenticate(AuthenticateFields(f.signature, f.extra))
 
     def marshal(self) -> list[Any]:
         return [self.TYPE, self.signature, self.extra]
