@@ -6,6 +6,7 @@ from nacl.encoding import HexEncoder
 from nacl.exceptions import BadSignatureError
 
 from wampproto import messages, auth
+from wampproto.messages.authenticate import AuthenticateFields
 
 
 class CryptoSignAuthenticator(auth.IClientAuthenticator):
@@ -26,7 +27,7 @@ class CryptoSignAuthenticator(auth.IClientAuthenticator):
 
         signed = sign_cryptosign_challenge(challenge_hex, self._private_key)
 
-        return messages.Authenticate(signed + challenge_hex, {})
+        return messages.Authenticate(AuthenticateFields(signed + challenge_hex, {}))
 
 
 def generate_cryptosign_challenge() -> str:

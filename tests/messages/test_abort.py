@@ -1,7 +1,7 @@
 import pytest
 
 from wampproto.messages import util
-from wampproto.messages.abort import Abort
+from wampproto.messages.abort import Abort, AbortFields
 
 
 def test_parse_with_invalid_type():
@@ -79,7 +79,7 @@ def test_parse_correctly():
 
 def test_marshal_with_empty_details():
     reason = "wamp.error.no_such_realm"
-    message = Abort({}, reason).marshal()
+    message = Abort(AbortFields({}, reason)).marshal()
 
     assert isinstance(message, list)
 
@@ -95,7 +95,7 @@ def test_marshal_with_empty_details():
 def test_marshal_with_details():
     details = {"message": "The realm does not exist."}
     reason = "wamp.error.no_such_realm"
-    message = Abort(details, reason).marshal()
+    message = Abort(AbortFields(details, reason)).marshal()
 
     assert isinstance(message, list)
 

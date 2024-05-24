@@ -1,7 +1,7 @@
 import pytest
 
 from wampproto.messages import util
-from wampproto.messages import Authenticate
+from wampproto.messages.authenticate import Authenticate, AuthenticateFields
 
 
 def test_parse_with_invalid_type():
@@ -72,7 +72,7 @@ def test_parse_correctly():
 
 def test_marshal_without_extra():
     signature = "signature"
-    message = Authenticate(signature).marshal()
+    message = Authenticate(AuthenticateFields(signature)).marshal()
 
     assert isinstance(message, list)
 
@@ -88,7 +88,7 @@ def test_marshal_without_extra():
 def test_marshal_with_extra():
     signature = "signature"
     extra = {"channel_binding": "null"}
-    message = Authenticate(signature, extra).marshal()
+    message = Authenticate(AuthenticateFields(signature, extra)).marshal()
 
     assert isinstance(message, list)
 

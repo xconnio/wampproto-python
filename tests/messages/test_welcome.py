@@ -299,7 +299,7 @@ def test_parse_with_empty_role():
     assert (
         str(exc_info.value)
         == f"{Welcome.TEXT}: value at index 2 for roles key must be in {util.AllowedRoles.get_allowed_roles()} "
-           f"but was empty"
+        f"but was empty"
     )
 
 
@@ -311,7 +311,7 @@ def test_parse_with_invalid_role_key():
     assert (
         str(exc_info.value)
         == f"{Welcome.TEXT}: value at index 2 for roles key must be in {util.AllowedRoles.get_allowed_roles()} "
-           f"but was new_role"
+        f"but was new_role"
     )
 
 

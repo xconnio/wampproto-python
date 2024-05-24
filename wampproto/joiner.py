@@ -2,6 +2,7 @@ from typing import Optional
 
 from wampproto import messages, serializers, auth
 from wampproto.types import SessionDetails
+from wampproto.messages.hello import HelloFields
 
 CLIENT_ROLES = {
     "caller": {"features": {}},
@@ -35,11 +36,13 @@ class Joiner:
             roles = CLIENT_ROLES
 
         hello = messages.Hello(
-            realm=self._realm,
-            roles=roles,
-            authid=self._authenticator.authid,
-            authmethods=[self._authenticator.auth_method],
-            authextra=self._authenticator.auth_extra,
+            HelloFields(
+                realm=self._realm,
+                roles=roles,
+                authid=self._authenticator.authid,
+                authmethods=[self._authenticator.auth_method],
+                authextra=self._authenticator.auth_extra,
+            )
         )
 
         self._state = Joiner.STATE_HELLO_SENT

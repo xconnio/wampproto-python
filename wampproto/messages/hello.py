@@ -7,6 +7,75 @@ from wampproto.messages.message import Message
 from wampproto.messages.validation_spec import ValidationSpec
 
 
+class IHelloFields:
+    @property
+    def realm(self) -> str:
+        raise NotImplementedError()
+
+    @property
+    def roles(self) -> dict[str, Any]:
+        raise NotImplementedError()
+
+    @property
+    def authid(self) -> str:
+        raise NotImplementedError()
+
+    @property
+    def authrole(self) -> str:
+        raise NotImplementedError()
+
+    @property
+    def authmethods(self) -> list[str]:
+        raise NotImplementedError()
+
+    @property
+    def authextra(self) -> dict:
+        raise NotImplementedError()
+
+
+class HelloFields(IHelloFields):
+    def __init__(
+        self,
+        realm: str,
+        roles: dict[str, Any],
+        authid: str | None = None,
+        authrole: str | None = None,
+        authmethods: list[str] | None = None,
+        authextra: dict | None = None,
+    ):
+        super().__init__()
+        self._realm = realm
+        self._roles = roles
+        self._authid = authid
+        self._authrole = authrole
+        self._authmethods = authmethods
+        self._authextra = authextra
+
+    @property
+    def realm(self) -> str:
+        return self._realm
+
+    @property
+    def roles(self) -> dict[str, Any]:
+        return self._roles
+
+    @property
+    def authid(self) -> str:
+        return self._authid
+
+    @property
+    def authrole(self) -> str:
+        return self._authrole
+
+    @property
+    def authmethods(self) -> list[str]:
+        return self._authmethods
+
+    @property
+    def authextra(self) -> dict:
+        return self._authextra
+
+
 class Hello(Message):
     TEXT = "HELLO"
     TYPE = 1
@@ -21,33 +90,46 @@ class Hello(Message):
         },
     )
 
-    def __init__(
-        self,
-        realm: str,
-        roles: dict[str, Any],
-        authid: str | None = None,
-        authrole: str | None = None,
-        authmethods: list[str] | None = None,
-        authextra: dict | None = None,
-    ):
+    def __init__(self, fields: IHelloFields):
         super().__init__()
-        self.realm = realm
-        self.roles = roles
-        self.authid = authid
-        self.authrole = authrole
-        self.authmethods = authmethods
-        self.authextra = authextra
+        self._fields = fields
+
+    @property
+    def realm(self) -> str:
+        return self._fields.realm
+
+    @property
+    def roles(self) -> dict[str, Any]:
+        return self._fields.roles
+
+    @property
+    def authid(self) -> str:
+        return self._fields.authid
+
+    @property
+    def authrole(self) -> str:
+        return self._fields.authrole
+
+    @property
+    def authmethods(self) -> list[str]:
+        return self._fields.authmethods
+
+    @property
+    def authextra(self) -> dict:
+        return self._fields.authextra
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Hello:
         f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
         return Hello(
-            realm=f.realm,
-            roles=f.roles,
-            authid=f.authid,
-            authrole=f.authrole,
-            authmethods=f.authmethods,
-            authextra=f.authextra,
+            HelloFields(
+                realm=f.realm,
+                roles=f.roles,
+                authid=f.authid,
+                authrole=f.authrole,
+                authmethods=f.authmethods,
+                authextra=f.authextra,
+            )
         )
 
     def marshal(self) -> list[Any]:
