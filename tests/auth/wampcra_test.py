@@ -10,7 +10,7 @@ cra_challenge = (
 )
 
 key = "6d9b906ad60d1f4dd796dbadcc2e2252310565ccdc6fe10b289df5684faf2a46"
-valid_signature = "0c854bddb2acfc48bdd5e4326339f352a12c893997ef4e413445ee89c3698bc0"
+valid_signature = "DIVL3bKs/Ei91eQyYznzUqEsiTmX705BNEXuicNpi8A="
 
 
 def test_authenticate():
