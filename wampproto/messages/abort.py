@@ -4,11 +4,22 @@ from typing import Any
 
 from wampproto.messages import util
 from wampproto.messages.message import Message
+from wampproto.messages.validation_spec import ValidationSpec
 
 
 class Abort(Message):
     TEXT = "ABORT"
     TYPE = 3
+
+    VALIDATION_SPEC = ValidationSpec(
+        min_length=3,
+        max_length=3,
+        message=TEXT,
+        spec={
+            1: util.validate_details,
+            2: util.validate_reason,
+        },
+    )
 
     def __init__(self, details: dict, reason: str):
         super().__init__()
@@ -17,13 +28,8 @@ class Abort(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Abort:
-        util.sanity_check(msg, 3, 3, cls.TYPE, cls.TEXT)
-
-        details = util.validate_details_or_raise(msg[1], cls.TEXT)
-
-        reason = util.validate_uri_or_raise(msg[2], cls.TEXT)
-
-        return Abort(details, reason)
+        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        return Abort(f.details, f.reason)
 
     def marshal(self) -> list[Any]:
         return [self.TYPE, self.details, self.reason]

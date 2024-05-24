@@ -2,6 +2,9 @@ from typing import Any
 
 InvalidDataTypeError = "{message}: value at index {index} must be of type '{expected_type}' but was {actual_type}"
 InvalidRangeError = "{message}: value at index {index} must be between '{start}' and '{end}' but was {actual}"
+InvalidDetailError = (
+    "{message}: value at index {index} for key '{key}' must be of type '{expected_type}' " "but was {actual_type}"
+)
 
 
 class ProtocolError(Exception):

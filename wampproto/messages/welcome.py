@@ -2,13 +2,24 @@ from __future__ import annotations
 
 from typing import Any
 
-from wampproto.messages import util, exceptions
+from wampproto.messages import util
 from wampproto.messages.message import Message
+from wampproto.messages.validation_spec import ValidationSpec
 
 
 class Welcome(Message):
     TEXT = "WELCOME"
     TYPE = 2
+
+    VALIDATION_SPEC = ValidationSpec(
+        min_length=3,
+        max_length=3,
+        message=TEXT,
+        spec={
+            1: util.validate_session_id,
+            2: util.validate_welcome_details,
+        },
+    )
 
     def __init__(
         self,
@@ -29,49 +40,14 @@ class Welcome(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Welcome:
-        util.sanity_check(msg, 3, 3, cls.TYPE, cls.TEXT)
-
-        session_id = util.validate_session_id_or_raise(msg[1], cls.TEXT)
-        details = util.validate_details_or_raise(msg[2], cls.TEXT)
-
-        roles = details.get("roles", {})
-        if not isinstance(roles, dict):
-            raise exceptions.ProtocolError(f"invalid type for 'roles' in details for {cls.TEXT}")
-
-        if len(roles) == 0:
-            raise exceptions.ProtocolError(f"roles are missing in details for {cls.TEXT}")
-
-        # for role in roles.keys():
-        #     if role not in util.AllowedRoles.__members__.values():
-        #         raise exceptions.ProtocolError(f"invalid role '{role}' in 'roles' details for {Welcome.WELCOME_TEXT}")
-
-        authid = details.get("authid", None)
-        if authid is not None:
-            if not isinstance(authid, str):
-                raise exceptions.ProtocolError(f"authid must be a type string for {cls.TEXT}")
-
-        authrole = details.get("authrole", None)
-        if authrole is not None:
-            if not isinstance(authrole, str):
-                raise exceptions.ProtocolError(f"authrole must be a type string for {cls.TEXT}")
-
-        authmethod = details.get("authmethod", None)
-        if authmethod is not None:
-            if not isinstance(authmethod, str):
-                raise exceptions.InvalidTypeError(str, type(authmethod), "authmethod", cls.TEXT)
-
-        authextra = details.get("authextra", None)
-        if authextra is not None:
-            if not isinstance(authextra, dict):
-                raise exceptions.InvalidTypeError(dict, type(authextra), "authextra", cls.TEXT)
-
+        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
         return Welcome(
-            session_id=session_id,
-            roles=roles,
-            authid=authid,
-            authrole=authrole,
-            authmethod=authmethod,
-            authextra=authextra,
+            session_id=f.session_id,
+            roles=f.roles,
+            authid=f.authid,
+            authrole=f.authrole,
+            authmethod=f.authmethod,
+            authextra=f.authextra,
         )
 
     def marshal(self) -> list[Any]:

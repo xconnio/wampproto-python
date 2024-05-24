@@ -1,7 +1,6 @@
 import pytest
 
 from wampproto.messages import util
-from wampproto.messages import exceptions
 from wampproto.messages.hello import Hello
 
 
@@ -217,102 +216,125 @@ def test_parse_with_invalid_message_type():
 
 
 def test_parse_with_realm_none():
-    message = [1, None, {}]
-    with pytest.raises(exceptions.InvalidRealmError) as exc_info:
+    message = [1, None, {"roles": {"callee": {}}}]
+    with pytest.raises(ValueError) as exc_info:
         Hello.parse(message)
 
-    assert str(exc_info.value) == f"realm cannot be null for {Hello.TEXT}"
+    assert str(exc_info.value) == f"{Hello.TEXT}: value at index 1 must be of type 'string' but was NoneType"
 
 
 def test_parse_with_invalid_realm_type():
-    message = [1, {"realm": "realm1"}, {}]
-    with pytest.raises(exceptions.InvalidRealmError) as exc_info:
+    message = [1, {"realm": "realm1"}, {"roles": {"callee": {}}}]
+    with pytest.raises(ValueError) as exc_info:
         Hello.parse(message)
 
-    assert str(exc_info.value) == f"realm must be of type string for {Hello.TEXT}"
+    assert str(exc_info.value) == f"{Hello.TEXT}: value at index 1 must be of type 'string' but was dict"
 
 
 def test_parse_with_invalid_details_type():
     message = [1, "realm1", "details"]
-    with pytest.raises(exceptions.InvalidDetailsError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Hello.parse(message)
 
-    assert str(exc_info.value) == f"details must be of type dictionary for {Hello.TEXT}"
+    assert str(exc_info.value) == f"{Hello.TEXT}: value at index 2 must be of type '{util.DICT}' but was str"
+
+
+def test_parse_with_invalid_realm_and_details():
+    message = [1, {"realm": 1}, {"authid": 123, "authrole": ["role"], "role": "new"}]
+    with pytest.raises(ValueError) as exc_info:
+        Hello.parse(message)
+
+    expected_errors = [
+        "HELLO: value at index 1 must be of type 'string' but was dict",
+        "HELLO: value at index 2 for key 'authid' must be of type 'string' but was int",
+        "HELLO: value at index 2 for key 'authrole' must be of type 'string' but was list",
+        "HELLO: value at index 2 for key 'roles' must be of type 'dict' but was NoneType",
+    ]
+
+    assert str(exc_info.value) == str(ValueError(*expected_errors))
 
 
 def test_parse_with_invalid_details_dict_key():
     message = [1, "realm1", {1: "v"}]
-    with pytest.raises(exceptions.InvalidDetailsError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Hello.parse(message)
 
-    assert str(exc_info.value) == f"invalid type for key '1' in extra details for {Hello.TEXT}"
+    assert (
+        str(exc_info.value) == f"{Hello.TEXT}: value at index 2 for key 'roles' must be of type 'dict' but was NoneType"
+    )
 
 
 def test_parse_with_invalid_role_type():
     message = [1, "realm1", {"roles": "new_role"}]
-    with pytest.raises(exceptions.ProtocolError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Hello.parse(message)
 
-    assert str(exc_info.value) == f"invalid type for 'roles' in details for {Hello.TEXT}"
+    assert str(exc_info.value) == f"{Hello.TEXT}: value at index 2 for key 'roles' must be of type 'dict' but was str"
 
 
 def test_parse_with_empty_role():
     message = [1, "realm1", {"roles": {}}]
-    with pytest.raises(exceptions.ProtocolError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Hello.parse(message)
 
-    assert str(exc_info.value) == f"roles are missing in details for {Hello.TEXT}"
+    assert (
+        str(exc_info.value) == f"{Hello.TEXT}: value at index 2 for roles key must be in "
+        f"{util.AllowedRoles.get_allowed_roles()} but was empty"
+    )
 
 
 def test_parse_with_invalid_role_key():
     message = [1, "realm1", {"roles": {"new_role": {}}}]
-    with pytest.raises(exceptions.ProtocolError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Hello.parse(message)
 
-    assert str(exc_info.value) == f"invalid role 'new_role' in 'roles' details for {Hello.TEXT}"
+    assert (
+        str(exc_info.value) == f"{Hello.TEXT}: value at index 2 for roles key must be in "
+        f"{util.AllowedRoles.get_allowed_roles()} but was new_role"
+    )
 
 
 def test_parse_with_invalid_authid():
     message = [1, "realm1", {"roles": {"callee": {}}, "authid": []}]
-    with pytest.raises(exceptions.ProtocolError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Hello.parse(message)
 
-    assert str(exc_info.value) == f"authid must be a type string for {Hello.TEXT}"
+    assert (
+        str(exc_info.value) == f"{Hello.TEXT}: value at index 2 for key 'authid' must be of type 'string' but was list"
+    )
 
 
 def test_parse_with_invalid_authrole():
     message = [1, "realm1", {"roles": {"callee": {}}, "authrole": []}]
-    with pytest.raises(exceptions.ProtocolError) as exc_info:
-        Hello.parse(message)
-
-    assert str(exc_info.value) == f"authrole must be a type string for {Hello.TEXT}"
-
-
-def test_parse_with_invalid_authmethods_type():
-    message = [1, "realm1", {"roles": {"callee": {}}, "authmethods": "authmethods"}]
-    with pytest.raises(exceptions.InvalidTypeError) as exc_info:
-        Hello.parse(message)
-
-    assert str(exc_info.value) == f"invalid type: expected type 'list', got 'str' for authmethods in '{Hello.TEXT}'"
-
-
-def test_parse_with_invalid_authmethods_item_type():
-    message = [1, "realm1", {"roles": {"callee": {}}, "authmethods": ["ticket", 23]}]
-    with pytest.raises(exceptions.InvalidTypeError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Hello.parse(message)
 
     assert (
         str(exc_info.value)
-        == f"invalid type: expected type 'str', got 'int' for item '23' in 'authmethods' in '{Hello.TEXT}'"
+        == f"{Hello.TEXT}: value at index 2 for key 'authrole' must be of type 'string' but was list"
+    )
+
+
+def test_parse_with_invalid_authmethods_type():
+    message = [1, "realm1", {"roles": {"callee": {}}, "authmethods": "authmethods"}]
+    with pytest.raises(ValueError) as exc_info:
+        Hello.parse(message)
+
+    assert (
+        str(exc_info.value)
+        == f"{Hello.TEXT}: value at index 2 for key 'authmethods' must be of type '{util.LIST}' but was str"
     )
 
 
 def test_parse_with_invalid_authextra_type():
     message = [1, "realm1", {"roles": {"callee": {}}, "authextra": "authextra"}]
-    with pytest.raises(exceptions.InvalidTypeError) as exc_info:
+    with pytest.raises(ValueError) as exc_info:
         Hello.parse(message)
 
-    assert str(exc_info.value) == f"invalid type: expected type 'dict', got 'str' for authextra in '{Hello.TEXT}'"
+    assert (
+        str(exc_info.value)
+        == f"{Hello.TEXT}: value at index 2 for key 'authextra' must be of type '{util.DICT}' but was str"
+    )
 
 
 def test_parse_with_valid_roles():

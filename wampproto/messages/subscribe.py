@@ -4,11 +4,23 @@ from typing import Any
 
 from wampproto.messages.message import Message
 from wampproto.messages import util
+from wampproto.messages.validation_spec import ValidationSpec
 
 
 class Subscribe(Message):
     TEXT = "SUBSCRIBE"
     TYPE = 32
+
+    VALIDATION_SPEC = ValidationSpec(
+        min_length=4,
+        max_length=4,
+        message=TEXT,
+        spec={
+            1: util.validate_request_id,
+            2: util.validate_options,
+            3: util.validate_topic,
+        },
+    )
 
     def __init__(self, request_id: int, topic: str, options: dict = None):
         super().__init__()
@@ -18,13 +30,8 @@ class Subscribe(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Subscribe:
-        util.sanity_check(msg, 4, 4, cls.TYPE, cls.TEXT)
-
-        request_id = util.validate_session_id_or_raise(msg[1], cls.TEXT, "request ID")
-        options = util.validate_details_or_raise(msg[2], cls.TEXT, "options")
-        topic = util.validate_uri_or_raise(msg[3], "topic")
-
-        return Subscribe(request_id, topic, options)
+        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        return Subscribe(f.request_id, f.topic, f.options)
 
     def marshal(self) -> list[Any]:
         return [self.TYPE, self.request_id, self.options, self.topic]

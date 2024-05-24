@@ -4,11 +4,23 @@ from typing import Any
 
 from wampproto.messages.message import Message
 from wampproto.messages import util
+from wampproto.messages.validation_spec import ValidationSpec
 
 
 class Register(Message):
     TEXT = "REGISTER"
     TYPE = 64
+
+    VALIDATION_SPEC = ValidationSpec(
+        min_length=4,
+        max_length=4,
+        message=TEXT,
+        spec={
+            1: util.validate_request_id,
+            2: util.validate_options,
+            3: util.validate_uri,
+        },
+    )
 
     def __init__(self, request_id: int, uri: str, options: dict = None):
         super().__init__()
@@ -18,13 +30,8 @@ class Register(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Register:
-        util.sanity_check(msg, 4, 4, cls.TYPE, cls.TEXT)
-
-        request_id = util.validate_session_id_or_raise(msg[1], cls.TEXT, "request ID")
-        options = util.validate_details_or_raise(msg[2], cls.TEXT, "options")
-        uri = util.validate_uri_or_raise(msg[3], cls.TEXT)
-
-        return Register(request_id, uri, options)
+        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        return Register(f.request_id, f.uri, f.options)
 
     def marshal(self) -> list[Any]:
         return [self.TYPE, self.request_id, self.options, self.uri]
