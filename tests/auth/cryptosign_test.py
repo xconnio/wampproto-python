@@ -4,6 +4,7 @@ import nacl.signing
 
 from wampproto import messages
 from wampproto.auth import cryptosign
+from wampproto.messages.challenge import ChallengeFields
 
 private_key_hex = "c7e8c1f8f16ec37f53ed153f8afb7f18469b051f1d24dbea2097a2a104b2e9db"
 public_key_hex = "c53e4f2756a52ca1ed5cd00da108b3ed7bcffe6294e78283521e5102824f52d3"
@@ -19,7 +20,7 @@ def test_authenticate():
     assert authenticator.authid == "authID"
     assert authenticator.auth_extra["pubkey"] == public_key_hex
 
-    challenge_obj = messages.Challenge("cryptosign", {"challenge": challenge})
+    challenge_obj = messages.Challenge(ChallengeFields("cryptosign", {"challenge": challenge}))
     authenticate = authenticator.authenticate(challenge_obj)
     expected_signature = signature + challenge
     assert authenticate.signature == expected_signature

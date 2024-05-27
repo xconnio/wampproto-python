@@ -1,7 +1,7 @@
 import pytest
 
 from wampproto.messages import util
-from wampproto.messages.welcome import Welcome
+from wampproto.messages.welcome import Welcome, WelcomeFields
 
 TEST_SESSION_ID = 25631
 
@@ -9,19 +9,29 @@ TEST_SESSION_ID = 25631
 @pytest.mark.parametrize(
     "session_id, roles, details, expected_details",
     [
-        (TEST_SESSION_ID, {}, {}, {"roles": {}}),
-        (TEST_SESSION_ID, {"caller": ""}, {"authid": "mahad"}, {"roles": {"caller": ""}, "authid": "mahad"}),
-        (TEST_SESSION_ID, {"caller": ""}, {"authrole": "callee"}, {"roles": {"caller": ""}, "authrole": "callee"}),
+        (TEST_SESSION_ID, {}, {}, {"roles": {}, "authextra": {}}),
+        (
+            TEST_SESSION_ID,
+            {"caller": ""},
+            {"authid": "mahad"},
+            {"roles": {"caller": ""}, "authid": "mahad", "authextra": {}},
+        ),
+        (
+            TEST_SESSION_ID,
+            {"caller": ""},
+            {"authrole": "callee"},
+            {"roles": {"caller": ""}, "authrole": "callee", "authextra": {}},
+        ),
         (
             TEST_SESSION_ID,
             {"publisher": ""},
             {"authrole": "callee", "authid": "mahad"},
-            {"roles": {"publisher": ""}, "authrole": "callee", "authid": "mahad"},
+            {"roles": {"publisher": ""}, "authrole": "callee", "authid": "mahad", "authextra": {}},
         ),
     ],
 )
 def test_welcome(session_id, roles, details, expected_details):
-    message = Welcome(session_id, roles, **details).marshal()
+    message = Welcome(WelcomeFields(session_id, roles, **details)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 3
@@ -33,7 +43,7 @@ def test_welcome(session_id, roles, details, expected_details):
 def test_marshal_with_no_roles_and_details():
     roles = {}
     details = {}
-    message = Welcome(TEST_SESSION_ID, roles, **details).marshal()
+    message = Welcome(WelcomeFields(TEST_SESSION_ID, roles, **details)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 3
@@ -45,13 +55,13 @@ def test_marshal_with_no_roles_and_details():
     assert message[1] == TEST_SESSION_ID
 
     assert isinstance(message[2], dict)
-    assert message[2] == {"roles": {}}
+    assert message[2] == {"roles": {}, "authextra": {}}
 
 
 def test_marshal_with_role_and_no_details():
     roles = {"callee": {}}
     details = {}
-    message = Welcome(TEST_SESSION_ID, roles, **details).marshal()
+    message = Welcome(WelcomeFields(TEST_SESSION_ID, roles, **details)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 3
@@ -63,13 +73,13 @@ def test_marshal_with_role_and_no_details():
     assert message[1] == TEST_SESSION_ID
 
     assert isinstance(message[2], dict)
-    assert message[2] == {"roles": roles}
+    assert message[2] == {"roles": roles, "authextra": {}}
 
 
 def test_marshal_with_authid():
     roles = {"callee": {}}
     details = {"authid": "mahad"}
-    message = Welcome(TEST_SESSION_ID, roles, **details).marshal()
+    message = Welcome(WelcomeFields(TEST_SESSION_ID, roles, **details)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 3
@@ -81,13 +91,13 @@ def test_marshal_with_authid():
     assert message[1] == TEST_SESSION_ID
 
     assert isinstance(message[2], dict)
-    assert message[2] == {"roles": roles, "authid": "mahad"}
+    assert message[2] == {"roles": roles, "authid": "mahad", "authextra": {}}
 
 
 def test_marshal_with_authrole():
     roles = {"callee": {}}
     details = {"authrole": "admin"}
-    message = Welcome(TEST_SESSION_ID, roles, **details).marshal()
+    message = Welcome(WelcomeFields(TEST_SESSION_ID, roles, **details)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 3
@@ -99,13 +109,13 @@ def test_marshal_with_authrole():
     assert message[1] == TEST_SESSION_ID
 
     assert isinstance(message[2], dict)
-    assert message[2] == {"roles": roles, "authrole": "admin"}
+    assert message[2] == {"roles": roles, "authrole": "admin", "authextra": {}}
 
 
 def test_marshal_with_authmethod():
     roles = {"callee": {}}
     details = {"authmethod": "anonymous"}
-    message = Welcome(TEST_SESSION_ID, roles, **details).marshal()
+    message = Welcome(WelcomeFields(TEST_SESSION_ID, roles, **details)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 3
@@ -117,13 +127,13 @@ def test_marshal_with_authmethod():
     assert message[1] == TEST_SESSION_ID
 
     assert isinstance(message[2], dict)
-    assert message[2] == {"roles": roles, "authmethod": "anonymous"}
+    assert message[2] == {"roles": roles, "authmethod": "anonymous", "authextra": {}}
 
 
 def test_marshal_with_authextra():
     roles = {"callee": {}}
     details = {"authextra": {"extra": True}}
-    message = Welcome(TEST_SESSION_ID, roles, **details).marshal()
+    message = Welcome(WelcomeFields(TEST_SESSION_ID, roles, **details)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 3
@@ -141,7 +151,7 @@ def test_marshal_with_authextra():
 def test_marshal_with_role_authid_and_authrole():
     roles = {"callee": {}}
     details = {"authid": "mahad", "authrole": "admin"}
-    message = Welcome(TEST_SESSION_ID, roles, **details).marshal()
+    message = Welcome(WelcomeFields(TEST_SESSION_ID, roles, **details)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 3
@@ -153,13 +163,13 @@ def test_marshal_with_role_authid_and_authrole():
     assert message[1] == TEST_SESSION_ID
 
     assert isinstance(message[2], dict)
-    assert message[2] == {"roles": roles, "authid": "mahad", "authrole": "admin"}
+    assert message[2] == {"roles": roles, "authid": "mahad", "authrole": "admin", "authextra": {}}
 
 
 def test_marshal_with_role_authid_authrole_authmethod():
     roles = {"callee": {}}
     details = {"authid": "mahad", "authrole": "admin", "authmethod": "ticket"}
-    message = Welcome(TEST_SESSION_ID, roles, **details).marshal()
+    message = Welcome(WelcomeFields(TEST_SESSION_ID, roles, **details)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 3
@@ -171,13 +181,19 @@ def test_marshal_with_role_authid_authrole_authmethod():
     assert message[1] == TEST_SESSION_ID
 
     assert isinstance(message[2], dict)
-    assert message[2] == {"roles": roles, "authid": "mahad", "authrole": "admin", "authmethod": "ticket"}
+    assert message[2] == {
+        "roles": roles,
+        "authid": "mahad",
+        "authrole": "admin",
+        "authmethod": "ticket",
+        "authextra": {},
+    }
 
 
 def test_marshal_with_role_authid_authrole_authmethod_authextra():
     roles = {"callee": {}}
     details = {"authid": "mahad", "authrole": "admin", "authmethod": "ticket", "authextra": {"authprovider": "static"}}
-    message = Welcome(TEST_SESSION_ID, roles, **details).marshal()
+    message = Welcome(WelcomeFields(TEST_SESSION_ID, roles, **details)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 3
@@ -374,7 +390,7 @@ def test_parse_with_valid_roles():
         assert welcome.authid is None
         assert welcome.authrole is None
         assert welcome.authmethod is None
-        assert welcome.authextra is None
+        assert welcome.authextra == {}
 
 
 def test_parse_with_multiple_roles():
@@ -391,7 +407,7 @@ def test_parse_with_multiple_roles():
     assert welcome.authid is None
     assert welcome.authrole is None
     assert welcome.authmethod is None
-    assert welcome.authextra is None
+    assert welcome.authextra == {}
 
 
 def test_parse_with_authid():
@@ -409,7 +425,7 @@ def test_parse_with_authid():
     assert welcome.authid == details["authid"]
     assert welcome.authrole is None
     assert welcome.authmethod is None
-    assert welcome.authextra is None
+    assert welcome.authextra == {}
 
 
 def test_parse_with_authrole():
@@ -427,7 +443,7 @@ def test_parse_with_authrole():
     assert welcome.authrole == details["authrole"]
     assert welcome.authid is None
     assert welcome.authmethod is None
-    assert welcome.authextra is None
+    assert welcome.authextra == {}
 
 
 def test_parse_with_authmethod():
@@ -445,7 +461,7 @@ def test_parse_with_authmethod():
     assert welcome.authmethod == details["authmethod"]
     assert welcome.authid is None
     assert welcome.authrole is None
-    assert welcome.authextra is None
+    assert welcome.authextra == {}
 
 
 def test_parse_with_authid_and_authrole():
@@ -465,7 +481,7 @@ def test_parse_with_authid_and_authrole():
     assert isinstance(welcome.authrole, str)
     assert welcome.authrole == details["authrole"]
     assert welcome.authmethod is None
-    assert welcome.authextra is None
+    assert welcome.authextra == {}
 
 
 def test_parse_with_authid_authrole_authmethod():
@@ -487,7 +503,7 @@ def test_parse_with_authid_authrole_authmethod():
 
     assert isinstance(welcome.authmethod, str)
     assert welcome.authmethod == details["authmethod"]
-    assert welcome.authextra is None
+    assert welcome.authextra == {}
 
 
 def test_parse_with_authid_authrole_authmethod_authextra():

@@ -3,6 +3,7 @@ from datetime import datetime
 
 from wampproto import messages
 from wampproto.auth import wampcra
+from wampproto.messages.challenge import ChallengeFields
 
 cra_challenge = (
     '{"nonce":"cdcb3b12d56e12825be99f38f55ba43f","authprovider":"provider","authid":"foo",'
@@ -15,7 +16,7 @@ valid_signature = "DIVL3bKs/Ei91eQyYznzUqEsiTmX705BNEXuicNpi8A="
 
 def test_authenticate():
     authenticator = wampcra.WAMPCRAAuthenticator("authID", key, {})
-    challenge = messages.Challenge(wampcra.WAMPCRAAuthenticator.TYPE, {"challenge": cra_challenge})
+    challenge = messages.Challenge(ChallengeFields(wampcra.WAMPCRAAuthenticator.TYPE, {"challenge": cra_challenge}))
 
     authenticate = authenticator.authenticate(challenge)
     assert authenticate.signature == valid_signature

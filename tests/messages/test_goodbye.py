@@ -1,7 +1,7 @@
 import pytest
 
 from wampproto.messages import util
-from wampproto.messages.goodbye import Goodbye
+from wampproto.messages.goodbye import Goodbye, GoodbyeFields
 
 
 def test_parse_with_invalid_type():
@@ -80,7 +80,7 @@ def test_parse_correctly():
 
 def test_marshal_with_empty_details():
     reason = "wamp.close.system_shutdown"
-    message = Goodbye({}, reason).marshal()
+    message = Goodbye(GoodbyeFields({}, reason)).marshal()
 
     assert isinstance(message, list)
 
@@ -96,7 +96,7 @@ def test_marshal_with_empty_details():
 def test_marshal_with_details():
     details = {"message": "The host is shutting down now."}
     reason = "wamp.close.system_shutdown"
-    message = Goodbye(details, reason).marshal()
+    message = Goodbye(GoodbyeFields(details, reason)).marshal()
 
     assert isinstance(message, list)
 

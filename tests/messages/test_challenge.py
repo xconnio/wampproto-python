@@ -1,7 +1,7 @@
 import pytest
 
 from wampproto.messages import util
-from wampproto.messages.challenge import Challenge
+from wampproto.messages.challenge import Challenge, ChallengeFields
 
 
 def test_parse_with_invalid_type():
@@ -72,7 +72,7 @@ def test_parse_correctly():
 
 def test_marshal_without_extra():
     authmethod = "cryptosign"
-    message = Challenge(authmethod).marshal()
+    message = Challenge(ChallengeFields(authmethod)).marshal()
 
     assert isinstance(message, list)
 
@@ -88,7 +88,7 @@ def test_marshal_without_extra():
 def test_marshal_with_extra():
     authmethod = "wamp-scram"
     extra = {"iterations": 4096}
-    message = Challenge(authmethod, extra).marshal()
+    message = Challenge(ChallengeFields(authmethod, extra)).marshal()
 
     assert isinstance(message, list)
 

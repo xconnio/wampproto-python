@@ -31,7 +31,7 @@ def test_subscribing_to_topic():
     topic_name = "io.xconn.test"
     broker.add_session(details)
 
-    subscribe = messages.Subscribe(1, topic_name)
+    subscribe = messages.Subscribe(messages.SubscribeFields(1, topic_name))
     message_with_recipient = broker.receive_message(details.session_id, subscribe)
 
     assert message_with_recipient.recipient == details.session_id
@@ -54,10 +54,10 @@ def test_unsubscribing_from_topic():
     details = SessionDetails(1, "realm1", "authid", "authrole")
     broker.add_session(details)
 
-    subscribe = messages.Subscribe(1, topic_name)
+    subscribe = messages.Subscribe(messages.SubscribeFields(1, topic_name))
     broker.receive_message(details.session_id, subscribe)
 
-    unsubscribe = messages.UnSubscribe(1, 1)
+    unsubscribe = messages.UnSubscribe(messages.UnSubscribeFields(1, 1))
     message_with_recipient = broker.receive_message(details.session_id, unsubscribe)
 
     assert message_with_recipient.recipient == 1
@@ -74,7 +74,7 @@ def test_unsubscribing_from_topic():
     assert str(exc.value) == "cannot unsubscribe, session 2 doesn't exist"
 
     # Unsubscribe with invalid subscriptionID
-    invalid_unsubscribe = messages.UnSubscribe(1, 2)
+    invalid_unsubscribe = messages.UnSubscribe(messages.UnSubscribeFields(1, 2))
     with pytest.raises(ValueError) as exc:
         broker.receive_message(1, invalid_unsubscribe)
 
@@ -89,7 +89,7 @@ def test_unsubscribing_from_topic():
 
 def test_receive_invalid_message():
     broker = Broker()
-    call = messages.Call(1, "io.xconn.test")
+    call = messages.Call(messages.CallFields(1, "io.xconn.test"))
 
     with pytest.raises(Exception) as exc:
         broker.receive_message(1, call)
@@ -103,10 +103,10 @@ def test_publishing_to_topic():
     details = SessionDetails(1, "realm1", "authid", "authrole")
     broker.add_session(details)
 
-    subscribe = messages.Subscribe(1, topic_name)
+    subscribe = messages.Subscribe(messages.SubscribeFields(1, topic_name))
     broker.receive_message(details.session_id, subscribe)
 
-    publish = messages.Publish(1, topic_name, args=[1, 2, 3])
+    publish = messages.Publish(messages.PublishFields(1, topic_name, args=[1, 2, 3]))
     messages_with_recipient = broker.receive_publish(details.session_id, publish)
 
     assert len(messages_with_recipient.recipients) == 1
@@ -114,7 +114,7 @@ def test_publishing_to_topic():
     assert messages_with_recipient.ack is None
 
     # Publish message to a topic with no subscribers
-    publish_no_subscriber = messages.Publish(2, "topic1", args=[1, 2, 3])
+    publish_no_subscriber = messages.Publish(messages.PublishFields(2, "topic1", args=[1, 2, 3]))
     msgs = broker.receive_publish(details.session_id, publish_no_subscriber)
 
     assert len(msgs.recipients) == 0
@@ -122,7 +122,9 @@ def test_publishing_to_topic():
     assert msgs.ack is None
 
     # Publish with acknowledge true
-    publish_acknowledge = messages.Publish(2, topic_name, args=[1, 2, 3], options={"acknowledge": True})
+    publish_acknowledge = messages.Publish(
+        messages.PublishFields(2, topic_name, args=[1, 2, 3], options={"acknowledge": True})
+    )
     msg_with_recipient = broker.receive_publish(details.session_id, publish_acknowledge)
 
     assert len(msg_with_recipient.recipients) == 1

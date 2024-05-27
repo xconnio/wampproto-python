@@ -28,7 +28,7 @@ class AuthenticateFields(IAuthenticateFields):
         return self._signature
 
     @property
-    def extra(self) -> dict:
+    def extra(self) -> dict[str, Any]:
         return self._extra
 
 
@@ -55,7 +55,7 @@ class Authenticate(Message):
         return self._fields.signature
 
     @property
-    def extra(self) -> dict:
+    def extra(self) -> dict[str, Any]:
         return self._fields.extra
 
     @classmethod

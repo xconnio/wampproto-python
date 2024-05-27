@@ -233,7 +233,7 @@ def test_parse_correctly_with_all_options():
 def test_marshal():
     request_id = 367
     uri = "io.xconn.hello"
-    message = messages.Call(request_id, uri).marshal()
+    message = messages.Call(messages.CallFields(request_id, uri)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 4
@@ -252,7 +252,7 @@ def test_marshal_with_args():
     request_id = 367
     uri = "io.xconn.hello"
     args = ["new"]
-    message = messages.Call(request_id, uri, args).marshal()
+    message = messages.Call(messages.CallFields(request_id, uri, args)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 5
@@ -273,7 +273,7 @@ def test_marshal_with_kwargs():
     uri = "io.xconn.new"
     args = ["args"]
     kwargs = {"new": "value"}
-    message = messages.Call(request_id, uri, args, kwargs).marshal()
+    message = messages.Call(messages.CallFields(request_id, uri, args, kwargs)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 6
@@ -300,7 +300,7 @@ def test_marshal_with_all_options():
     args = ["arg1"]
     kwargs = {"key": "value"}
     options = {"receive_progress": True}
-    message = messages.Call(request_id, uri, args, kwargs, options).marshal()
+    message = messages.Call(messages.CallFields(request_id, uri, args, kwargs, options)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 6

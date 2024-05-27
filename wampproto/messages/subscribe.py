@@ -7,6 +7,40 @@ from wampproto.messages import util
 from wampproto.messages.validation_spec import ValidationSpec
 
 
+class ISubscribeFields:
+    @property
+    def request_id(self):
+        raise NotImplementedError
+
+    @property
+    def options(self):
+        raise NotImplementedError
+
+    @property
+    def topic(self):
+        raise NotImplementedError
+
+
+class SubscribeFields(ISubscribeFields):
+    def __init__(self, request_id: int, topic: str, options: dict[str, Any] | None = None):
+        super().__init__()
+        self._request_id = request_id
+        self._topic = topic
+        self._options = {} if options is None else options
+
+    @property
+    def request_id(self) -> int:
+        return self._request_id
+
+    @property
+    def topic(self) -> str:
+        return self._topic
+
+    @property
+    def options(self) -> dict[str, Any]:
+        return self._options
+
+
 class Subscribe(Message):
     TEXT = "SUBSCRIBE"
     TYPE = 32
@@ -22,16 +56,26 @@ class Subscribe(Message):
         },
     )
 
-    def __init__(self, request_id: int, topic: str, options: dict = None):
+    def __init__(self, fields: ISubscribeFields):
         super().__init__()
-        self.request_id = request_id
-        self.topic: str = topic
-        self.options = options if options else {}
+        self._fields = fields
+
+    @property
+    def request_id(self) -> int:
+        return self._fields.request_id
+
+    @property
+    def topic(self) -> str:
+        return self._fields.topic
+
+    @property
+    def options(self) -> dict[str, Any]:
+        return self._fields.options
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Subscribe:
         f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
-        return Subscribe(f.request_id, f.topic, f.options)
+        return Subscribe(SubscribeFields(f.request_id, f.topic, f.options))
 
     def marshal(self) -> list[Any]:
         return [self.TYPE, self.request_id, self.options, self.topic]

@@ -7,6 +7,65 @@ from wampproto.messages.message import Message
 from wampproto.messages.validation_spec import ValidationSpec
 
 
+class IInvocationFields:
+    @property
+    def request_id(self):
+        raise NotImplementedError
+
+    @property
+    def registration_id(self):
+        raise NotImplementedError
+
+    @property
+    def args(self):
+        raise NotImplementedError
+
+    @property
+    def kwargs(self):
+        raise NotImplementedError
+
+    @property
+    def details(self):
+        raise NotImplementedError
+
+
+class InvocationFields(IInvocationFields):
+    def __init__(
+        self,
+        request_id: int,
+        registration_id: int,
+        args: list | None = None,
+        kwargs: dict | None = None,
+        details: dict | None = None,
+    ):
+        super().__init__()
+        self._request_id = request_id
+        self._registration_id = registration_id
+        self._args = args
+        self._kwargs = kwargs
+        self._details = {} if details is None else details
+
+    @property
+    def request_id(self) -> int:
+        return self._request_id
+
+    @property
+    def registration_id(self) -> int:
+        return self._registration_id
+
+    @property
+    def args(self) -> list | None:
+        return self._args
+
+    @property
+    def kwargs(self) -> dict[str, Any] | None:
+        return self._kwargs
+
+    @property
+    def details(self) -> dict[str, Any]:
+        return self._details
+
+
 class Invocation(Message):
     TEXT = "INVOCATION"
     TYPE = 68
@@ -18,31 +77,40 @@ class Invocation(Message):
         spec={
             1: util.validate_request_id,
             2: util.validate_registration_id,
-            3: util.validate_options,
+            3: util.validate_details,
             4: util.validate_args,
             5: util.validate_kwargs,
         },
     )
 
-    def __init__(
-        self,
-        request_id: int,
-        registration_id: int,
-        args: list | None = None,
-        kwargs: dict | None = None,
-        details: dict | None = None,
-    ):
+    def __init__(self, fields: IInvocationFields):
         super().__init__()
-        self.request_id = request_id
-        self.registration_id = registration_id
-        self.args = args
-        self.kwargs = kwargs
-        self.details = details if details is not None else {}
+        self._fields = fields
+
+    @property
+    def request_id(self) -> int:
+        return self._fields.request_id
+
+    @property
+    def registration_id(self) -> int:
+        return self._fields.registration_id
+
+    @property
+    def args(self) -> list | None:
+        return self._fields.args
+
+    @property
+    def kwargs(self) -> dict[str, Any] | None:
+        return self._fields.kwargs
+
+    @property
+    def details(self) -> dict[str, Any]:
+        return self._fields.details
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Invocation:
         f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
-        return Invocation(f.request_id, f.registration_id, f.args, f.kwargs, f.options)
+        return Invocation(InvocationFields(f.request_id, f.registration_id, f.args, f.kwargs, f.details))
 
     def marshal(self) -> list[Any]:
         message = [self.TYPE, self.request_id, self.registration_id, self.details]

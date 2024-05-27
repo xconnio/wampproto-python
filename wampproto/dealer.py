@@ -68,7 +68,9 @@ class Dealer:
         if isinstance(message, messages.Call):
             registration = self.registrations_by_procedure.get(message.uri)
             if registration is None:
-                err = messages.Error(message.TYPE, message.request_id, "wamp.error.no_such_procedure")
+                err = messages.Error(
+                    messages.ErrorFields(message.TYPE, message.request_id, "wamp.error.no_such_procedure")
+                )
                 return types.MessageWithRecipient(err, session_id)
 
             callee_id: int = 0
@@ -95,11 +97,13 @@ class Dealer:
                 details[OPTION_PROGRESS] = True
 
             invocation = messages.Invocation(
-                request_id=invocation_id,
-                registration_id=registration.id,
-                args=message.args,
-                kwargs=message.kwargs,
-                details=details,
+                messages.InvocationFields(
+                    request_id=invocation_id,
+                    registration_id=registration.id,
+                    args=message.args,
+                    kwargs=message.kwargs,
+                    details=details,
+                )
             )
 
             return types.MessageWithRecipient(invocation, callee_id)
@@ -121,7 +125,9 @@ class Dealer:
                 del self.call_to_invocation_id[(invocation.caller_id, invocation.request_id)]
 
             result = messages.Result(
-                request_id=invocation.request_id, args=message.args, kwargs=message.kwargs, options=details
+                messages.ResultFields(
+                    request_id=invocation.request_id, args=message.args, kwargs=message.kwargs, options=details
+                )
             )
             return types.MessageWithRecipient(result, invocation.caller_id)
         elif isinstance(message, messages.Register):
@@ -136,11 +142,13 @@ class Dealer:
             else:
                 # TODO: implement shared registrations.
                 registered = messages.Error(
-                    messages.Register.TYPE, message.request_id, "wamp.error.procedure_already_exists"
+                    messages.ErrorFields(
+                        messages.Register.TYPE, message.request_id, "wamp.error.procedure_already_exists"
+                    )
                 )
                 return types.MessageWithRecipient(registered, session_id)
 
-            registered = messages.Registered(message.request_id, registration.id)
+            registered = messages.Registered(messages.RegisteredFields(message.request_id, registration.id))
             return types.MessageWithRecipient(registered, session_id)
         elif isinstance(message, messages.UnRegister):
             registrations = self.registrations_by_session.get(session_id)
@@ -164,7 +172,7 @@ class Dealer:
 
             self.registrations_by_session[session_id] = registrations
 
-            unregistered = messages.UnRegistered(message.request_id)
+            unregistered = messages.UnRegistered(messages.UnRegisteredFields(message.request_id))
             return types.MessageWithRecipient(unregistered, session_id)
         else:
             raise ValueError("message type not supported")

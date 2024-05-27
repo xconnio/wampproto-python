@@ -57,7 +57,7 @@ class Broker:
 
             self.subscriptions_by_session[session_id][subscription.id] = subscription
 
-            subscribed = messages.Subscribed(message.request_id, subscription.id)
+            subscribed = messages.Subscribed(messages.SubscribedFields(message.request_id, subscription.id))
             return types.MessageWithRecipient(subscribed, session_id)
         elif isinstance(message, messages.UnSubscribe):
             if session_id not in self.subscriptions_by_session:
@@ -74,7 +74,7 @@ class Broker:
 
             del self.subscriptions_by_session[session_id][message.subscription_id]
 
-            unsubscribed = messages.UnSubscribed(message.request_id)
+            unsubscribed = messages.UnSubscribed(messages.UnSubscribedFields(message.request_id))
             return types.MessageWithRecipient(unsubscribed, session_id)
         else:
             raise ValueError("message type not supported")
@@ -88,14 +88,14 @@ class Broker:
 
         subscription = self.subscriptions_by_topic.get(message.uri)
         if subscription is not None:
-            event = messages.Event(subscription.id, publication_id, message.args, message.kwargs)
+            event = messages.Event(messages.EventFields(subscription.id, publication_id, message.args, message.kwargs))
             result.event = event
             for subscriber_id in subscription.subscribers.keys():
                 result.recipients.append(subscriber_id)
 
         ack = message.options.get("acknowledge", False)
         if ack:
-            published = messages.Published(message.request_id, publication_id)
+            published = messages.Published(messages.PublishedFields(message.request_id, publication_id))
             result.ack = types.MessageWithRecipient(published, session_id)
 
         return result
