@@ -59,7 +59,9 @@ class Acceptor:
 
             if self._authenticator is None:
                 self._state = Acceptor.STATE_WELCOME_SENT
-                welcome = messages.Welcome(self._session_id, self._roles, "anonymous", "anonymous", "anonymous")
+                welcome = messages.Welcome(
+                    messages.WelcomeFields(self._session_id, self._roles, "anonymous", "anonymous", "anonymous")
+                )
                 self._session_details = SessionDetails(welcome.session_id, msg.realm, welcome.authid, welcome.authrole)
 
                 return welcome
@@ -75,7 +77,9 @@ class Acceptor:
                     self._state = Acceptor.STATE_WELCOME_SENT
 
                     welcome = messages.Welcome(
-                        self._session_id, self._roles, response.authid, response.authrole, method
+                        messages.WelcomeFields(
+                            self._session_id, self._roles, response.authid, response.authrole, method
+                        )
                     )
                     self._session_details = SessionDetails(
                         welcome.session_id, msg.realm, welcome.authid, welcome.authrole
@@ -94,7 +98,7 @@ class Acceptor:
                     challenge = auth.generate_cryptosign_challenge()
                     self._state = Acceptor.STATE_CHALLENGE_SENT
 
-                    return messages.Challenge(method, {"challenge": challenge})
+                    return messages.Challenge(messages.ChallengeFields(method, {"challenge": challenge}))
                 case "wampcra":
                     request = auth.Request(method, msg.realm, msg.authid, msg.authextra)
                     response = self._authenticator.authenticate(request)
@@ -110,10 +114,10 @@ class Acceptor:
                     self._state = Acceptor.STATE_CHALLENGE_SENT
                     self._challenge = challenge
 
-                    return messages.Challenge(method, {"challenge": challenge})
+                    return messages.Challenge(messages.ChallengeFields(method, {"challenge": challenge}))
                 case "ticket":
                     self._state = Acceptor.STATE_CHALLENGE_SENT
-                    return messages.Challenge(method, {})
+                    return messages.Challenge(messages.ChallengeFields(method, {}))
                 case _:
                     raise ValueError("unknown method")
         elif isinstance(msg, messages.Authenticate):
@@ -125,7 +129,12 @@ class Acceptor:
                     auth.verify_cryptosign_signature(msg.signature, binascii.unhexlify(self._public_key))
                     self._state = Acceptor.STATE_WELCOME_SENT
                     welcome = messages.Welcome(
-                        self._session_id, self._roles, authid=self._response.authid, authrole=self._response.authrole
+                        messages.WelcomeFields(
+                            self._session_id,
+                            self._roles,
+                            authid=self._response.authid,
+                            authrole=self._response.authrole,
+                        )
                     )
                     self._session_details = SessionDetails(
                         welcome.session_id, self._hello.realm, welcome.authid, welcome.authrole
@@ -135,7 +144,12 @@ class Acceptor:
                     auth.verify_wampcra_signature(msg.signature, self._challenge, self._secret.encode())
                     self._state = Acceptor.STATE_WELCOME_SENT
                     welcome = messages.Welcome(
-                        self._session_id, self._roles, authid=self._response.authid, authrole=self._response.authrole
+                        messages.WelcomeFields(
+                            self._session_id,
+                            self._roles,
+                            authid=self._response.authid,
+                            authrole=self._response.authrole,
+                        )
                     )
                     self._session_details = SessionDetails(
                         welcome.session_id, self._hello.realm, welcome.authid, welcome.authrole
@@ -148,7 +162,9 @@ class Acceptor:
                     response = self._authenticator.authenticate(request)
                     self._state = Acceptor.STATE_WELCOME_SENT
                     welcome = messages.Welcome(
-                        self._session_id, self._roles, authid=response.authid, authrole=response.authrole
+                        messages.WelcomeFields(
+                            self._session_id, self._roles, authid=response.authid, authrole=response.authrole
+                        )
                     )
                     self._session_details = SessionDetails(
                         welcome.session_id, self._hello.realm, welcome.authid, welcome.authrole

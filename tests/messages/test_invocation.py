@@ -2,6 +2,7 @@ import pytest
 
 from wampproto import messages
 from wampproto.messages import util
+from wampproto.messages.invocation import InvocationFields
 
 
 def test_parse_with_invalid_type():
@@ -235,7 +236,7 @@ def test_parse_correctly_with_all_options():
 def test_marshal():
     request_id = 612723
     registration_id = 171952
-    message = messages.Invocation(request_id, registration_id).marshal()
+    message = messages.Invocation(InvocationFields(request_id, registration_id)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 4
@@ -256,7 +257,7 @@ def test_marshal_with_args():
     request_id = 61273
     registration_id = 17152
     args = ["2nd"]
-    message = messages.Invocation(request_id, registration_id, args).marshal()
+    message = messages.Invocation(InvocationFields(request_id, registration_id, args)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 5
@@ -281,7 +282,7 @@ def test_marshal_with_kwargs():
     registration_id = 1152
     args = ["2nd"]
     kwargs = {"fruit": "apple"}
-    message = messages.Invocation(request_id, registration_id, args, kwargs).marshal()
+    message = messages.Invocation(InvocationFields(request_id, registration_id, args, kwargs)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 6
@@ -310,7 +311,7 @@ def test_marshal_with_all_options():
     args = ["1st"]
     kwargs = {"fruit": "apple"}
     details = {"caller_authrole": "user"}
-    message = messages.Invocation(request_id, registration_id, args, kwargs, details).marshal()
+    message = messages.Invocation(InvocationFields(request_id, registration_id, args, kwargs, details)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 6

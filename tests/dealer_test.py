@@ -33,7 +33,7 @@ def test_register_procedure():
 
     dealer.add_session(details)
 
-    register = messages.Register(1, procedure_name)
+    register = messages.Register(messages.RegisterFields(1, procedure_name))
     message_with_recipient = dealer.receive_message(details.session_id, register)
 
     assert message_with_recipient.recipient == details.session_id
@@ -66,17 +66,17 @@ def test_call_procedure_and_receive_yield():
     dealer.add_session(details)
 
     # Register a procedure
-    register = messages.Register(1, procedure_name)
+    register = messages.Register(messages.RegisterFields(1, procedure_name))
     dealer.receive_message(details.session_id, register)
 
-    call = messages.Call(2, procedure_name)
+    call = messages.Call(messages.CallFields(2, procedure_name))
     message_with_recipient = dealer.receive_message(details.session_id, call)
 
     assert message_with_recipient.recipient == details.session_id
     assert isinstance(message_with_recipient.message, messages.Invocation)
 
     # Call a non-existing procedure
-    invalid_call_message = messages.Call(3, "invalid")
+    invalid_call_message = messages.Call(messages.CallFields(3, "invalid"))
     error_msg_with_recipient = dealer.receive_message(details.session_id, invalid_call_message)
 
     assert error_msg_with_recipient.recipient == details.session_id
@@ -84,7 +84,7 @@ def test_call_procedure_and_receive_yield():
 
     # Process yield message correctly
     invocation = message_with_recipient.message
-    yield_message = messages.Yield(invocation.request_id)
+    yield_message = messages.Yield(messages.YieldFields(invocation.request_id))
     result_msg_with_recipient = dealer.receive_message(details.session_id, yield_message)
 
     assert result_msg_with_recipient.recipient == details.session_id
@@ -99,7 +99,7 @@ def test_call_procedure_and_receive_yield():
     # Receive yield with invalid sessionID
     msg = dealer.receive_message(details.session_id, call).message
     with pytest.raises(ValueError) as exc:
-        dealer.receive_message(3, messages.Yield(msg.request_id))
+        dealer.receive_message(3, messages.Yield(messages.YieldFields(msg.request_id)))
 
     assert str(exc.value) == "received unexpected yield from session=3"
 
@@ -109,7 +109,7 @@ def test_unregister_procedure_not_registered():
     details = SessionDetails(1, "realm1", "authid", "authrole")
     dealer.add_session(details)
 
-    unregister = messages.UnRegister(details.session_id, 1)
+    unregister = messages.UnRegister(messages.UnRegisterFields(details.session_id, 1))
     with pytest.raises(ValueError) as exc:
         dealer.receive_message(details.session_id, unregister)
 
@@ -123,10 +123,10 @@ def test_unregister_procedure():
     dealer.add_session(details)
 
     # Register a procedure
-    register = messages.Register(1, procedure_name)
+    register = messages.Register(messages.RegisterFields(1, procedure_name))
     dealer.receive_message(details.session_id, register)
 
-    unregister = messages.UnRegister(2, 1)
+    unregister = messages.UnRegister(messages.UnRegisterFields(2, 1))
     messages_with_recipient = dealer.receive_message(details.session_id, unregister)
     assert messages_with_recipient.recipient == details.session_id
     assert isinstance(messages_with_recipient.message, messages.UnRegistered)
@@ -142,7 +142,7 @@ def test_unregister_procedure():
     assert str(exc.value) == "cannot unregister, session 2 doesn't exist"
 
     # Unregister with invalid registrationID
-    invalid_unregister = messages.UnRegister(3, 3)
+    invalid_unregister = messages.UnRegister(messages.UnRegisterFields(3, 3))
     with pytest.raises(ValueError) as exc:
         dealer.receive_message(details.session_id, invalid_unregister)
 
@@ -153,7 +153,7 @@ def test_receive_invalid_message():
     dealer = Dealer()
     session_id = 1
     procedure_name = "io.xconn.test"
-    subscribe = messages.Subscribe(session_id, procedure_name)
+    subscribe = messages.Subscribe(messages.SubscribeFields(session_id, procedure_name))
     with pytest.raises(ValueError) as exc:
         dealer.receive_message(session_id, subscribe)
 
@@ -167,28 +167,28 @@ def test_progressive_call_results():
     dealer.add_session(callee_details)
     dealer.add_session(caller_details)
 
-    register = messages.Register(1, "foo.bar")
+    register = messages.Register(messages.RegisterFields(1, "foo.bar"))
     dealer.receive_message(callee_details.session_id, register)
 
-    call = messages.Call(2, "foo.bar", options={OPTION_RECEIVE_PROGRESS: True})
+    call = messages.Call(messages.CallFields(2, "foo.bar", options={OPTION_RECEIVE_PROGRESS: True}))
     msg = dealer.receive_message(caller_details.session_id, call)
     assert isinstance(msg.message, messages.Invocation)
     assert msg.message.details.get(OPTION_RECEIVE_PROGRESS)
 
     for _ in range(10):
-        yield_ = messages.Yield(msg.message.request_id, options={OPTION_PROGRESS: True})
+        yield_ = messages.Yield(messages.YieldFields(msg.message.request_id, options={OPTION_PROGRESS: True}))
         msg = dealer.receive_message(callee_details.session_id, yield_)
         assert isinstance(msg.message, messages.Result)
         assert msg.message.request_id == call.request_id
         assert msg.message.options.get(OPTION_PROGRESS)
 
-    yield_ = messages.Yield(msg.message.request_id)
+    yield_ = messages.Yield(messages.YieldFields(msg.message.request_id))
     msg = dealer.receive_message(callee_details.session_id, yield_)
     assert isinstance(msg.message, messages.Result)
     assert msg.message.request_id == call.request_id
     assert msg.message.options.get(OPTION_PROGRESS, False) is False
 
-    yield_ = messages.Yield(msg.message.request_id)
+    yield_ = messages.Yield(messages.YieldFields(msg.message.request_id))
     with pytest.raises(ValueError) as exc:
         dealer.receive_message(callee_details.session_id, yield_)
 
@@ -202,23 +202,23 @@ def test_progressive_call_invocations():
     dealer.add_session(callee_details)
     dealer.add_session(caller_details)
 
-    register = messages.Register(1, "foo.bar")
+    register = messages.Register(messages.RegisterFields(1, "foo.bar"))
     dealer.receive_message(callee_details.session_id, register)
 
-    call = messages.Call(2, "foo.bar", options={OPTION_PROGRESS: True})
+    call = messages.Call(messages.CallFields(2, "foo.bar", options={OPTION_PROGRESS: True}))
     msg = dealer.receive_message(caller_details.session_id, call)
     assert isinstance(msg.message, messages.Invocation)
     assert msg.message.details.get(OPTION_PROGRESS)
     invocation_request_id = msg.message.request_id
 
     for _ in range(10):
-        call = messages.Call(2, "foo.bar", options={OPTION_PROGRESS: True})
+        call = messages.Call(messages.CallFields(2, "foo.bar", options={OPTION_PROGRESS: True}))
         msg = dealer.receive_message(caller_details.session_id, call)
         assert isinstance(msg.message, messages.Invocation)
         assert msg.message.details.get(OPTION_PROGRESS)
         assert msg.message.request_id == invocation_request_id
 
-    call = messages.Call(2, "foo.bar")
+    call = messages.Call(messages.CallFields(2, "foo.bar"))
     msg = dealer.receive_message(caller_details.session_id, call)
     assert isinstance(msg.message, messages.Invocation)
     assert OPTION_PROGRESS not in msg.message.details

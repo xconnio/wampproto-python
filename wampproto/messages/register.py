@@ -7,6 +7,39 @@ from wampproto.messages import util
 from wampproto.messages.validation_spec import ValidationSpec
 
 
+class IRegisterFields:
+    @property
+    def request_id(self):
+        raise NotImplementedError
+
+    @property
+    def uri(self):
+        raise NotImplementedError
+
+    @property
+    def options(self):
+        raise NotImplementedError
+
+
+class RegisterFields(IRegisterFields):
+    def __init__(self, request_id: int, uri: str, options: dict[str, Any] | None = None):
+        self._request_id = request_id
+        self._uri = uri
+        self._options = {} if options is None else options
+
+    @property
+    def request_id(self) -> int:
+        return self._request_id
+
+    @property
+    def uri(self) -> str:
+        return self._uri
+
+    @property
+    def options(self) -> dict[str, Any]:
+        return self._options
+
+
 class Register(Message):
     TEXT = "REGISTER"
     TYPE = 64
@@ -22,16 +55,26 @@ class Register(Message):
         },
     )
 
-    def __init__(self, request_id: int, uri: str, options: dict = None):
+    def __init__(self, fields: IRegisterFields):
         super().__init__()
-        self.request_id = request_id
-        self.uri = uri
-        self.options = options
+        self._fields = fields
+
+    @property
+    def request_id(self) -> int:
+        return self._fields.request_id
+
+    @property
+    def uri(self) -> str:
+        return self._fields.uri
+
+    @property
+    def options(self) -> dict[str, Any]:
+        return self._fields.options
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Register:
         f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
-        return Register(f.request_id, f.uri, f.options)
+        return Register(RegisterFields(f.request_id, f.uri, f.options))
 
     def marshal(self) -> list[Any]:
         return [self.TYPE, self.request_id, self.options, self.uri]

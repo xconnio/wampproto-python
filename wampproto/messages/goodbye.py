@@ -7,6 +7,30 @@ from wampproto.messages.message import Message
 from wampproto.messages.validation_spec import ValidationSpec
 
 
+class IGoodbyeFields:
+    @property
+    def details(self):
+        raise NotImplementedError
+
+    @property
+    def reason(self):
+        raise NotImplementedError
+
+
+class GoodbyeFields(IGoodbyeFields):
+    def __init__(self, details: dict[str, Any], reason: str):
+        self._details = details
+        self._reason = reason
+
+    @property
+    def details(self) -> dict[str, Any]:
+        return self._details
+
+    @property
+    def reason(self) -> str:
+        return self._reason
+
+
 class Goodbye(Message):
     TEXT = "GOODBYE"
     TYPE = 6
@@ -21,15 +45,22 @@ class Goodbye(Message):
         },
     )
 
-    def __init__(self, details: dict, reason: str):
+    def __init__(self, fields: IGoodbyeFields):
         super().__init__()
-        self.details = details
-        self.reason = reason
+        self._fields = fields
+
+    @property
+    def details(self) -> dict[str, Any]:
+        return self._fields.details
+
+    @property
+    def reason(self) -> str:
+        return self._fields.reason
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Goodbye:
         f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
-        return Goodbye(f.details, f.reason)
+        return Goodbye(GoodbyeFields(f.details, f.reason))
 
     def marshal(self) -> list[Any]:
         return [self.TYPE, self.details, self.reason]

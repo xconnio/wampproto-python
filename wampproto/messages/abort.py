@@ -24,11 +24,11 @@ class AbortFields(IAbortFields):
         self._reason = reason
 
     @property
-    def details(self):
+    def details(self) -> dict[str, Any]:
         return self._details
 
     @property
-    def reason(self):
+    def reason(self) -> str:
         return self._reason
 
 
@@ -51,7 +51,7 @@ class Abort(Message):
         self._fields = fields
 
     @property
-    def details(self) -> dict:
+    def details(self) -> dict[str, Any]:
         return self._fields.details
 
     @property

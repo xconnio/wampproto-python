@@ -6,6 +6,30 @@ from wampproto.messages import util, Message
 from wampproto.messages.validation_spec import ValidationSpec
 
 
+class IInterruptFields:
+    @property
+    def request_id(self):
+        raise NotImplementedError
+
+    @property
+    def options(self):
+        raise NotImplementedError
+
+
+class InterruptFields(IInterruptFields):
+    def __init__(self, request_id: int, options: dict[str, Any] | None = None):
+        self._request_id = request_id
+        self._options = {} if options is None else options
+
+    @property
+    def request_id(self) -> int:
+        return self._request_id
+
+    @property
+    def options(self) -> dict[str, Any]:
+        return self._options
+
+
 class Interrupt(Message):
     TEXT = "INTERRUPT"
     TYPE = 69
@@ -20,19 +44,22 @@ class Interrupt(Message):
         },
     )
 
-    def __init__(
-        self,
-        inv_request_id: int,
-        options: dict | None = None,
-    ):
+    def __init__(self, fields: IInterruptFields):
         super().__init__()
-        self.inv_request_id = inv_request_id
-        self.options = options if options is not None else {}
+        self._fields = fields
+
+    @property
+    def request_id(self) -> int:
+        return self._fields.request_id
+
+    @property
+    def options(self) -> dict[str, Any]:
+        return self._fields.options
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Interrupt:
         f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
-        return Interrupt(f.request_id, f.options)
+        return Interrupt(InterruptFields(f.request_id, f.options))
 
     def marshal(self) -> list[Any]:
-        return [self.TYPE, self.inv_request_id, self.options]
+        return [self.TYPE, self.request_id, self.options]
