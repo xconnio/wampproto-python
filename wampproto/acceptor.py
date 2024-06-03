@@ -21,6 +21,11 @@ class Acceptor:
     STATE_WELCOME_SENT = 3
     STATE_ABORTED = 4
 
+    TICKET = "ticket"
+    WAMPCRA = "wampcra"
+    ANONYMOUS = "anonymous"
+    CRYPTOSIGN = "cryptosign"
+
     def __init__(
         self,
         serializer: serializers.Serializer = serializers.JSONSerializer(),
@@ -73,8 +78,8 @@ class Acceptor:
             self._hello = msg
 
             match method:
-                case "anonymous":
-                    request = auth.Request(method, msg.realm, msg.authid, msg.authextra)
+                case Acceptor.ANONYMOUS:
+                    request = auth.AnonymousRequest(msg.realm, msg.authid, msg.authextra)
                     response = self._authenticator.authenticate(request)
                     self._state = Acceptor.STATE_WELCOME_SENT
 
@@ -88,7 +93,7 @@ class Acceptor:
                     )
 
                     return welcome
-                case "cryptosign":
+                case Acceptor.CRYPTOSIGN:
                     public_key = msg.authextra.get("pubkey")
                     if public_key is None:
                         raise ValueError("authextra must contain pubkey for cryptosign")
@@ -101,8 +106,8 @@ class Acceptor:
                     self._state = Acceptor.STATE_CHALLENGE_SENT
 
                     return messages.Challenge(messages.ChallengeFields(method, {"challenge": challenge}))
-                case "wampcra":
-                    request = auth.Request(method, msg.realm, msg.authid, msg.authextra)
+                case Acceptor.WAMPCRA:
+                    request = auth.WAMPCRARequest(msg.realm, msg.authid, msg.authextra)
                     response = self._authenticator.authenticate(request)
                     if not isinstance(response, auth.WAMPCRAResponse):
                         raise ValueError("invalid response type for WAMPCRA")
@@ -117,7 +122,7 @@ class Acceptor:
                     self._challenge = challenge
 
                     return messages.Challenge(messages.ChallengeFields(method, {"challenge": challenge}))
-                case "ticket":
+                case Acceptor.TICKET:
                     self._state = Acceptor.STATE_CHALLENGE_SENT
                     return messages.Challenge(messages.ChallengeFields(method, {}))
                 case _:
@@ -127,7 +132,7 @@ class Acceptor:
                 raise ValueError("unknown state")
 
             match self._auth_method:
-                case "cryptosign":
+                case Acceptor.CRYPTOSIGN:
                     if not auth.verify_cryptosign_signature(msg.signature, binascii.unhexlify(self._public_key)):
                         self._state = Acceptor.STATE_ABORTED
                         return messages.Abort(messages.AbortFields({}, uris.AUTHENTICATION_FAILED))
@@ -145,7 +150,7 @@ class Acceptor:
                         welcome.session_id, self._hello.realm, welcome.authid, welcome.authrole
                     )
                     return welcome
-                case "wampcra":
+                case Acceptor.WAMPCRA:
                     if not auth.verify_wampcra_signature(msg.signature, self._challenge, self._secret.encode()):
                         self._state = Acceptor.STATE_ABORTED
                         return messages.Abort(messages.AbortFields({}, uris.AUTHENTICATION_FAILED))
@@ -163,7 +168,7 @@ class Acceptor:
                         welcome.session_id, self._hello.realm, welcome.authid, welcome.authrole
                     )
                     return welcome
-                case "ticket":
+                case Acceptor.TICKET:
                     request = auth.TicketRequest(
                         self._hello.realm, self._hello.authid, self._hello.authextra, msg.signature
                     )
