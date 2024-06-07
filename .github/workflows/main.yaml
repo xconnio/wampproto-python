@@ -25,6 +25,9 @@ jobs:
       - name: Build wheel
         run: make build-wheel
 
+      - name: build wampproto-cli
+        run: make build-wampproto
+
       - name: Run tests
         run: make test
 
