@@ -1,7 +1,7 @@
 import binascii
 import random
 
-from wampproto import messages, auth, serializers
+from wampproto import messages, auth, serializers, uris
 from wampproto.types import SessionDetails
 
 ROUTER_ROLES = {
@@ -19,7 +19,7 @@ class Acceptor:
     STATE_HELLO_RECEIVED = 1
     STATE_CHALLENGE_SENT = 2
     STATE_WELCOME_SENT = 3
-    STATE_ERRORED = 4
+    STATE_ABORTED = 4
 
     def __init__(
         self,
@@ -47,7 +47,9 @@ class Acceptor:
         received_message = self._serializer.deserialize(data)
         to_send = self.receive_message(received_message)
 
-        return self._serializer.serialize(to_send), isinstance(to_send, messages.Welcome)
+        return self._serializer.serialize(to_send), isinstance(to_send, messages.Welcome) or isinstance(
+            to_send, messages.Abort
+        )
 
     def receive_message(self, msg: messages.Message) -> messages.Message:
         if self._state == Acceptor.STATE_WELCOME_SENT:
@@ -126,7 +128,10 @@ class Acceptor:
 
             match self._auth_method:
                 case "cryptosign":
-                    auth.verify_cryptosign_signature(msg.signature, binascii.unhexlify(self._public_key))
+                    if not auth.verify_cryptosign_signature(msg.signature, binascii.unhexlify(self._public_key)):
+                        self._state = Acceptor.STATE_ABORTED
+                        return messages.Abort(messages.AbortFields({}, uris.AUTHENTICATION_FAILED))
+
                     self._state = Acceptor.STATE_WELCOME_SENT
                     welcome = messages.Welcome(
                         messages.WelcomeFields(
@@ -141,7 +146,10 @@ class Acceptor:
                     )
                     return welcome
                 case "wampcra":
-                    auth.verify_wampcra_signature(msg.signature, self._challenge, self._secret.encode())
+                    if not auth.verify_wampcra_signature(msg.signature, self._challenge, self._secret.encode()):
+                        self._state = Acceptor.STATE_ABORTED
+                        return messages.Abort(messages.AbortFields({}, uris.AUTHENTICATION_FAILED))
+
                     self._state = Acceptor.STATE_WELCOME_SENT
                     welcome = messages.Welcome(
                         messages.WelcomeFields(
@@ -172,7 +180,10 @@ class Acceptor:
 
                     return welcome
         elif isinstance(msg, messages.Abort):
-            self._state = Acceptor.STATE_ERRORED
+            self._state = Acceptor.STATE_ABORTED
+
+    def is_aborted(self) -> bool:
+        return self._state == Acceptor.STATE_ABORTED
 
     def get_session_details(self) -> SessionDetails:
         if self._session_details is None:
