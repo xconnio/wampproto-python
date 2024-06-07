@@ -58,6 +58,16 @@ class TicketRequest(Request):
         return self._ticket
 
 
+class AnonymousRequest(Request):
+    def __init__(self, realm: str, authid: str, auth_extra: dict):
+        super().__init__(method="anonymous", realm=realm, authid=authid, auth_extra=auth_extra)
+
+
+class WAMPCRARequest(Request):
+    def __init__(self, realm: str, authid: str, auth_extra: dict):
+        super().__init__(method="wampcra", realm=realm, authid=authid, auth_extra=auth_extra)
+
+
 class CryptoSignRequest(Request):
     def __init__(self, realm: str, authid: str, auth_extra: dict, public_key: str):
         super().__init__(method="cryptosign", realm=realm, authid=authid, auth_extra=auth_extra)
