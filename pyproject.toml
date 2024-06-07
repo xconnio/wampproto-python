@@ -27,7 +27,7 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-test = ["coverage", "pytest", "ruff"]
+test = ["coverage", "pytest", "ruff", "pytest-asyncio"]
 publish = ["twine", "build"]
 
 [project.urls]
