@@ -73,7 +73,10 @@ class Acceptor:
 
                 return welcome
 
-            method = msg.authmethods[0]
+            method = Acceptor.ANONYMOUS
+            if msg.authmethods is not None and len(msg.authmethods) > 0:
+                method = msg.authmethods[0]
+
             self._auth_method = method
             self._hello = msg
 
