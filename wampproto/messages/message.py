@@ -13,3 +13,16 @@ class Message:
 
     def marshal(self) -> list[Any]:
         raise NotImplementedError()
+
+
+class BinaryPayload:
+    def payload_is_binary(self) -> bool:
+        raise NotImplementedError()
+
+    @property
+    def payload(self) -> bytes | None:
+        raise NotImplementedError()
+
+    @property
+    def payload_serializer(self) -> int:
+        raise NotImplementedError()

@@ -3,11 +3,11 @@ from __future__ import annotations
 from typing import Any
 
 from wampproto.messages import util
-from wampproto.messages.message import Message
+from wampproto.messages.message import Message, BinaryPayload
 from wampproto.messages.validation_spec import ValidationSpec
 
 
-class ICallFields:
+class ICallFields(BinaryPayload):
     @property
     def request_id(self):
         raise NotImplementedError()
@@ -37,6 +37,8 @@ class CallFields(ICallFields):
         args: list | None = None,
         kwargs: dict[str, Any] | None = None,
         options: dict[str, Any] | None = None,
+        serializer: int | None = None,
+        payload: bytes | None = None,
     ):
         super().__init__()
         self._request_id = request_id
@@ -44,6 +46,9 @@ class CallFields(ICallFields):
         self._args = args
         self._kwargs = kwargs
         self._options = {} if options is None else options
+
+        self._serializer = serializer
+        self._payload = payload
 
     @property
     def request_id(self) -> int:
@@ -64,6 +69,17 @@ class CallFields(ICallFields):
     @property
     def options(self) -> dict[str, Any]:
         return self._options
+
+    def payload_is_binary(self) -> bool:
+        return self._serializer != 0
+
+    @property
+    def payload(self) -> bytes | None:
+        return self._payload
+
+    @property
+    def payload_serializer(self) -> int:
+        return self._serializer
 
 
 class Call(Message):
@@ -107,6 +123,17 @@ class Call(Message):
     @property
     def options(self) -> dict[str, Any]:
         return self._fields.options
+
+    def payload_is_binary(self) -> bool:
+        return self._fields.payload_is_binary()
+
+    @property
+    def payload(self) -> bytes | None:
+        return self._fields.payload
+
+    @property
+    def payload_serializer(self) -> int:
+        return self._fields.payload_serializer
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Call:

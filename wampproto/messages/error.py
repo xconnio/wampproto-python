@@ -3,11 +3,11 @@ from __future__ import annotations
 from typing import Any
 
 from wampproto.messages import util
-from wampproto.messages.message import Message
+from wampproto.messages.message import Message, BinaryPayload
 from wampproto.messages.validation_spec import ValidationSpec
 
 
-class IErrorFields:
+class IErrorFields(BinaryPayload):
     @property
     def message_type(self):
         raise NotImplementedError
@@ -75,6 +75,17 @@ class ErrorFields(IErrorFields):
     def details(self):
         return self._details
 
+    def payload_is_binary(self) -> bool:
+        return False
+
+    @property
+    def payload(self) -> bytes | None:
+        return None
+
+    @property
+    def payload_serializer(self) -> int:
+        return 0
+
 
 class Error(Message):
     TEXT = "ERROR"
@@ -121,6 +132,17 @@ class Error(Message):
     @property
     def details(self) -> dict[str, Any]:
         return self._fields.details
+
+    def payload_is_binary(self) -> bool:
+        return self._fields.payload_is_binary()
+
+    @property
+    def payload(self) -> bytes | None:
+        return self._fields.payload
+
+    @property
+    def payload_serializer(self) -> int:
+        return self._fields.payload_serializer
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Error:

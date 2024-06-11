@@ -103,6 +103,8 @@ class Dealer:
                     args=message.args,
                     kwargs=message.kwargs,
                     details=details,
+                    payload=message.payload,
+                    serializer=message.payload_serializer,
                 )
             )
 
