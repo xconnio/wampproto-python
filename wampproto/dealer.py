@@ -96,13 +96,6 @@ class Dealer:
             if progress:
                 details[OPTION_PROGRESS] = True
 
-            if message.payload_is_binary():
-                payload = message.payload
-                serializer = message.payload_serializer
-            else:
-                payload = None
-                serializer = None
-
             invocation = messages.Invocation(
                 messages.InvocationFields(
                     request_id=invocation_id,
@@ -110,8 +103,8 @@ class Dealer:
                     args=message.args,
                     kwargs=message.kwargs,
                     details=details,
-                    payload=payload,
-                    serializer=serializer,
+                    payload=message.payload,
+                    serializer=message.payload_serializer,
                 )
             )
 
