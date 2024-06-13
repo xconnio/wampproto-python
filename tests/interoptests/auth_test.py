@@ -1,22 +1,12 @@
-import asyncio
 import binascii
-import subprocess
 import pytest
 import nacl.signing
 
+from tests.interoptests.helpers import run_command
 from wampproto.auth import cryptosign as cryptosign_auth
-
 
 TEST_PUBLIC_KEY = "2b7ec216daa877c7f4c9439db8a722ea2340eacad506988db2564e258284f895"
 TEST_PRIVATE_KEY = "022b089bed5ab78808365e82dd12c796c835aeb98b4a5a9e099d3e72cb719516"
-
-
-async def run_command(command: str):
-    process = await asyncio.create_subprocess_shell(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = await process.communicate()
-    assert process.returncode == 0, stderr.decode()
-
-    return stdout.decode().strip()
 
 
 @pytest.mark.asyncio
