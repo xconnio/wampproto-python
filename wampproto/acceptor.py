@@ -1,17 +1,13 @@
 import binascii
-import random
 
 from wampproto import messages, auth, serializers, uris
+from wampproto.idgen import generate_session_id
 from wampproto.types import SessionDetails
 
 ROUTER_ROLES = {
     "dealer": {"features": {}},
     "broker": {"features": {}},
 }
-
-
-def get_session_id() -> int:
-    return random.randint(1, 9007199254740992)
 
 
 class Acceptor:
@@ -37,7 +33,7 @@ class Acceptor:
         self._roles = roles if roles is not None else ROUTER_ROLES
 
         self._state = Acceptor.STATE_NONE
-        self._session_id = get_session_id()
+        self._session_id = generate_session_id()
 
         self._auth_method: str = None
         self._hello: messages.Hello = None
