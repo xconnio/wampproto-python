@@ -23,11 +23,9 @@ async def test_json_serializer():
     command = f"wampproto message call {call_message.request_id} {call_message.uri} --serializer json"
 
     output = await run_command(command)
-    output_bytes = bytes.fromhex(output)
-    json_str = output_bytes.decode()
 
     serializer = JSONSerializer()
-    message = serializer.deserialize(json_str)
+    message = serializer.deserialize(output)
 
     assert is_equal(call_message, message)
 
@@ -35,7 +33,7 @@ async def test_json_serializer():
 @pytest.mark.asyncio
 async def test_cbor_serializer():
     call_message = messages.Call(messages.CallFields(1, TEST_PROCEDURE))
-    command = f"wampproto message call {call_message.request_id} {call_message.uri} --serializer cbor"
+    command = f"wampproto message call {call_message.request_id} {call_message.uri} --serializer cbor --output hex"
 
     output = await run_command(command)
     output_bytes = bytes.fromhex(output)
@@ -49,7 +47,7 @@ async def test_cbor_serializer():
 @pytest.mark.asyncio
 async def test_msgpack_serializer():
     call_message = messages.Call(messages.CallFields(1, TEST_PROCEDURE))
-    command = f"wampproto message call {call_message.request_id} {call_message.uri} --serializer msgpack"
+    command = f"wampproto message call {call_message.request_id} {call_message.uri} --serializer msgpack --output hex"
 
     output = await run_command(command)
     output_bytes = bytes.fromhex(output)
@@ -66,10 +64,8 @@ async def test_with_args_kwargs():
     command = f"wampproto message call {call_message.request_id} {call_message.uri} abc 123 -k a=b --serializer json"
 
     output = await run_command(command)
-    output_bytes = bytes.fromhex(output)
-    json_str = output_bytes.decode()
 
     serializer = JSONSerializer()
-    message = serializer.deserialize(json_str)
+    message = serializer.deserialize(output)
 
     assert is_equal(call_message, message)
