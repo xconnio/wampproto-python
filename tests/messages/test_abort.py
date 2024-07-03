@@ -23,11 +23,11 @@ def test_parse_with_invalid_min_length():
 
 
 def test_parse_with_invalid_max_length():
-    message = [1, {}, "io.xconn", 4]
+    message = [1, {}, "io.xconn", 4, 5, 6]
     with pytest.raises(ValueError) as exc_info:
         Abort.parse(message)
 
-    assert str(exc_info.value) == f"invalid message length {len(message)}, must be at most 3"
+    assert str(exc_info.value) == f"invalid message length {len(message)}, must be at most 5"
 
 
 def test_parse_with_invalid_message_type():
