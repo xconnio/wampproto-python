@@ -41,6 +41,8 @@ class WAMPSession:
                 raise ValueError("send only supported for invocation error")
 
             self._invocation_requests.pop(msg.request_id, None)
+        elif isinstance(msg, messages.Goodbye):
+            pass
         else:
             raise ValueError(f"unknown message type {type(msg)}")
 
@@ -135,6 +137,8 @@ class WAMPSession:
                         self._publish_requests.pop(msg.request_id)
                     except KeyError:
                         raise ValueError("received ERROR for invalid publish request")
+                case messages.Goodbye:
+                    return msg
                 case _:
                     raise ValueError(f"unknown error message type {type(msg)}")
         else:
