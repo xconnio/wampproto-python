@@ -137,10 +137,10 @@ class WAMPSession:
                         self._publish_requests.pop(msg.request_id)
                     except KeyError:
                         raise ValueError("received ERROR for invalid publish request")
-                case messages.Goodbye:
-                    return msg
                 case _:
                     raise ValueError(f"unknown error message type {type(msg)}")
+        elif isinstance(msg, messages.Goodbye):
+            return msg
         else:
             raise ValueError(f"unknown message {type(msg)}")
 
