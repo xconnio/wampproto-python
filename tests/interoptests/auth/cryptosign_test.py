@@ -14,11 +14,11 @@ async def test_generate_challenge():
     challenge = cryptosign_auth.generate_cryptosign_challenge()
 
     signature = await run_command(
-        f"wampproto auth cryptosign sign-challenge {challenge} {TEST_PRIVATE_KEY}"
+        f"wampproto auth cryptosign sign-challenge {challenge} {TEST_PRIVATE_KEY}",
     )
 
     await run_command(
-        f"wampproto auth cryptosign verify-signature {signature.strip()} {TEST_PUBLIC_KEY}"
+        f"wampproto auth cryptosign verify-signature {signature.strip()} {TEST_PUBLIC_KEY}",
     )
 
 
@@ -35,7 +35,7 @@ async def test_sign_cryptosign_challenge():
     full_signature = signature + challenge
 
     await run_command(
-        f"wampproto auth cryptosign verify-signature {full_signature} {TEST_PUBLIC_KEY}"
+        f"wampproto auth cryptosign verify-signature {full_signature} {TEST_PUBLIC_KEY}",
     )
 
 
@@ -44,7 +44,7 @@ async def test_verify_cryptosign_signature():
     challenge = await run_command("wampproto auth cryptosign generate-challenge")
 
     signature = await run_command(
-        f"wampproto auth cryptosign sign-challenge {challenge.strip()} {TEST_PRIVATE_KEY}"
+        f"wampproto auth cryptosign sign-challenge {challenge.strip()} {TEST_PRIVATE_KEY}",
     )
 
     public_key_bytes = binascii.unhexlify(TEST_PUBLIC_KEY)
