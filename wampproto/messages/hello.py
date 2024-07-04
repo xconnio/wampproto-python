@@ -21,10 +21,6 @@ class IHelloFields:
         raise NotImplementedError()
 
     @property
-    def authrole(self) -> str:
-        raise NotImplementedError()
-
-    @property
     def authmethods(self) -> list[str]:
         raise NotImplementedError()
 
@@ -39,7 +35,6 @@ class HelloFields(IHelloFields):
         realm: str,
         roles: dict[str, Any],
         authid: str | None = None,
-        authrole: str | None = None,
         authmethods: list[str] | None = None,
         authextra: dict | None = None,
     ):
@@ -47,7 +42,6 @@ class HelloFields(IHelloFields):
         self._realm = realm
         self._roles = roles
         self._authid = authid
-        self._authrole = authrole
         self._authmethods = authmethods
         self._authextra = authextra
 
@@ -62,10 +56,6 @@ class HelloFields(IHelloFields):
     @property
     def authid(self) -> str:
         return self._authid
-
-    @property
-    def authrole(self) -> str:
-        return self._authrole
 
     @property
     def authmethods(self) -> list[str]:
@@ -107,10 +97,6 @@ class Hello(Message):
         return self._fields.authid
 
     @property
-    def authrole(self) -> str:
-        return self._fields.authrole
-
-    @property
     def authmethods(self) -> list[str]:
         return self._fields.authmethods
 
@@ -126,7 +112,6 @@ class Hello(Message):
                 realm=f.realm,
                 roles=f.roles,
                 authid=f.authid,
-                authrole=f.authrole,
                 authmethods=f.authmethods,
                 authextra=f.authextra,
             )
@@ -137,9 +122,6 @@ class Hello(Message):
 
         if self.authid is not None:
             details["authid"] = self.authid
-
-        if self.authrole is not None:
-            details["authrole"] = self.authrole
 
         if self.authmethods is not None:
             details["authmethods"] = self.authmethods
