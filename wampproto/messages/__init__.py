@@ -1,8 +1,8 @@
 from wampproto.messages.call import Call, CallFields
 from wampproto.messages.register import Register, RegisterFields
 from wampproto.messages.registered import Registered, RegisteredFields
-from wampproto.messages.unregister import UnRegister, UnRegisterFields
-from wampproto.messages.unregistered import UnRegistered, UnRegisteredFields
+from wampproto.messages.unregister import Unregister, UnregisterFields
+from wampproto.messages.unregistered import Unregistered, UnregisteredFields
 from wampproto.messages.hello import Hello, HelloFields
 from wampproto.messages.abort import Abort, AbortFields
 from wampproto.messages.yield_ import Yield, YieldFields
@@ -18,8 +18,8 @@ from wampproto.messages.published import Published, PublishedFields
 from wampproto.messages.event import Event, EventFields
 from wampproto.messages.subscribe import Subscribe, SubscribeFields
 from wampproto.messages.subscribed import Subscribed, SubscribedFields
-from wampproto.messages.unsubscribe import UnSubscribe, UnSubscribeFields
-from wampproto.messages.unsubscribed import UnSubscribed, UnSubscribedFields
+from wampproto.messages.unsubscribe import Unsubscribe, UnsubscribeFields
+from wampproto.messages.unsubscribed import Unsubscribed, UnsubscribedFields
 from wampproto.messages.error import Error, ErrorFields
 from wampproto.messages.cancel import Cancel, CancelFields
 from wampproto.messages.interrupt import Interrupt, InterruptFields
@@ -50,10 +50,10 @@ __all__ = (
     "RegisterFields",
     "Registered",
     "RegisteredFields",
-    "UnRegister",
-    "UnRegisterFields",
-    "UnRegistered",
-    "UnRegisteredFields",
+    "Unregister",
+    "UnregisterFields",
+    "Unregistered",
+    "UnregisteredFields",
     "Publish",
     "PublishFields",
     "Published",
@@ -64,10 +64,10 @@ __all__ = (
     "SubscribeFields",
     "Subscribed",
     "SubscribedFields",
-    "UnSubscribe",
-    "UnSubscribeFields",
-    "UnSubscribed",
-    "UnSubscribedFields",
+    "Unsubscribe",
+    "UnsubscribeFields",
+    "Unsubscribed",
+    "UnsubscribedFields",
     "Error",
     "ErrorFields",
     "Cancel",

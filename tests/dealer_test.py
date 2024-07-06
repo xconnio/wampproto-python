@@ -109,7 +109,7 @@ def test_unregister_procedure_not_registered():
     details = SessionDetails(1, "realm1", "authid", "authrole")
     dealer.add_session(details)
 
-    unregister = messages.UnRegister(messages.UnRegisterFields(details.session_id, 1))
+    unregister = messages.Unregister(messages.UnregisterFields(details.session_id, 1))
     with pytest.raises(ValueError) as exc:
         dealer.receive_message(details.session_id, unregister)
 
@@ -126,10 +126,10 @@ def test_unregister_procedure():
     register = messages.Register(messages.RegisterFields(1, procedure_name))
     dealer.receive_message(details.session_id, register)
 
-    unregister = messages.UnRegister(messages.UnRegisterFields(2, 1))
+    unregister = messages.Unregister(messages.UnregisterFields(2, 1))
     messages_with_recipient = dealer.receive_message(details.session_id, unregister)
     assert messages_with_recipient.recipient == details.session_id
-    assert isinstance(messages_with_recipient.message, messages.UnRegistered)
+    assert isinstance(messages_with_recipient.message, messages.Unregistered)
 
     # Check registration by procedure
     has_registration = dealer.has_registration(procedure_name)
@@ -142,7 +142,7 @@ def test_unregister_procedure():
     assert str(exc.value) == "cannot unregister, session 2 doesn't exist"
 
     # Unregister with invalid registrationID
-    invalid_unregister = messages.UnRegister(messages.UnRegisterFields(3, 3))
+    invalid_unregister = messages.Unregister(messages.UnregisterFields(3, 3))
     with pytest.raises(ValueError) as exc:
         dealer.receive_message(details.session_id, invalid_unregister)
 

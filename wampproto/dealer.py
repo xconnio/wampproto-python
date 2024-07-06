@@ -152,7 +152,7 @@ class Dealer:
 
             registered = messages.Registered(messages.RegisteredFields(message.request_id, registration.id))
             return types.MessageWithRecipient(registered, session_id)
-        elif isinstance(message, messages.UnRegister):
+        elif isinstance(message, messages.Unregister):
             registrations = self.registrations_by_session.get(session_id)
             if registrations is None:
                 raise ValueError(f"cannot unregister, session {session_id} doesn't exist")
@@ -174,7 +174,7 @@ class Dealer:
 
             self.registrations_by_session[session_id] = registrations
 
-            unregistered = messages.UnRegistered(messages.UnRegisteredFields(message.request_id))
+            unregistered = messages.Unregistered(messages.UnregisteredFields(message.request_id))
             return types.MessageWithRecipient(unregistered, session_id)
         else:
             raise ValueError("message type not supported")

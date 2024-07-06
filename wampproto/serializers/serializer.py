@@ -42,18 +42,18 @@ def to_message(message: list) -> messages.Message:
             return messages.Register.parse(message)
         case messages.Registered.TYPE:
             return messages.Registered.parse(message)
-        case messages.UnRegister.TYPE:
-            return messages.UnRegister.parse(message)
-        case messages.UnRegistered.TYPE:
-            return messages.UnRegistered.parse(message)
+        case messages.Unregister.TYPE:
+            return messages.Unregister.parse(message)
+        case messages.Unregistered.TYPE:
+            return messages.Unregistered.parse(message)
         case messages.Subscribe.TYPE:
             return messages.Subscribe.parse(message)
         case messages.Subscribed.TYPE:
             return messages.Subscribed.parse(message)
-        case messages.UnSubscribe.TYPE:
-            return messages.UnSubscribe.parse(message)
-        case messages.UnSubscribed.TYPE:
-            return messages.UnSubscribed.parse(message)
+        case messages.Unsubscribe.TYPE:
+            return messages.Unsubscribe.parse(message)
+        case messages.Unsubscribed.TYPE:
+            return messages.Unsubscribed.parse(message)
         case messages.Publish.TYPE:
             return messages.Publish.parse(message)
         case messages.Published.TYPE:

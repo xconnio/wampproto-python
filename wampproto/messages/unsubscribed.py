@@ -7,13 +7,13 @@ from wampproto.messages import util
 from wampproto.messages.validation_spec import ValidationSpec
 
 
-class IUnSubscribedFields:
+class IUnsubscribedFields:
     @property
     def request_id(self):
         raise NotImplementedError
 
 
-class UnSubscribedFields(IUnSubscribedFields):
+class UnsubscribedFields(IUnsubscribedFields):
     def __init__(self, request_id: int):
         super().__init__()
         self._request_id = request_id
@@ -23,7 +23,7 @@ class UnSubscribedFields(IUnSubscribedFields):
         return self._request_id
 
 
-class UnSubscribed(Message):
+class Unsubscribed(Message):
     TEXT = "UNSUBSCRIBED"
     TYPE = 35
 
@@ -36,7 +36,7 @@ class UnSubscribed(Message):
         },
     )
 
-    def __init__(self, fields: IUnSubscribedFields):
+    def __init__(self, fields: IUnsubscribedFields):
         super().__init__()
         self._fields = fields
 
@@ -45,9 +45,9 @@ class UnSubscribed(Message):
         return self._fields.request_id
 
     @classmethod
-    def parse(cls, msg: list[Any]) -> UnSubscribed:
+    def parse(cls, msg: list[Any]) -> Unsubscribed:
         f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
-        return UnSubscribed(UnSubscribedFields(f.request_id))
+        return Unsubscribed(UnsubscribedFields(f.request_id))
 
     def marshal(self) -> list[Any]:
         return [self.TYPE, self.request_id]

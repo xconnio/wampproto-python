@@ -59,7 +59,7 @@ class Broker:
 
             subscribed = messages.Subscribed(messages.SubscribedFields(message.request_id, subscription.id))
             return types.MessageWithRecipient(subscribed, session_id)
-        elif isinstance(message, messages.UnSubscribe):
+        elif isinstance(message, messages.Unsubscribe):
             if session_id not in self.subscriptions_by_session:
                 raise ValueError(f"cannot unsubscribe, session {session_id} doesn't exist")
 
@@ -74,7 +74,7 @@ class Broker:
 
             del self.subscriptions_by_session[session_id][message.subscription_id]
 
-            unsubscribed = messages.UnSubscribed(messages.UnSubscribedFields(message.request_id))
+            unsubscribed = messages.Unsubscribed(messages.UnsubscribedFields(message.request_id))
             return types.MessageWithRecipient(unsubscribed, session_id)
         else:
             raise ValueError("message type not supported")
