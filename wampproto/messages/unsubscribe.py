@@ -7,7 +7,7 @@ from wampproto.messages import util
 from wampproto.messages.validation_spec import ValidationSpec
 
 
-class IUnSubscribeFields:
+class IUnsubscribeFields:
     @property
     def request_id(self):
         raise NotImplementedError
@@ -17,7 +17,7 @@ class IUnSubscribeFields:
         raise NotImplementedError
 
 
-class UnSubscribeFields(IUnSubscribeFields):
+class UnsubscribeFields(IUnsubscribeFields):
     def __init__(self, request_id: int, subscription_id: int):
         super().__init__()
         self._request_id = request_id
@@ -32,7 +32,7 @@ class UnSubscribeFields(IUnSubscribeFields):
         return self._subscription_id
 
 
-class UnSubscribe(Message):
+class Unsubscribe(Message):
     TEXT = "UNSUBSCRIBE"
     TYPE = 34
 
@@ -46,7 +46,7 @@ class UnSubscribe(Message):
         },
     )
 
-    def __init__(self, fields: IUnSubscribeFields):
+    def __init__(self, fields: IUnsubscribeFields):
         super().__init__()
         self._fields = fields
 
@@ -59,9 +59,9 @@ class UnSubscribe(Message):
         return self._fields.subscription_id
 
     @classmethod
-    def parse(cls, msg: list[Any]) -> UnSubscribe:
+    def parse(cls, msg: list[Any]) -> Unsubscribe:
         f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
-        return UnSubscribe(UnSubscribeFields(f.request_id, f.subscription_id))
+        return Unsubscribe(UnsubscribeFields(f.request_id, f.subscription_id))
 
     def marshal(self) -> list[Any]:
         return [self.TYPE, self.request_id, self.subscription_id]

@@ -57,11 +57,11 @@ def test_unsubscribing_from_topic():
     subscribe = messages.Subscribe(messages.SubscribeFields(1, topic_name))
     broker.receive_message(details.session_id, subscribe)
 
-    unsubscribe = messages.UnSubscribe(messages.UnSubscribeFields(1, 1))
+    unsubscribe = messages.Unsubscribe(messages.UnsubscribeFields(1, 1))
     message_with_recipient = broker.receive_message(details.session_id, unsubscribe)
 
     assert message_with_recipient.recipient == 1
-    assert isinstance(message_with_recipient.message, messages.UnSubscribed)
+    assert isinstance(message_with_recipient.message, messages.Unsubscribed)
 
     # Check subscription by topic
     has_subscription = broker.has_subscription(topic_name)
@@ -74,7 +74,7 @@ def test_unsubscribing_from_topic():
     assert str(exc.value) == "cannot unsubscribe, session 2 doesn't exist"
 
     # Unsubscribe with invalid subscriptionID
-    invalid_unsubscribe = messages.UnSubscribe(messages.UnSubscribeFields(1, 2))
+    invalid_unsubscribe = messages.Unsubscribe(messages.UnsubscribeFields(1, 2))
     with pytest.raises(ValueError) as exc:
         broker.receive_message(1, invalid_unsubscribe)
 

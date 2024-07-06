@@ -18,8 +18,8 @@ from wampproto.messages.published import Published, PublishedFields
 from wampproto.messages.event import Event, EventFields
 from wampproto.messages.subscribe import Subscribe, SubscribeFields
 from wampproto.messages.subscribed import Subscribed, SubscribedFields
-from wampproto.messages.unsubscribe import UnSubscribe, UnSubscribeFields
-from wampproto.messages.unsubscribed import UnSubscribed, UnSubscribedFields
+from wampproto.messages.unsubscribe import Unsubscribe, UnsubscribeFields
+from wampproto.messages.unsubscribed import Unsubscribed, UnsubscribedFields
 from wampproto.messages.error import Error, ErrorFields
 from wampproto.messages.cancel import Cancel, CancelFields
 from wampproto.messages.interrupt import Interrupt, InterruptFields
@@ -64,10 +64,10 @@ __all__ = (
     "SubscribeFields",
     "Subscribed",
     "SubscribedFields",
-    "UnSubscribe",
-    "UnSubscribeFields",
-    "UnSubscribed",
-    "UnSubscribedFields",
+    "Unsubscribe",
+    "UnsubscribeFields",
+    "Unsubscribed",
+    "UnsubscribedFields",
     "Error",
     "ErrorFields",
     "Cancel",

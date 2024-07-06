@@ -126,22 +126,22 @@ def test_unsubscribe(session: WAMPSession):
     # confirm subscribed
     session.receive_message(messages.Subscribed(messages.SubscribedFields(7, 8)))
 
-    unsubscribe = messages.UnSubscribe(messages.UnSubscribeFields(8, 8))
+    unsubscribe = messages.Unsubscribe(messages.UnsubscribeFields(8, 8))
     to_send = session.send_message(unsubscribe)
-    assert to_send == f"[{messages.UnSubscribe.TYPE}, {unsubscribe.request_id}, {unsubscribe.subscription_id}]"
+    assert to_send == f"[{messages.Unsubscribe.TYPE}, {unsubscribe.request_id}, {unsubscribe.subscription_id}]"
 
-    unsubscribed = messages.UnSubscribed(messages.UnSubscribedFields(8))
+    unsubscribed = messages.Unsubscribed(messages.UnsubscribedFields(8))
     received = session.receive_message(unsubscribed)
     assert received == unsubscribed
 
 
 def test_unsubscribe_error(session: WAMPSession):
-    # Send UnSubscribe message and receive Error for that UnSubscribe
-    unsubscribe = messages.UnSubscribe(messages.UnSubscribeFields(8, 8))
+    # Send Unsubscribe message and receive Error for that Unsubscribe
+    unsubscribe = messages.Unsubscribe(messages.UnsubscribeFields(8, 8))
     session.send_message(unsubscribe)
 
     unsubscribe_error = messages.Error(
-        messages.ErrorFields(messages.UnSubscribe.TYPE, unsubscribe.request_id, uris.INVALID_URI)
+        messages.ErrorFields(messages.Unsubscribe.TYPE, unsubscribe.request_id, uris.INVALID_URI)
     )
     received = session.receive_message(unsubscribe_error)
     assert received == unsubscribe_error
@@ -246,10 +246,10 @@ def test_exceptions():
 
     assert str(exc.value) == f"received {messages.Error.TEXT} for invalid subscribe request"
 
-    # Receive error invalid UnSubscribe id
+    # Receive error invalid Unsubscribe id
     with pytest.raises(ValueError) as exc:
         session.receive_message(
-            messages.Error(messages.ErrorFields(messages.UnSubscribe.TYPE, 100, uris.INVALID_ARGUMENT))
+            messages.Error(messages.ErrorFields(messages.Unsubscribe.TYPE, 100, uris.INVALID_ARGUMENT))
         )
 
     assert str(exc.value) == f"received {messages.Error.TEXT} for invalid unsubscribe request"

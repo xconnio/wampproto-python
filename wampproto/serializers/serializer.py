@@ -50,10 +50,10 @@ def to_message(message: list) -> messages.Message:
             return messages.Subscribe.parse(message)
         case messages.Subscribed.TYPE:
             return messages.Subscribed.parse(message)
-        case messages.UnSubscribe.TYPE:
-            return messages.UnSubscribe.parse(message)
-        case messages.UnSubscribed.TYPE:
-            return messages.UnSubscribed.parse(message)
+        case messages.Unsubscribe.TYPE:
+            return messages.Unsubscribe.parse(message)
+        case messages.Unsubscribed.TYPE:
+            return messages.Unsubscribed.parse(message)
         case messages.Publish.TYPE:
             return messages.Publish.parse(message)
         case messages.Published.TYPE:
