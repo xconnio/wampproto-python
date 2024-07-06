@@ -5,13 +5,13 @@ from wampproto import messages
 from wampproto.serializers import JSONSerializer, CBORSerializer, MsgPackSerializer
 
 
-def is_equal(msg1: messages.UnRegistered, msg2: messages.UnRegistered) -> bool:
+def is_equal(msg1: messages.Unregistered, msg2: messages.Unregistered) -> bool:
     return msg1.request_id == msg2.request_id
 
 
 @pytest.mark.asyncio
 async def test_json_serializer():
-    msg = messages.UnRegistered(messages.UnRegisteredFields(1))
+    msg = messages.Unregistered(messages.UnregisteredFields(1))
     command = f"wampproto message unregistered {msg.request_id} --serializer json"
 
     output = await run_command(command)
@@ -24,7 +24,7 @@ async def test_json_serializer():
 
 @pytest.mark.asyncio
 async def test_cbor_serializer():
-    msg = messages.UnRegistered(messages.UnRegisteredFields(1))
+    msg = messages.Unregistered(messages.UnregisteredFields(1))
     command = f"wampproto message unregistered {msg.request_id} --serializer cbor --output hex"
 
     output = await run_command(command)
@@ -38,7 +38,7 @@ async def test_cbor_serializer():
 
 @pytest.mark.asyncio
 async def test_msgpack_serializer():
-    msg = messages.UnRegistered(messages.UnRegisteredFields(1))
+    msg = messages.Unregistered(messages.UnregisteredFields(1))
     command = f"wampproto message unregistered {msg.request_id} --serializer msgpack --output hex"
 
     output = await run_command(command)

@@ -71,23 +71,23 @@ def test_call_error(session: WAMPSession):
 
 
 def test_unregister(session: WAMPSession, register_procedure):
-    # Send UnRegister message and receive UnRegistered message
-    unregister = messages.UnRegister(messages.UnRegisterFields(1, 1))
+    # Send Unregister message and receive Unregistered message
+    unregister = messages.Unregister(messages.UnregisterFields(1, 1))
     to_send = session.send_message(unregister)
-    assert to_send == f"[{messages.UnRegister.TYPE}, {unregister.request_id}, {unregister.registration_id}]"
+    assert to_send == f"[{messages.Unregister.TYPE}, {unregister.request_id}, {unregister.registration_id}]"
 
-    unregistered = messages.UnRegistered(messages.UnRegisteredFields(1))
+    unregistered = messages.Unregistered(messages.UnregisteredFields(1))
     received = session.receive_message(unregistered)
     assert received == unregistered
 
 
 def test_unregister_error(session: WAMPSession):
-    # Send UnRegister message and receive Error for that UnRegister
-    unregister = messages.UnRegister(messages.UnRegisterFields(3, 3))
+    # Send Unregister message and receive Error for that Unregister
+    unregister = messages.Unregister(messages.UnregisterFields(3, 3))
     session.send_message(unregister)
 
     unregister_err = messages.Error(
-        messages.ErrorFields(messages.UnRegister.TYPE, unregister.request_id, uris.INVALID_ARGUMENT)
+        messages.ErrorFields(messages.Unregister.TYPE, unregister.request_id, uris.INVALID_ARGUMENT)
     )
     received = session.receive_message(unregister_err)
     assert received == unregister_err
@@ -230,10 +230,10 @@ def test_exceptions():
 
     assert str(exc.value) == f"received {messages.Error.TEXT} for invalid register request"
 
-    # Receive error invalid UnRegister id
+    # Receive error invalid Unregister id
     with pytest.raises(ValueError) as exc:
         session.receive_message(
-            messages.Error(messages.ErrorFields(messages.UnRegister.TYPE, 100, uris.INVALID_ARGUMENT))
+            messages.Error(messages.ErrorFields(messages.Unregister.TYPE, 100, uris.INVALID_ARGUMENT))
         )
 
     assert str(exc.value) == f"received {messages.Error.TEXT} for invalid unregister request"

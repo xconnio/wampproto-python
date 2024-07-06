@@ -7,7 +7,7 @@ from wampproto.messages import util
 from wampproto.messages.validation_spec import ValidationSpec
 
 
-class IUnRegisterFields:
+class IUnregisterFields:
     @property
     def request_id(self):
         raise NotImplementedError
@@ -17,7 +17,7 @@ class IUnRegisterFields:
         raise NotImplementedError
 
 
-class UnRegisterFields(IUnRegisterFields):
+class UnregisterFields(IUnregisterFields):
     def __init__(self, request_id: int, registration_id: int):
         super().__init__()
         self._request_id = request_id
@@ -32,7 +32,7 @@ class UnRegisterFields(IUnRegisterFields):
         return self._registration_id
 
 
-class UnRegister(Message):
+class Unregister(Message):
     TEXT = "UNREGISTER"
     TYPE = 66
 
@@ -46,7 +46,7 @@ class UnRegister(Message):
         },
     )
 
-    def __init__(self, fields: IUnRegisterFields):
+    def __init__(self, fields: IUnregisterFields):
         super().__init__()
         self._fields = fields
 
@@ -59,9 +59,9 @@ class UnRegister(Message):
         return self._fields.registration_id
 
     @classmethod
-    def parse(cls, msg: list[Any]) -> UnRegister:
+    def parse(cls, msg: list[Any]) -> Unregister:
         f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
-        return UnRegister(UnRegisterFields(f.request_id, f.registration_id))
+        return Unregister(UnregisterFields(f.request_id, f.registration_id))
 
     def marshal(self) -> list[Any]:
         return [self.TYPE, self.request_id, self.registration_id]

@@ -22,7 +22,7 @@ class WAMPSession:
             self._call_requests[msg.request_id] = msg.request_id
         elif isinstance(msg, messages.Register):
             self._register_requests[msg.request_id] = msg.request_id
-        elif isinstance(msg, messages.UnRegister):
+        elif isinstance(msg, messages.Unregister):
             self._unregister_requests[msg.request_id] = msg.registration_id
         elif isinstance(msg, messages.Yield):
             if msg.request_id not in self._invocation_requests:
@@ -63,7 +63,7 @@ class WAMPSession:
                 raise ValueError("received REGISTERED for invalid request_id")
 
             self._registrations[msg.registration_id] = msg.registration_id
-        elif isinstance(msg, messages.UnRegistered):
+        elif isinstance(msg, messages.Unregistered):
             try:
                 registration_id = self._unregister_requests.pop(msg.request_id)
             except KeyError:
@@ -115,7 +115,7 @@ class WAMPSession:
                         self._register_requests.pop(msg.request_id)
                     except KeyError:
                         raise ValueError("received ERROR for invalid register request")
-                case messages.UnRegister.TYPE:
+                case messages.Unregister.TYPE:
                     try:
                         self._unregister_requests.pop(msg.request_id)
                     except KeyError:

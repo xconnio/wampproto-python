@@ -1,8 +1,8 @@
 from wampproto.messages.call import Call, CallFields
 from wampproto.messages.register import Register, RegisterFields
 from wampproto.messages.registered import Registered, RegisteredFields
-from wampproto.messages.unregister import UnRegister, UnRegisterFields
-from wampproto.messages.unregistered import UnRegistered, UnRegisteredFields
+from wampproto.messages.unregister import Unregister, UnregisterFields
+from wampproto.messages.unregistered import Unregistered, UnregisteredFields
 from wampproto.messages.hello import Hello, HelloFields
 from wampproto.messages.abort import Abort, AbortFields
 from wampproto.messages.yield_ import Yield, YieldFields
@@ -50,10 +50,10 @@ __all__ = (
     "RegisterFields",
     "Registered",
     "RegisteredFields",
-    "UnRegister",
-    "UnRegisterFields",
-    "UnRegistered",
-    "UnRegisteredFields",
+    "Unregister",
+    "UnregisterFields",
+    "Unregistered",
+    "UnregisteredFields",
     "Publish",
     "PublishFields",
     "Published",
