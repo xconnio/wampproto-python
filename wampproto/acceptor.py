@@ -80,7 +80,11 @@ class Acceptor:
             match method:
                 case Acceptor.ANONYMOUS:
                     request = auth.AnonymousRequest(msg.realm, msg.authid, msg.authextra)
-                    response = self._authenticator.authenticate(request)
+                    try:
+                        response = self._authenticator.authenticate(request)
+                    except Exception as e:
+                        return messages.Abort(messages.AbortFields({}, uris.AUTHENTICATION_FAILED, args=list(e.args)))
+
                     self._state = Acceptor.STATE_WELCOME_SENT
 
                     welcome = messages.Welcome(
@@ -99,7 +103,11 @@ class Acceptor:
                         raise ValueError("authextra must contain pubkey for cryptosign")
 
                     request = auth.CryptoSignRequest(msg.realm, msg.authid, msg.authextra, public_key)
-                    self._response = self._authenticator.authenticate(request)
+                    try:
+                        self._response = self._authenticator.authenticate(request)
+                    except Exception as e:
+                        return messages.Abort(messages.AbortFields({}, uris.AUTHENTICATION_FAILED, args=list(e.args)))
+
                     self._public_key = public_key
 
                     challenge = auth.generate_cryptosign_challenge()
@@ -108,7 +116,11 @@ class Acceptor:
                     return messages.Challenge(messages.ChallengeFields(method, {"challenge": challenge}))
                 case Acceptor.WAMPCRA:
                     request = auth.WAMPCRARequest(msg.realm, msg.authid, msg.authextra)
-                    response = self._authenticator.authenticate(request)
+                    try:
+                        response = self._authenticator.authenticate(request)
+                    except Exception as e:
+                        return messages.Abort(messages.AbortFields({}, uris.AUTHENTICATION_FAILED, args=list(e.args)))
+
                     if not isinstance(response, auth.WAMPCRAResponse):
                         raise ValueError("invalid response type for WAMPCRA")
 
@@ -172,7 +184,11 @@ class Acceptor:
                     request = auth.TicketRequest(
                         self._hello.realm, self._hello.authid, self._hello.authextra, msg.signature
                     )
-                    response = self._authenticator.authenticate(request)
+                    try:
+                        response = self._authenticator.authenticate(request)
+                    except Exception as e:
+                        return messages.Abort(messages.AbortFields({}, uris.AUTHENTICATION_FAILED, args=list(e.args)))
+
                     self._state = Acceptor.STATE_WELCOME_SENT
                     welcome = messages.Welcome(
                         messages.WelcomeFields(
