@@ -121,7 +121,7 @@ class Yield(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Yield:
-        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        f = util.validate_message(msg, cls.TYPE, cls.VALIDATION_SPEC)
         return Yield(YieldFields(f.request_id, f.args, f.kwargs, f.options))
 
     def marshal(self) -> list[Any]:

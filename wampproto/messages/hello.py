@@ -106,7 +106,7 @@ class Hello(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Hello:
-        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        f = util.validate_message(msg, cls.TYPE, cls.VALIDATION_SPEC)
         return Hello(
             HelloFields(
                 realm=f.realm,

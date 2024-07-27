@@ -88,7 +88,7 @@ class Abort(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Abort:
-        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        f = util.validate_message(msg, cls.TYPE, cls.VALIDATION_SPEC)
         return Abort(AbortFields(f.details, f.reason, f.args, f.kwargs))
 
     def marshal(self) -> list[Any]:

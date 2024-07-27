@@ -58,7 +58,7 @@ class Interrupt(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Interrupt:
-        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        f = util.validate_message(msg, cls.TYPE, cls.VALIDATION_SPEC)
         return Interrupt(InterruptFields(f.request_id, f.options))
 
     def marshal(self) -> list[Any]:

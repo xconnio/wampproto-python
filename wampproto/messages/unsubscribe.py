@@ -60,7 +60,7 @@ class Unsubscribe(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Unsubscribe:
-        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        f = util.validate_message(msg, cls.TYPE, cls.VALIDATION_SPEC)
         return Unsubscribe(UnsubscribeFields(f.request_id, f.subscription_id))
 
     def marshal(self) -> list[Any]:

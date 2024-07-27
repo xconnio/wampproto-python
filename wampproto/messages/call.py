@@ -137,7 +137,7 @@ class Call(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Call:
-        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        f = util.validate_message(msg, cls.TYPE, cls.VALIDATION_SPEC)
         return Call(CallFields(f.request_id, f.uri, f.args, f.kwargs, f.options))
 
     def marshal(self) -> list[Any]:

@@ -439,8 +439,8 @@ def validate_registration_id(msg: list[Any], index: int, fields: Fields, name: s
     return None
 
 
-def validate_message(msg: list[Any], type_: int, name: str, val_spec: ValidationSpec) -> Fields:
-    sanity_check(msg, val_spec.min_length, val_spec.max_length, type_, name)
+def validate_message(msg: list[Any], type_: int, val_spec: ValidationSpec) -> Fields:
+    sanity_check(msg, val_spec.min_length, val_spec.max_length, type_, val_spec.message)
 
     errors = []
     f = Fields()

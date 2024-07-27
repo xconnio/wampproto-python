@@ -136,7 +136,7 @@ class Invocation(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Invocation:
-        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        f = util.validate_message(msg, cls.TYPE, cls.VALIDATION_SPEC)
         return Invocation(InvocationFields(f.request_id, f.registration_id, f.args, f.kwargs, f.details))
 
     def marshal(self) -> list[Any]:

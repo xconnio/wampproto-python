@@ -59,7 +59,7 @@ class Challenge(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Challenge:
-        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        f = util.validate_message(msg, cls.TYPE, cls.VALIDATION_SPEC)
         return Challenge(ChallengeFields(f.authmethod, f.extra))
 
     def marshal(self) -> list[Any]:

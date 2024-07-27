@@ -60,7 +60,7 @@ class Registered(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Registered:
-        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        f = util.validate_message(msg, cls.TYPE, cls.VALIDATION_SPEC)
         return Registered(RegisteredFields(f.request_id, f.registration_id))
 
     def marshal(self) -> list[Any]:

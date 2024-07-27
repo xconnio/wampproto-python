@@ -73,7 +73,7 @@ class Register(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Register:
-        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        f = util.validate_message(msg, cls.TYPE, cls.VALIDATION_SPEC)
         return Register(RegisterFields(f.request_id, f.uri, f.options))
 
     def marshal(self) -> list[Any]:
