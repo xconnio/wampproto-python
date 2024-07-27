@@ -60,7 +60,7 @@ class Unregister(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Unregister:
-        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        f = util.validate_message(msg, cls.TYPE, cls.VALIDATION_SPEC)
         return Unregister(UnregisterFields(f.request_id, f.registration_id))
 
     def marshal(self) -> list[Any]:

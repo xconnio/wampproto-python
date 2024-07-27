@@ -59,7 +59,7 @@ class Published(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Published:
-        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        f = util.validate_message(msg, cls.TYPE, cls.VALIDATION_SPEC)
         return Published(PublishedFields(f.request_id, f.publication_id))
 
     def marshal(self) -> list[Any]:

@@ -60,7 +60,7 @@ class Subscribed(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Subscribed:
-        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        f = util.validate_message(msg, cls.TYPE, cls.VALIDATION_SPEC)
         return Subscribed(SubscribedFields(f.request_id, f.subscription_id))
 
     def marshal(self) -> list[Any]:

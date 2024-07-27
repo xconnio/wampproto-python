@@ -121,7 +121,7 @@ class Result(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Result:
-        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        f = util.validate_message(msg, cls.TYPE, cls.VALIDATION_SPEC)
         return Result(ResultFields(f.request_id, f.args, f.kwargs, f.options))
 
     def marshal(self) -> list[Any]:

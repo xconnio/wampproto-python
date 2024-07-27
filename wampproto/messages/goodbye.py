@@ -59,7 +59,7 @@ class Goodbye(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Goodbye:
-        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        f = util.validate_message(msg, cls.TYPE, cls.VALIDATION_SPEC)
         return Goodbye(GoodbyeFields(f.details, f.reason))
 
     def marshal(self) -> list[Any]:

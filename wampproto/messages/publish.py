@@ -131,7 +131,7 @@ class Publish(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Publish:
-        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        f = util.validate_message(msg, cls.TYPE, cls.VALIDATION_SPEC)
         return Publish(PublishFields(f.request_id, f.uri, f.args, f.kwargs, f.options))
 
     def marshal(self) -> list[Any]:

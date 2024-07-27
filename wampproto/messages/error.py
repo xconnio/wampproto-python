@@ -146,7 +146,7 @@ class Error(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Error:
-        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        f = util.validate_message(msg, cls.TYPE, cls.VALIDATION_SPEC)
         return Error(ErrorFields(f.message_type, f.request_id, f.uri, f.args, f.kwargs, f.details))
 
     def marshal(self) -> list[Any]:

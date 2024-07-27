@@ -131,7 +131,7 @@ class Event(Message):
 
     @classmethod
     def parse(cls, msg: list[Any]) -> Event:
-        f = util.validate_message(msg, cls.TYPE, cls.TEXT, cls.VALIDATION_SPEC)
+        f = util.validate_message(msg, cls.TYPE, cls.VALIDATION_SPEC)
         return Event(EventFields(f.subscription_id, f.publication_id, f.args, f.kwargs, f.details))
 
     def marshal(self) -> list[Any]:
