@@ -176,5 +176,17 @@ class Dealer:
 
             unregistered = messages.Unregistered(messages.UnregisteredFields(message.request_id))
             return types.MessageWithRecipient(unregistered, session_id)
+        elif isinstance(message, messages.Error):
+            if message.message_type != messages.Invocation.TYPE:
+                raise ValueError("dealer: only expected to receive error in response to invocation")
+
+            pending = self.pending_calls.pop(message.request_id, None)
+            if pending is None:
+                raise ValueError(f"dealer: no pending invocation for {message.request_id}")
+
+            err_msg = messages.Error(messages.ErrorFields(
+                messages.Call.TYPE, message.request_id, message.uri, message.args, message.kwargs, message.details
+            ))
+            return types.MessageWithRecipient(err_msg, pending.caller_id)
         else:
             raise ValueError("message type not supported")
