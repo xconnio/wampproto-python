@@ -18,8 +18,32 @@ class WAMPCRAAuthenticator(auth.IClientAuthenticator):
         self._secret = secret
 
     def authenticate(self, challenge: messages.Challenge) -> messages.Authenticate:
-        signed = sign_wampcra_challenge(challenge.extra["challenge"], self._secret.encode())
+        salt = challenge.extra.get("salt", None)
+        iterations = challenge.extra.get("iterations", 0)
+        key_length = challenge.extra.get("keylen", 0)
+
+        if salt is not None:
+            raw_secret = derive_cra_key(salt, self._secret, iterations, key_length)
+        else:
+            raw_secret = self._secret.encode()
+
+        signed = sign_wampcra_challenge(challenge.extra["challenge"], raw_secret)
         return messages.Authenticate(AuthenticateFields(signed, {}))
+
+
+def derive_cra_key(salt_str: str, secret: str, iterations: int, key_length: int) -> bytes:
+    salt = salt_str.encode("utf-8")
+    secret_bytes = secret.encode("utf-8")
+
+    if iterations == 0:
+        raise ValueError("iterations string required in extra & should be greater than 0")
+
+    if key_length == 0:
+        raise ValueError("keylen string missing in extra & should be greater than 0")
+
+    derived_key = hashlib.pbkdf2_hmac("sha256", secret_bytes, salt, iterations, key_length)
+
+    return base64.b64encode(derived_key)
 
 
 def utcnow() -> str:
