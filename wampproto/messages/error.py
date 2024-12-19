@@ -161,3 +161,14 @@ class Error(Message):
             message.append(self.kwargs)
 
         return message
+
+    def __str__(self) -> str:
+        error = self.uri
+        if self.args is not None:
+            args = ", ".join(str(arg) for arg in self.args)
+            error += f": {args}"
+        if self.kwargs is not None:
+            kwargs = ", ".join(f"{key}={value}" for key, value in self.kwargs.items())
+            error += f": {kwargs}"
+
+        return error
