@@ -184,9 +184,11 @@ class Dealer:
             if pending is None:
                 raise ValueError(f"dealer: no pending invocation for {message.request_id}")
 
-            err_msg = messages.Error(messages.ErrorFields(
-                messages.Call.TYPE, pending.request_id, message.uri, message.args, message.kwargs, message.details
-            ))
+            err_msg = messages.Error(
+                messages.ErrorFields(
+                    messages.Call.TYPE, pending.request_id, message.uri, message.args, message.kwargs, message.details
+                )
+            )
             return types.MessageWithRecipient(err_msg, pending.caller_id)
         else:
             raise ValueError("message type not supported")
