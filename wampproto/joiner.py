@@ -3,6 +3,7 @@ from typing import Optional
 from wampproto import messages, serializers, auth
 from wampproto.types import SessionDetails
 from wampproto.messages.hello import HelloFields
+from wampproto.exception import ApplicationError
 
 CLIENT_ROLES = {
     "caller": {"features": {}},
@@ -70,7 +71,7 @@ class Joiner:
             self._state = Joiner.STATE_AUTHENTICATE_SENT
             return authenticate
         elif isinstance(msg, messages.Abort):
-            raise ValueError("received abort")
+            raise ApplicationError(msg.reason, *msg.args, **msg.kwargs)
         else:
             raise ValueError("received unknown message")
 
