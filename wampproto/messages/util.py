@@ -290,8 +290,7 @@ def validate_roles(details: dict[str, Any], index: int, fields: Fields, name: st
 
     if len(roles) == 0:
         return (
-            f"{name}: value at index {index} for roles key must be in {AllowedRoles.get_allowed_roles()} "
-            f"but was empty"
+            f"{name}: value at index {index} for roles key must be in {AllowedRoles.get_allowed_roles()} but was empty"
         )
 
     for role in roles:
