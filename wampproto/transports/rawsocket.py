@@ -1,13 +1,13 @@
 import math
 
 MAGIC = 0x7F
-# 1 megabyte
+# 16 megabyte
 PROTOCOL_MAX_MSG_SIZE = 2**24
 DEFAULT_MAX_MSG_SIZE = 2**20
 
-JSON = 1
-MSGPACK = 2
-CBOR = 3
+SERIALIZER_TYPE_JSON = 1
+SERIALIZER_TYPE_MSGPACK = 2
+SERIALIZER_TYPE_CBOR = 3
 
 MSG_TYPE_WAMP = 0
 MSG_TYPE_PING = 1
@@ -29,11 +29,11 @@ class Handshake:
         return self._max_msg_size
 
     def to_bytes(self) -> bytes:
-        return send_client_handshake_request(Handshake(self._protocol, self._max_msg_size))
+        return send_handshake(self)
 
     @classmethod
     def from_bytes(cls, data: bytes) -> "Handshake":
-        return receive_server_handshake_response(data)
+        return receive_handshake(data)
 
 
 class MessageHeader:
@@ -66,21 +66,21 @@ class MessageHeader:
         return MessageHeader(data[0], bytes_to_int(data[1:]))
 
 
-def send_client_handshake_request(request: Handshake) -> bytes:
+def send_handshake(hs: Handshake) -> bytes:
     # FIXME: max_msg_size must not be more than 16 megabytes.
     # FIXME: protocol must be checked to ensure only supported serializers are used.
 
     return bytes(
         [
             MAGIC,
-            int(math.log2(request.max_msg_size)) - 9 << 4 | (request.protocol & 0xF),
+            int(math.log2(hs.max_msg_size)) - 9 << 4 | (hs.protocol & 0xF),
             0x00,
             0x00,
         ]
     )
 
 
-def receive_server_handshake_response(data: bytes) -> Handshake:
+def receive_handshake(data: bytes) -> Handshake:
     if len(data) != 4:
         raise ValueError("Expected 4 bytes for handshake response, got %d" % len(data))
 
