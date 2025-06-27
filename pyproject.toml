@@ -4,14 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "wampproto"
-version = "0.2.1"
+version = "0.3.0"
 authors = [
   {name="Omer Akram", email="omer@thing.com"},
   {name="Mahad Munir", email="mahad@xconn.io"},
 ]
 description = "https://github.com/xconnio/wampproto.py"
 readme = "README.md"
-license = {file = "LICENSE"}
 dependencies = [
   "cbor2",
   "msgpack",
@@ -20,7 +19,6 @@ dependencies = [
 requires-python = ">=3.10"
 classifiers = [
   "Development Status :: 4 - Beta",
-  "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
