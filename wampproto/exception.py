@@ -1,15 +1,19 @@
+from typing import Any
+
+
 class ApplicationError(RuntimeError):
-    def __init__(self, message: str, *args, **kwargs):
-        super().__init__(*args)
+    def __init__(self, message: str, args: list[Any], kwargs: dict[str, Any]):
+        if args is not None:
+            super().__init__(*args)
         self.message = message
-        self.args = args
+        self._args = args
         self.kwargs = kwargs
 
     def __str__(self):
         err = self.message
 
-        if self.args:
-            args = ", ".join(str(arg) for arg in self.args)
+        if self._args:
+            args = ", ".join(str(arg) for arg in self._args)
             err += f": {args}"
 
         if self.kwargs:
