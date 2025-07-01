@@ -71,7 +71,7 @@ class Joiner:
             self._state = Joiner.STATE_AUTHENTICATE_SENT
             return authenticate
         elif isinstance(msg, messages.Abort):
-            raise ApplicationError(msg.reason, *msg.args, **msg.kwargs)
+            raise ApplicationError(msg.reason, msg.args, msg.kwargs)
         else:
             raise ValueError("received unknown message")
 
