@@ -141,6 +141,8 @@ class WAMPSession:
                     raise ValueError(f"unknown error message type {type(msg)}")
         elif isinstance(msg, messages.Goodbye):
             return msg
+        elif isinstance(msg, messages.Abort):
+            return msg
         else:
             raise ValueError(f"unknown message {type(msg)}")
 
