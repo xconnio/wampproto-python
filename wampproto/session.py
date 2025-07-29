@@ -10,12 +10,12 @@ class WAMPSession:
         self._register_requests: set[int] = set()
         self._registrations: set[int] = set()
         self._invocation_requests: set[int] = set()
-        self._unregister_requests: set[int] = set()
+        self._unregister_requests: dict[int, int] = {}
         # data structures for PubSub
         self._publish_requests: set[int] = set()
         self._subscribe_requests: set[int] = set()
         self._subscriptions: set[int] = set()
-        self._unsubscribe_requests: set[int] = set()
+        self._unsubscribe_requests: dict[int, int] = {}
 
     def send_message(self, msg: messages.Message) -> bytes:
         if isinstance(msg, messages.Call):
@@ -23,7 +23,7 @@ class WAMPSession:
         elif isinstance(msg, messages.Register):
             self._register_requests.add(msg.request_id)
         elif isinstance(msg, messages.Unregister):
-            self._unregister_requests.add(msg.request_id)
+            self._unregister_requests[msg.request_id] = msg.registration_id
         elif isinstance(msg, messages.Yield):
             if msg.request_id not in self._invocation_requests:
                 raise ValueError("cannot yield for unknown invocation request")
@@ -35,7 +35,7 @@ class WAMPSession:
         elif isinstance(msg, messages.Subscribe):
             self._subscribe_requests.add(msg.request_id)
         elif isinstance(msg, messages.Unsubscribe):
-            self._unsubscribe_requests.add(msg.request_id)
+            self._unsubscribe_requests[msg.request_id] = msg.subscription_id
         elif isinstance(msg, messages.Error):
             if msg.message_type != messages.Invocation.TYPE:
                 raise ValueError("send only supported for invocation error")
@@ -67,12 +67,12 @@ class WAMPSession:
             self._registrations.add(msg.registration_id)
         elif isinstance(msg, messages.Unregistered):
             try:
-                self._unregister_requests.remove(msg.request_id)
+                registration_id = self._unregister_requests.pop(msg.request_id)
             except KeyError:
                 raise ValueError("received UNREGISTERED for invalid request_id")
 
             try:
-                self._registrations.remove(msg.request_id)
+                self._registrations.remove(registration_id)
             except KeyError:
                 raise ValueError("received UNREGISTERED for invalid registration_id")
         elif isinstance(msg, messages.Invocation):
@@ -94,12 +94,12 @@ class WAMPSession:
             self._subscriptions.add(msg.subscription_id)
         elif isinstance(msg, messages.Unsubscribed):
             try:
-                self._unsubscribe_requests.remove(msg.request_id)
+                subscription_id = self._unsubscribe_requests.pop(msg.request_id)
             except KeyError:
                 raise ValueError("received UNSUBSCRIBED for invalid request_id")
 
             try:
-                self._subscriptions.remove(msg.request_id)
+                self._subscriptions.remove(subscription_id)
             except KeyError:
                 raise ValueError("received UNSUBSCRIBED for invalid subscription_id")
         elif isinstance(msg, messages.Event):
@@ -119,7 +119,7 @@ class WAMPSession:
                         raise ValueError("received ERROR for invalid register request")
                 case messages.Unregister.TYPE:
                     try:
-                        self._unregister_requests.remove(msg.request_id)
+                        self._unregister_requests.pop(msg.request_id)
                     except KeyError:
                         raise ValueError("received ERROR for invalid unregister request")
                 case messages.Subscribe.TYPE:
@@ -129,7 +129,7 @@ class WAMPSession:
                         raise ValueError("received ERROR for invalid subscribe request")
                 case messages.Unsubscribe.TYPE:
                     try:
-                        self._unsubscribe_requests.remove(msg.request_id)
+                        self._unsubscribe_requests.pop(msg.request_id)
                     except KeyError:
                         raise ValueError("received ERROR for invalid unsubscribe request")
                 case messages.Publish.TYPE:
