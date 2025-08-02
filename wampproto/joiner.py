@@ -7,7 +7,7 @@ from wampproto.exception import ApplicationError
 
 CLIENT_ROLES = {
     "caller": {"features": {}},
-    "callee": {"features": {}},
+    "callee": {"features": {"progressive_call_results": True, "call_canceling": True}},
     "publisher": {"features": {}},
     "subscriber": {"features": {}},
 }
