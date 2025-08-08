@@ -7,6 +7,7 @@ setup:
 	make install_uv
 	uv venv
 	uv pip install .[test]
+	make build-wampproto
 
 lint:
 	. .venv/bin/activate; ruff format .
