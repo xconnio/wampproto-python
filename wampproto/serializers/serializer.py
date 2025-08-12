@@ -1,11 +1,16 @@
 from wampproto import messages
 
+NONE_SERIALIZER_ID = 0
+
 
 class Serializer:
     def serialize(self, message: messages.Message) -> bytes | str:
         raise NotImplementedError()
 
     def deserialize(self, data: bytes | str) -> messages.Message:
+        raise NotImplementedError()
+
+    def static(self) -> bool:
         raise NotImplementedError()
 
 
