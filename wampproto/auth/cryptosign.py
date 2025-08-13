@@ -48,3 +48,13 @@ def verify_cryptosign_signature(signature: str, public_key: bytes) -> bool:
         return False
 
     return True
+
+
+def generate_cryptosign_keypair() -> tuple[str, str]:
+    signing_key = nacl.signing.SigningKey.generate()
+    verify_key = signing_key.verify_key
+
+    private_key_hex = signing_key.encode().hex()
+    public_key_hex = verify_key.encode().hex()
+
+    return public_key_hex, private_key_hex
