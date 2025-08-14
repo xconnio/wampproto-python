@@ -27,7 +27,7 @@ class CryptoSignAuthenticator(auth.IClientAuthenticator):
 
         signed = sign_cryptosign_challenge(challenge_hex, self._private_key)
 
-        return messages.Authenticate(AuthenticateFields(signed + challenge_hex, {}))
+        return messages.Authenticate(AuthenticateFields(signed, {}))
 
 
 def generate_cryptosign_challenge() -> str:
@@ -37,7 +37,7 @@ def generate_cryptosign_challenge() -> str:
 
 def sign_cryptosign_challenge(challenge: str, private_key: nacl.signing.SigningKey) -> str:
     raw_challenge = binascii.a2b_hex(challenge)
-    return private_key.sign(raw_challenge, HexEncoder).signature.decode()
+    return private_key.sign(raw_challenge, HexEncoder).signature.decode() + challenge
 
 
 def verify_cryptosign_signature(signature: str, public_key: bytes) -> bool:

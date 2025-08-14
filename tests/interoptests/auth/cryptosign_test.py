@@ -31,11 +31,8 @@ async def test_sign_cryptosign_challenge():
 
     signature = cryptosign_auth.sign_cryptosign_challenge(challenge, private_key)
 
-    # Combine the signature and the challenge as a single hex string
-    full_signature = signature + challenge
-
     await run_command(
-        f"wampproto auth cryptosign verify-signature {full_signature} {TEST_PUBLIC_KEY}",
+        f"wampproto auth cryptosign verify-signature {signature} {TEST_PUBLIC_KEY}",
     )
 
 

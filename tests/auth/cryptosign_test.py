@@ -34,7 +34,7 @@ def test_generate_cryptosign_challenge():
 
 def test_sign_cryptosign_challenge():
     signed = cryptosign.sign_cryptosign_challenge(challenge, nacl.signing.SigningKey(binascii.a2b_hex(private_key_hex)))
-    assert signed == signature
+    assert signed == signature + challenge
 
 
 def test_verify_cryptosign_signature():
