@@ -25,8 +25,8 @@ jobs:
       - name: Build wheel
         run: make build-wheel
 
-      - name: build wampproto-cli
-        run: make build-wampproto
+      - name: install wampproto-cli
+        run: sudo snap install wampproto --edge
 
       - name: Run tests
         run: make test
