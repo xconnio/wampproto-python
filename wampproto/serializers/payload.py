@@ -48,7 +48,10 @@ def cbor_encode_payload(args: list, kwargs: dict) -> bytes | None:
     return cbor2.dumps(data)
 
 
-def cbor_decode_payload(b: bytes):
+def cbor_decode_payload(b: bytes) -> Tuple[list[Any] | None, dict[Any, Any] | None]:
+    if len(b) == 0:
+        return None, None
+
     arr = cbor2.loads(b)
 
     return decode(arr)
@@ -62,7 +65,10 @@ def msgpack_encode_payload(args: list, kwargs: dict) -> bytes | None:
     return msgpack.dumps(data)
 
 
-def msgpack_decode_payload(b: bytes):
+def msgpack_decode_payload(b: bytes) -> Tuple[list[Any] | None, dict[Any, Any] | None]:
+    if len(b) == 0:
+        return None, None
+
     arr = msgpack.loads(b)
 
     return decode(arr)
@@ -77,6 +83,9 @@ def json_encode_payload(args: list, kwargs: dict) -> bytes | None:
 
 
 def json_decode_payload(b: bytes) -> Tuple[list[Any] | None, dict[Any, Any] | None]:
+    if len(b) == 0:
+        return None, None
+
     arr = json.loads(b)
 
     return decode(arr)
