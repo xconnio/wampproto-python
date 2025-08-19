@@ -3,7 +3,7 @@ import cbor2
 from wampproto import messages, serializers
 from wampproto.serializers.serializer import to_message
 
-CBOR_SERIALIZER_ID = 1
+CBOR_SERIALIZER_ID = 3
 
 
 class CBORSerializer(serializers.Serializer):
