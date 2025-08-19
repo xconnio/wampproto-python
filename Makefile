@@ -33,8 +33,3 @@ publish-build:
 	@echo ========================================================
 	@echo
 	@echo now run .venv/bin/twine upload dist/newly_created.tar.gz
-
-build-wampproto:
-	rm -rf wampproto-cli
-	git clone https://github.com/xconnio/wampproto-cli.git
-	cd wampproto-cli/ && make build && sudo cp ./wampproto /usr/local/bin/
