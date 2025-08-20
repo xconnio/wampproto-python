@@ -17,7 +17,7 @@ class ICallFields(BinaryPayload):
         raise NotImplementedError()
 
     @property
-    def uri(self):
+    def procedure(self):
         raise NotImplementedError()
 
     @property
@@ -33,7 +33,7 @@ class CallFields(ICallFields):
     def __init__(
         self,
         request_id: int,
-        uri: str,
+        procedure: str,
         args: list | None = None,
         kwargs: dict[str, Any] | None = None,
         options: dict[str, Any] | None = None,
@@ -42,7 +42,7 @@ class CallFields(ICallFields):
     ):
         super().__init__()
         self._request_id = request_id
-        self._uri = uri
+        self._procedure = procedure
         self._args = args
         self._kwargs = kwargs
         self._options = {} if options is None else options
@@ -55,8 +55,8 @@ class CallFields(ICallFields):
         return self._request_id
 
     @property
-    def uri(self) -> str:
-        return self._uri
+    def procedure(self) -> str:
+        return self._procedure
 
     @property
     def args(self) -> list[Any] | None:
@@ -94,7 +94,7 @@ class Call(Message):
         spec={
             1: util.validate_request_id,
             2: util.validate_options,
-            3: util.validate_uri,
+            3: util.validate_procedure,
             4: util.validate_args,
             5: util.validate_kwargs,
         },
@@ -109,8 +109,8 @@ class Call(Message):
         return self._fields.request_id
 
     @property
-    def uri(self) -> str:
-        return self._fields.uri
+    def procedure(self) -> str:
+        return self._fields.procedure
 
     @property
     def args(self) -> list[Any] | None:
@@ -138,10 +138,10 @@ class Call(Message):
     @classmethod
     def parse(cls, msg: list[Any]) -> Call:
         f = util.validate_message(msg, cls.TYPE, cls.VALIDATION_SPEC)
-        return Call(CallFields(f.request_id, f.uri, f.args, f.kwargs, f.options))
+        return Call(CallFields(f.request_id, f.procedure, f.args, f.kwargs, f.options))
 
     def marshal(self) -> list[Any]:
-        message = [self.TYPE, self.request_id, self.options, self.uri]
+        message = [self.TYPE, self.request_id, self.options, self.procedure]
         if self.args is not None:
             message.append(self.args)
 

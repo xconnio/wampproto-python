@@ -180,13 +180,13 @@ def test_progressive_call_results():
         msg = dealer.receive_message(callee_details.session_id, yield_)
         assert isinstance(msg.message, messages.Result)
         assert msg.message.request_id == call.request_id
-        assert msg.message.options.get(OPTION_PROGRESS)
+        assert msg.message.details.get(OPTION_PROGRESS)
 
     yield_ = messages.Yield(messages.YieldFields(msg.message.request_id))
     msg = dealer.receive_message(callee_details.session_id, yield_)
     assert isinstance(msg.message, messages.Result)
     assert msg.message.request_id == call.request_id
-    assert msg.message.options.get(OPTION_PROGRESS, False) is False
+    assert msg.message.details.get(OPTION_PROGRESS, False) is False
 
     yield_ = messages.Yield(messages.YieldFields(msg.message.request_id))
     with pytest.raises(ValueError) as exc:

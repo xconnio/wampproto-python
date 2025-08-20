@@ -23,7 +23,7 @@ def test_register(session: WAMPSession):
     # Send Register message and receive Registered message
     register = messages.Register(messages.RegisterFields(2, "io.xconn.test"))
     to_send = session.send_message(register)
-    assert to_send == f'[{messages.Register.TYPE}, {register.request_id}, {dict()}, "{register.uri}"]'
+    assert to_send == f'[{messages.Register.TYPE}, {register.request_id}, {dict()}, "{register.procedure}"]'
 
     registered = messages.Registered(messages.RegisteredFields(2, 3))
     received = session.receive_message(registered)
@@ -151,7 +151,9 @@ def test_publish(session: WAMPSession):
     # Send Publish message with acknowledge true and receive Published message
     publish = messages.Publish(messages.PublishFields(6, "topic", options={"acknowledge": True}))
     to_send = session.send_message(publish)
-    assert to_send == f'[{messages.Publish.TYPE}, {publish.request_id}, {json.dumps(publish.options)}, "{publish.uri}"]'
+    assert (
+        to_send == f'[{messages.Publish.TYPE}, {publish.request_id}, {json.dumps(publish.options)}, "{publish.topic}"]'
+    )
 
     published = messages.Published(messages.PublishedFields(6, 6))
     received = session.receive_message(published)

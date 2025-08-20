@@ -46,6 +46,16 @@ def validate_uri_or_raise(uri: str, error_msg: str) -> str:
     return uri
 
 
+def validate_procedure_or_raise(procedure: str, error_msg: str) -> str:
+    if procedure is None:
+        raise exceptions.InvalidUriError(f"procedure cannot be null for {error_msg}")
+
+    if not isinstance(procedure, str):
+        raise exceptions.InvalidUriError(f"procedure must be of type string for {error_msg}")
+
+    return procedure
+
+
 def validate_details_or_raise(details: dict[str, Any], error_msg: str, field: str | None = None) -> dict[str, Any]:
     if field is None:
         field = "details"
@@ -93,6 +103,7 @@ class Fields:
         super().__init__()
         self.request_id: int | None = None
         self.uri: str | None = None
+        self.procedure: str | None = None
         self.args: list[Any] | None = None
         self.kwargs: dict[str, Any] | None = None
 
@@ -179,6 +190,14 @@ def validate_uri(msg: list[Any], index: int, fields: Fields, name: str):
         return error
 
     fields.uri = msg[index]
+    return None
+
+
+def validate_procedure(msg: list[Any], index: int, fields: Fields, name: str):
+    if (error := validate_string_or_raise(msg[index], index, name)) is not None:
+        return error
+
+    fields.procedure = msg[index]
     return None
 
 

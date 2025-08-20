@@ -86,7 +86,7 @@ class Broker:
         result = types.Publication(recipients=[])
         publication_id = self.idgen.next()
 
-        subscription = self.subscriptions_by_topic.get(message.uri)
+        subscription = self.subscriptions_by_topic.get(message.topic)
         if subscription is not None:
             event = messages.Event(messages.EventFields(subscription.id, publication_id, message.args, message.kwargs))
             result.event = event

@@ -13,7 +13,7 @@ class IRegisterFields:
         raise NotImplementedError
 
     @property
-    def uri(self):
+    def procedure(self):
         raise NotImplementedError
 
     @property
@@ -22,9 +22,9 @@ class IRegisterFields:
 
 
 class RegisterFields(IRegisterFields):
-    def __init__(self, request_id: int, uri: str, options: dict[str, Any] | None = None):
+    def __init__(self, request_id: int, procedure: str, options: dict[str, Any] | None = None):
         self._request_id = request_id
-        self._uri = uri
+        self._procedure = procedure
         self._options = {} if options is None else options
 
     @property
@@ -32,8 +32,8 @@ class RegisterFields(IRegisterFields):
         return self._request_id
 
     @property
-    def uri(self) -> str:
-        return self._uri
+    def procedure(self) -> str:
+        return self._procedure
 
     @property
     def options(self) -> dict[str, Any]:
@@ -51,7 +51,7 @@ class Register(Message):
         spec={
             1: util.validate_request_id,
             2: util.validate_options,
-            3: util.validate_uri,
+            3: util.validate_procedure,
         },
     )
 
@@ -64,8 +64,8 @@ class Register(Message):
         return self._fields.request_id
 
     @property
-    def uri(self) -> str:
-        return self._fields.uri
+    def procedure(self) -> str:
+        return self._fields.procedure
 
     @property
     def options(self) -> dict[str, Any]:
@@ -74,7 +74,7 @@ class Register(Message):
     @classmethod
     def parse(cls, msg: list[Any]) -> Register:
         f = util.validate_message(msg, cls.TYPE, cls.VALIDATION_SPEC)
-        return Register(RegisterFields(f.request_id, f.uri, f.options))
+        return Register(RegisterFields(f.request_id, f.procedure, f.options))
 
     def marshal(self) -> list[Any]:
-        return [self.TYPE, self.request_id, self.options, self.uri]
+        return [self.TYPE, self.request_id, self.options, self.procedure]

@@ -67,8 +67,8 @@ def test_parse_with_out_of_range_request_value():
     )
 
 
-def test_parse_with_invalid_options_type():
-    message = [messages.Result.TYPE, 367, "options"]
+def test_parse_with_invalid_details_type():
+    message = [messages.Result.TYPE, 367, "details"]
     with pytest.raises(ValueError) as exc_info:
         messages.Result.parse(message)
 
@@ -103,13 +103,13 @@ def test_parse_correctly():
 
     assert yield_message.args is None
     assert yield_message.kwargs is None
-    assert yield_message.options == {}
+    assert yield_message.details == {}
 
 
-def test_parse_correctly_with_options():
+def test_parse_correctly_with_details():
     request_id = 362
-    options = {"caller_authid": "mahad"}
-    message = [messages.Result.TYPE, request_id, options]
+    details = {"caller_authid": "mahad"}
+    message = [messages.Result.TYPE, request_id, details]
     yield_message = messages.Result.parse(message)
 
     assert isinstance(yield_message, messages.Result)
@@ -117,8 +117,8 @@ def test_parse_correctly_with_options():
     assert isinstance(yield_message.request_id, int)
     assert yield_message.request_id == request_id
 
-    assert isinstance(yield_message.options, dict)
-    assert yield_message.options == options
+    assert isinstance(yield_message.details, dict)
+    assert yield_message.details == details
 
     assert yield_message.args is None
     assert yield_message.kwargs is None
@@ -138,7 +138,7 @@ def test_parse_correctly_with_args():
     assert isinstance(yield_message.args, list)
     assert yield_message.args == args
 
-    assert yield_message.options == {}
+    assert yield_message.details == {}
     assert yield_message.kwargs is None
 
 
@@ -155,15 +155,15 @@ def test_parse_correctly_with_kwargs():
 
     assert result.kwargs == kwargs
     assert result.args == []
-    assert result.options == {}
+    assert result.details == {}
 
 
-def test_parse_correctly_with_all_options():
+def test_parse_correctly_with_all_details():
     request_id = 3671
-    options = {"caller_authid": "mahad"}
+    details = {"caller_authid": "mahad"}
     args = ["arg1"]
     kwargs = {"name": "mahad"}
-    message = [messages.Result.TYPE, request_id, options, args, kwargs]
+    message = [messages.Result.TYPE, request_id, details, args, kwargs]
     result = messages.Result.parse(message)
 
     assert isinstance(result, messages.Result)
@@ -171,7 +171,7 @@ def test_parse_correctly_with_all_options():
     assert isinstance(result.request_id, int)
     assert result.request_id == request_id
 
-    assert result.options == options
+    assert result.details == details
     assert result.args == args
     assert result.kwargs == kwargs
 
@@ -235,12 +235,12 @@ def test_marshal_with_kwargs():
     assert message[4] == kwargs
 
 
-def test_marshal_with_all_options():
+def test_marshal_with_all_details():
     request_id = 1677
     args = ["arg1"]
     kwargs = {"key": "value"}
-    options = {"receive_progress": True}
-    message = messages.Result(messages.ResultFields(request_id, args, kwargs, options)).marshal()
+    details = {"receive_progress": True}
+    message = messages.Result(messages.ResultFields(request_id, args, kwargs, details)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 5
@@ -252,7 +252,7 @@ def test_marshal_with_all_options():
     assert message[1] == request_id
 
     assert isinstance(message[2], dict)
-    assert message[2] == options
+    assert message[2] == details
 
     assert isinstance(message[3], list)
     assert message[3] == args
