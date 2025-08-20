@@ -10,7 +10,7 @@ TEST_TOPIC = "io.xconn.test"
 def is_equal(msg1: messages.Publish, msg2: messages.Publish) -> bool:
     return (
         msg1.request_id == msg2.request_id
-        and msg1.uri == msg2.uri
+        and msg1.topic == msg2.topic
         and msg1.options == msg2.options
         and msg1.args == msg2.args
         and msg1.kwargs == msg2.kwargs
@@ -20,7 +20,7 @@ def is_equal(msg1: messages.Publish, msg2: messages.Publish) -> bool:
 @pytest.mark.asyncio
 async def test_json_serializer():
     msg = messages.Publish(messages.PublishFields(1, TEST_TOPIC))
-    command = f"wampproto message publish {msg.request_id} {msg.uri} --serializer json"
+    command = f"wampproto message publish {msg.request_id} {msg.topic} --serializer json"
 
     output = await run_command(command)
 
@@ -33,7 +33,7 @@ async def test_json_serializer():
 @pytest.mark.asyncio
 async def test_cbor_serializer():
     msg = messages.Publish(messages.PublishFields(1, TEST_TOPIC))
-    command = f"wampproto message publish {msg.request_id} {msg.uri} --serializer cbor --output hex"
+    command = f"wampproto message publish {msg.request_id} {msg.topic} --serializer cbor --output hex"
 
     output = await run_command(command)
     output_bytes = bytes.fromhex(output)
@@ -47,7 +47,7 @@ async def test_cbor_serializer():
 @pytest.mark.asyncio
 async def test_msgpack_serializer():
     msg = messages.Publish(messages.PublishFields(1, TEST_TOPIC))
-    command = f"wampproto message publish {msg.request_id} {msg.uri} --serializer msgpack --output hex"
+    command = f"wampproto message publish {msg.request_id} {msg.topic} --serializer msgpack --output hex"
 
     output = await run_command(command)
     output_bytes = bytes.fromhex(output)
@@ -63,7 +63,7 @@ async def test_with_args_kwargs_options():
     msg = messages.Publish(
         messages.PublishFields(1, TEST_TOPIC, options={"a": "b"}, args=["abc", 123], kwargs={"a": "b"})
     )
-    command = f"wampproto message publish {msg.request_id} {msg.uri} abc 123 -o a=b -k a=b --serializer json"
+    command = f"wampproto message publish {msg.request_id} {msg.topic} abc 123 -o a=b -k a=b --serializer json"
 
     output = await run_command(command)
 

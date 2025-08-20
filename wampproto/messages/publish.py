@@ -17,7 +17,7 @@ class IPublishFields(BinaryPayload):
         raise NotImplementedError
 
     @property
-    def uri(self):
+    def topic(self):
         raise NotImplementedError
 
     @property
@@ -33,14 +33,14 @@ class PublishFields(IPublishFields):
     def __init__(
         self,
         request_id: int,
-        uri: str,
+        topic: str,
         args: list | None = None,
         kwargs: dict | None = None,
         options: dict | None = None,
     ):
         super().__init__()
         self._request_id = request_id
-        self._uri = uri
+        self._topic = topic
         self._args = args
         self._kwargs = kwargs
         self._options = {} if options is None else options
@@ -50,8 +50,8 @@ class PublishFields(IPublishFields):
         return self._request_id
 
     @property
-    def uri(self) -> str:
-        return self._uri
+    def topic(self) -> str:
+        return self._topic
 
     @property
     def args(self) -> list[Any] | None:
@@ -88,7 +88,7 @@ class Publish(Message):
         spec={
             1: util.validate_request_id,
             2: util.validate_options,
-            3: util.validate_uri,
+            3: util.validate_topic,
             4: util.validate_args,
             5: util.validate_kwargs,
         },
@@ -103,8 +103,8 @@ class Publish(Message):
         return self._fields.request_id
 
     @property
-    def uri(self) -> str:
-        return self._fields.uri
+    def topic(self) -> str:
+        return self._fields.topic
 
     @property
     def args(self) -> list[Any] | None:
@@ -132,10 +132,10 @@ class Publish(Message):
     @classmethod
     def parse(cls, msg: list[Any]) -> Publish:
         f = util.validate_message(msg, cls.TYPE, cls.VALIDATION_SPEC)
-        return Publish(PublishFields(f.request_id, f.uri, f.args, f.kwargs, f.options))
+        return Publish(PublishFields(f.request_id, f.topic, f.args, f.kwargs, f.options))
 
     def marshal(self) -> list[Any]:
-        message = [self.TYPE, self.request_id, self.options, self.uri]
+        message = [self.TYPE, self.request_id, self.options, self.topic]
         if self.args is not None:
             message.append(self.args)
 

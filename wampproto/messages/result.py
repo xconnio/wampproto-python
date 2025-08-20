@@ -13,7 +13,7 @@ class IResultFields(BinaryPayload):
         raise NotImplementedError
 
     @property
-    def options(self):
+    def details(self):
         raise NotImplementedError
 
     @property
@@ -31,7 +31,7 @@ class ResultFields(IResultFields):
         request_id: int,
         args: list | None = None,
         kwargs: dict | None = None,
-        options: dict | None = None,
+        details: dict | None = None,
         payload: bytes | None = None,
         serializer: int | None = None,
     ):
@@ -39,7 +39,7 @@ class ResultFields(IResultFields):
         self._request_id = request_id
         self._args = args
         self._kwargs = kwargs
-        self._options = {} if options is None else options
+        self._details = {} if details is None else details
 
         self._serializer = serializer
         self._payload = payload
@@ -49,8 +49,8 @@ class ResultFields(IResultFields):
         return self._request_id
 
     @property
-    def options(self) -> dict[str, Any]:
-        return self._options
+    def details(self) -> dict[str, Any]:
+        return self._details
 
     @property
     def args(self) -> list[Any] | None:
@@ -82,7 +82,7 @@ class Result(Message):
         message=TEXT,
         spec={
             1: util.validate_request_id,
-            2: util.validate_options,
+            2: util.validate_details,
             3: util.validate_args,
             4: util.validate_kwargs,
         },
@@ -97,8 +97,8 @@ class Result(Message):
         return self._fields.request_id
 
     @property
-    def options(self) -> dict[str, Any]:
-        return self._fields.options
+    def details(self) -> dict[str, Any]:
+        return self._fields.details
 
     @property
     def args(self) -> list[Any] | None:
@@ -122,10 +122,10 @@ class Result(Message):
     @classmethod
     def parse(cls, msg: list[Any]) -> Result:
         f = util.validate_message(msg, cls.TYPE, cls.VALIDATION_SPEC)
-        return Result(ResultFields(f.request_id, f.args, f.kwargs, f.options))
+        return Result(ResultFields(f.request_id, f.args, f.kwargs, f.details))
 
     def marshal(self) -> list[Any]:
-        message = [self.TYPE, self.request_id, self.options]
+        message = [self.TYPE, self.request_id, self.details]
         if self.args is not None:
             message.append(self.args)
 

@@ -66,7 +66,7 @@ class Dealer:
 
     def receive_message(self, session_id: int, message: messages.Message) -> types.MessageWithRecipient:
         if isinstance(message, messages.Call):
-            registration = self.registrations_by_procedure.get(message.uri)
+            registration = self.registrations_by_procedure.get(message.procedure)
             if registration is None:
                 err = messages.Error(
                     messages.ErrorFields(message.TYPE, message.request_id, "wamp.error.no_such_procedure")
@@ -128,7 +128,7 @@ class Dealer:
 
             result = messages.Result(
                 messages.ResultFields(
-                    request_id=invocation.request_id, args=message.args, kwargs=message.kwargs, options=details
+                    request_id=invocation.request_id, args=message.args, kwargs=message.kwargs, details=details
                 )
             )
             return types.MessageWithRecipient(result, invocation.caller_id)
@@ -136,10 +136,10 @@ class Dealer:
             if session_id not in self.registrations_by_session:
                 raise ValueError(f"cannot register, session {session_id} doesn't exist")
 
-            registration = self.registrations_by_procedure.get(message.uri)
+            registration = self.registrations_by_procedure.get(message.procedure)
             if registration is None:
-                registration = Registration(self.idgen.next(), message.uri, {session_id: session_id})
-                self.registrations_by_procedure[message.uri] = registration
+                registration = Registration(self.idgen.next(), message.procedure, {session_id: session_id})
+                self.registrations_by_procedure[message.procedure] = registration
                 self.registrations_by_session[session_id][registration.id] = registration
             else:
                 # TODO: implement shared registrations.

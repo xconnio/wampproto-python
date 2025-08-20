@@ -116,6 +116,20 @@ def test_validate_uri_or_raise_correctly():
     assert result == uri
 
 
+def test_validate_procedure_or_raise_with_invalid_uri_type():
+    error_message = "error"
+    with pytest.raises(exceptions.InvalidUriError) as exc_info:
+        util.validate_procedure_or_raise(3, error_message)
+
+    assert str(exc_info.value) == f"procedure must be of type string for {error_message}"
+
+
+def test_validate_procedure_or_raise_correctly():
+    procedure = "io.xconn.echo"
+    result = util.validate_procedure_or_raise(procedure, "")
+    assert result == procedure
+
+
 def test_sanity_check_with_invalid_message_type():
     wamp_message = "wamp message"
     with pytest.raises(ValueError) as exc_info:

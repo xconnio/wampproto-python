@@ -40,8 +40,8 @@ def test_parse_with_invalid_message_type():
 def test_parse_with_multiple_errors():
     req_id = "1"
     options = 23
-    uri = {"uri": "xconn"}
-    message = [messages.Call.TYPE, req_id, options, uri]
+    procedure = {"procedure": "xconn"}
+    message = [messages.Call.TYPE, req_id, options, procedure]
     with pytest.raises(ValueError) as exc_info:
         messages.Call.parse(message)
 
@@ -53,7 +53,7 @@ def test_parse_with_multiple_errors():
             message=messages.Call.TEXT, index=2, expected_type=util.DICT, actual_type=type(options).__name__
         ),
         exceptions.InvalidDataTypeError.format(
-            message=messages.Call.TEXT, index=3, expected_type=util.STRING, actual_type=type(uri).__name__
+            message=messages.Call.TEXT, index=3, expected_type=util.STRING, actual_type=type(procedure).__name__
         ),
     ]
 
@@ -92,7 +92,7 @@ def test_parse_with_invalid_options_type():
     assert str(exc_info.value) == f"{messages.Call.TEXT}: value at index 2 must be of type 'dict' but was str"
 
 
-def test_parse_with_uri_none():
+def test_parse_with_procedure_none():
     message = [messages.Call.TYPE, 367, {}, None]
     with pytest.raises(ValueError) as exc_info:
         messages.Call.parse(message)
@@ -100,9 +100,9 @@ def test_parse_with_uri_none():
     assert str(exc_info.value) == f"{messages.Call.TEXT}: value at index 3 must be of type 'string' but was NoneType"
 
 
-def test_parse_with_invalid_uri_type():
-    uri = {"uri": "io.xconn.ping"}
-    message = [messages.Call.TYPE, 367, {}, uri]
+def test_parse_with_invalid_procedure_type():
+    procedure = {"procedure": "io.xconn.ping"}
+    message = [messages.Call.TYPE, 367, {}, procedure]
     with pytest.raises(ValueError) as exc_info:
         messages.Call.parse(message)
 
@@ -126,9 +126,9 @@ def test_parse_with_invalid_kwargs_type():
 
 
 def test_parse_correctly():
-    uri = "io.xconn.ping"
+    procedure = "io.xconn.ping"
     request_id = 367
-    message = [messages.Call.TYPE, request_id, {}, uri]
+    message = [messages.Call.TYPE, request_id, {}, procedure]
     call = messages.Call.parse(message)
 
     assert isinstance(call, messages.Call)
@@ -136,8 +136,8 @@ def test_parse_correctly():
     assert isinstance(call.request_id, int)
     assert call.request_id == request_id
 
-    assert isinstance(call.uri, str)
-    assert call.uri == uri
+    assert isinstance(call.procedure, str)
+    assert call.procedure == procedure
 
     assert call.args is None
     assert call.kwargs is None
@@ -145,10 +145,10 @@ def test_parse_correctly():
 
 
 def test_parse_correctly_with_options():
-    uri = "io.xconn.ping"
+    procedure = "io.xconn.ping"
     request_id = 367
     options = {"caller_authid": "mahad"}
-    message = [messages.Call.TYPE, request_id, options, uri]
+    message = [messages.Call.TYPE, request_id, options, procedure]
     call = messages.Call.parse(message)
 
     assert isinstance(call, messages.Call)
@@ -156,8 +156,8 @@ def test_parse_correctly_with_options():
     assert isinstance(call.request_id, int)
     assert call.request_id == request_id
 
-    assert isinstance(call.uri, str)
-    assert call.uri == uri
+    assert isinstance(call.procedure, str)
+    assert call.procedure == procedure
 
     assert isinstance(call.options, dict)
     assert call.options == options
@@ -167,10 +167,10 @@ def test_parse_correctly_with_options():
 
 
 def test_parse_correctly_with_args():
-    uri = "io.xconn.ping"
+    procedure = "io.xconn.ping"
     request_id = 367
     args = ["first", 2]
-    message = [messages.Call.TYPE, request_id, {}, uri, args]
+    message = [messages.Call.TYPE, request_id, {}, procedure, args]
     call = messages.Call.parse(message)
 
     assert isinstance(call, messages.Call)
@@ -178,8 +178,8 @@ def test_parse_correctly_with_args():
     assert isinstance(call.request_id, int)
     assert call.request_id == request_id
 
-    assert isinstance(call.uri, str)
-    assert call.uri == uri
+    assert isinstance(call.procedure, str)
+    assert call.procedure == procedure
 
     assert isinstance(call.args, list)
     assert call.args == args
@@ -189,10 +189,10 @@ def test_parse_correctly_with_args():
 
 
 def test_parse_correctly_with_kwargs():
-    uri = "io.xconn.ping"
+    procedure = "io.xconn.ping"
     request_id = 367
     kwargs = {"name": "mahad"}
-    message = [messages.Call.TYPE, request_id, {}, uri, [], kwargs]
+    message = [messages.Call.TYPE, request_id, {}, procedure, [], kwargs]
     call = messages.Call.parse(message)
 
     assert isinstance(call, messages.Call)
@@ -200,8 +200,8 @@ def test_parse_correctly_with_kwargs():
     assert isinstance(call.request_id, int)
     assert call.request_id == request_id
 
-    assert isinstance(call.uri, str)
-    assert call.uri == uri
+    assert isinstance(call.procedure, str)
+    assert call.procedure == procedure
 
     assert call.kwargs == kwargs
     assert call.args == []
@@ -209,12 +209,12 @@ def test_parse_correctly_with_kwargs():
 
 
 def test_parse_correctly_with_all_options():
-    uri = "io.xconn.ping"
+    procedure = "io.xconn.ping"
     request_id = 367
     options = {"caller_authid": "mahad"}
     args = ["arg1"]
     kwargs = {"name": "mahad"}
-    message = [messages.Call.TYPE, request_id, options, uri, args, kwargs]
+    message = [messages.Call.TYPE, request_id, options, procedure, args, kwargs]
     call = messages.Call.parse(message)
 
     assert isinstance(call, messages.Call)
@@ -222,8 +222,8 @@ def test_parse_correctly_with_all_options():
     assert isinstance(call.request_id, int)
     assert call.request_id == request_id
 
-    assert isinstance(call.uri, str)
-    assert call.uri == uri
+    assert isinstance(call.procedure, str)
+    assert call.procedure == procedure
 
     assert call.options == options
     assert call.args == args
@@ -232,8 +232,8 @@ def test_parse_correctly_with_all_options():
 
 def test_marshal():
     request_id = 367
-    uri = "io.xconn.hello"
-    message = messages.Call(messages.CallFields(request_id, uri)).marshal()
+    procedure = "io.xconn.hello"
+    message = messages.Call(messages.CallFields(request_id, procedure)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 4
@@ -245,14 +245,14 @@ def test_marshal():
     assert message[1] == request_id
 
     assert message[2] == {}
-    assert message[3] == uri
+    assert message[3] == procedure
 
 
 def test_marshal_with_args():
     request_id = 367
-    uri = "io.xconn.hello"
+    procedure = "io.xconn.hello"
     args = ["new"]
-    message = messages.Call(messages.CallFields(request_id, uri, args)).marshal()
+    message = messages.Call(messages.CallFields(request_id, procedure, args)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 5
@@ -264,16 +264,16 @@ def test_marshal_with_args():
     assert message[1] == request_id
 
     assert message[2] == {}
-    assert message[3] == uri
+    assert message[3] == procedure
     assert message[4] == args
 
 
 def test_marshal_with_kwargs():
     request_id = 167
-    uri = "io.xconn.new"
+    procedure = "io.xconn.new"
     args = ["args"]
     kwargs = {"new": "value"}
-    message = messages.Call(messages.CallFields(request_id, uri, args, kwargs)).marshal()
+    message = messages.Call(messages.CallFields(request_id, procedure, args, kwargs)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 6
@@ -285,7 +285,7 @@ def test_marshal_with_kwargs():
     assert message[1] == request_id
 
     assert message[2] == {}
-    assert message[3] == uri
+    assert message[3] == procedure
 
     assert isinstance(message[4], list)
     assert message[4] == args
@@ -296,11 +296,11 @@ def test_marshal_with_kwargs():
 
 def test_marshal_with_all_options():
     request_id = 1677
-    uri = "io.xconn.ping"
+    procedure = "io.xconn.ping"
     args = ["arg1"]
     kwargs = {"key": "value"}
     options = {"receive_progress": True}
-    message = messages.Call(messages.CallFields(request_id, uri, args, kwargs, options)).marshal()
+    message = messages.Call(messages.CallFields(request_id, procedure, args, kwargs, options)).marshal()
 
     assert isinstance(message, list)
     assert len(message) == 6
@@ -313,7 +313,7 @@ def test_marshal_with_all_options():
 
     assert isinstance(message[2], dict)
     assert message[2] == options
-    assert message[3] == uri
+    assert message[3] == procedure
 
     assert isinstance(message[4], list)
     assert message[4] == args
