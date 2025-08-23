@@ -28,7 +28,9 @@ class WAMPSession:
             if msg.request_id not in self._invocation_requests:
                 raise ValueError("cannot yield for unknown invocation request")
 
-            self._invocation_requests.remove(msg.request_id)
+            progress = msg.options.get("progress", False)
+            if not progress:
+                self._invocation_requests.remove(msg.request_id)
         elif isinstance(msg, messages.Publish):
             if msg.options.get("acknowledge", False):
                 self._publish_requests.add(msg.request_id)
@@ -54,10 +56,12 @@ class WAMPSession:
 
     def receive_message(self, msg: messages.Message) -> messages.Message:
         if isinstance(msg, messages.Result):
-            try:
-                self._call_requests.remove(msg.request_id)
-            except KeyError:
+            if msg.request_id not in self._call_requests:
                 raise ValueError("received RESULT for invalid request_id")
+
+            progress = msg.options.get("progress", False)
+            if not progress:
+                self._call_requests.remove(msg.request_id)
         elif isinstance(msg, messages.Registered):
             try:
                 self._register_requests.remove(msg.request_id)
