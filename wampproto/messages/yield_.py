@@ -34,6 +34,7 @@ class YieldFields(IYieldFields):
         options: dict | None = None,
         payload: bytes | None = None,
         serializer: int | None = None,
+        binary: bool = False,
     ):
         super().__init__()
         self._request_id = request_id
@@ -43,6 +44,7 @@ class YieldFields(IYieldFields):
 
         self._serializer = serializer
         self._payload = payload
+        self._binary = binary
 
     @property
     def request_id(self) -> int:
@@ -61,7 +63,7 @@ class YieldFields(IYieldFields):
         return self._kwargs
 
     def payload_is_binary(self) -> bool:
-        return self._serializer != 0
+        return self._binary
 
     @property
     def payload(self) -> bytes | None:
