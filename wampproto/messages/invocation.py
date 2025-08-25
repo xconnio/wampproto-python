@@ -39,6 +39,7 @@ class InvocationFields(IInvocationFields):
         details: dict | None = None,
         serializer: int | None = None,
         payload: bytes | None = None,
+        binary: bool = False,
     ):
         super().__init__()
         self._request_id = request_id
@@ -49,6 +50,7 @@ class InvocationFields(IInvocationFields):
 
         self._serializer = serializer
         self._payload = payload
+        self._binary = binary
 
     @property
     def request_id(self) -> int:
@@ -71,7 +73,7 @@ class InvocationFields(IInvocationFields):
         return self._details
 
     def payload_is_binary(self) -> bool:
-        return self._serializer != 0
+        return self._binary
 
     @property
     def payload(self) -> bytes | None:
