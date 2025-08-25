@@ -98,6 +98,9 @@ class Yield(Message):
 
     @property
     def options(self) -> dict[str, Any]:
+        if self.payload_serializer is not None:
+            self._fields.options["x_payload_serializer"] = self._fields.payload_serializer
+
         return self._fields.options
 
     @property

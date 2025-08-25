@@ -98,6 +98,9 @@ class Result(Message):
 
     @property
     def details(self) -> dict[str, Any]:
+        if self.payload_serializer is not None:
+            self._fields.details["x_payload_serializer"] = self._fields.payload_serializer
+
         return self._fields.details
 
     @property
