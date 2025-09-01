@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "wampproto"
-version = "0.3.0"
+version = "0.4.0"
 authors = [
-  {name="Omer Akram", email="omer@thing.com"},
+  {name="Omer Akram", email="omer@xconn.io"},
   {name="Mahad Munir", email="mahad@xconn.io"},
 ]
-description = "https://github.com/xconnio/wampproto.py"
+description = "https://github.com/xconnio/wampproto-python"
 readme = "README.md"
 dependencies = [
   "cbor2",
@@ -22,15 +22,15 @@ classifiers = [
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
 ]
 
 [project.optional-dependencies]
 test = ["coverage", "pytest", "ruff", "pytest-asyncio"]
-publish = ["twine", "build"]
 
 [project.urls]
-"Homepage" = "https://github.com/xconnio/wampproto.py"
-"Bug Tracker" = "https://github.com/xconnio/wampproto.py/issues"
+"Homepage" = "https://github.com/xconnio/wampproto-python"
+"Bug Tracker" = "https://github.com/xconnio/wampproto-python/issues"
 
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.
