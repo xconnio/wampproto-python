@@ -8,10 +8,10 @@ setup:
 	uv venv
 	uv pip install .[test]
 
-lint:
+format:
 	. .venv/bin/activate; ruff format .
 
-check-lint:
+lint:
 	. .venv/bin/activate; ruff check .
 
 test:
@@ -20,16 +20,12 @@ test:
 coverage:
 	. .venv/bin/activate; coverage run -m pytest -v tests && coverage html && open htmlcov/index.html
 
-build-wheel:
-	pip wheel --no-deps -w dist .
+build:
+	uv build
+
+publish:
+	uv publish
 
 clean:
 	rm -rf .venv build dist wampproto.egg-info
 
-publish-build:
-	rm -rf ./dist ./build
-	.venv/bin/python -m build --sdist
-	.venv/bin/twine check dist/*
-	@echo ========================================================
-	@echo
-	@echo now run .venv/bin/twine upload dist/newly_created.tar.gz

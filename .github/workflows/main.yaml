@@ -23,7 +23,7 @@ jobs:
         run: make setup
 
       - name: Build wheel
-        run: make build-wheel
+        run: make build
 
       - name: install wampproto-cli
         run: sudo snap install wampproto --edge
