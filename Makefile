@@ -7,6 +7,7 @@ setup:
 	make install_uv
 	uv venv
 	uv pip install .[test]
+	sudo snap install wampproto --edge
 
 format:
 	. .venv/bin/activate; ruff format .
